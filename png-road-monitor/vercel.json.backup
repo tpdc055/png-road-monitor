@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npx prisma generate && npm run build",
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "src/app/api/**/*.ts": {
+      "runtime": "nodejs20.x"
+    }
+  }
+}
