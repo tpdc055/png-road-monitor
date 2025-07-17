@@ -386,40 +386,56 @@ export default function RoadProgressMapper() {
   };
 
   const exportProgressReport = () => {
-    // Create CSV data
-    const csvData = [
-      ['Sequence', 'Latitude', 'Longitude', 'Description', 'Work Type', 'Status', 'Chainage (m)', 'Photos Count', 'Timestamp'],
-      ...gpsPoints.map(point => [
-        point.sequence,
-        point.latitude.toFixed(6),
-        point.longitude.toFixed(6),
-        point.description,
-        WORK_TYPES.find(w => w.id === point.workType)?.name || point.workType,
-        point.status,
-        point.chainage,
-        point.photos?.length || 0,
-        new Date(point.timestamp).toLocaleDateString()
-      ])
-    ];
+    try {
+      // Create CSV data
+      const csvData = [
+        ['Sequence', 'Latitude', 'Longitude', 'Description', 'Work Type', 'Status', 'Chainage (m)', 'Photos Count', 'Timestamp'],
+        ...gpsPoints.map(point => [
+          point.sequence,
+          point.latitude.toFixed(6),
+          point.longitude.toFixed(6),
+          point.description,
+          WORK_TYPES.find(w => w.id === point.workType)?.name || point.workType,
+          point.status,
+          point.chainage,
+          point.photos?.length || 0,
+          new Date(point.timestamp).toLocaleDateString()
+        ])
+      ];
 
-    const csvContent = csvData.map(row => row.join(',')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `road-progress-report-${new Date().toISOString().split('T')[0]}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+      const csvContent = csvData.map(row => row.join(',')).join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+
+      if (typeof window !== 'undefined') {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `road-progress-report-${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Error exporting progress report:', error);
+      alert('Error exporting report. Please try again.');
+    }
   };
 
   const exportMapImage = () => {
-    const canvas = mapCanvasRef.current;
-    if (!canvas) return;
+    try {
+      const canvas = mapCanvasRef.current;
+      if (!canvas || typeof window === 'undefined') {
+        alert('Map canvas not available for export');
+        return;
+      }
 
-    const link = document.createElement('a');
-    link.download = `road-progress-map-${new Date().toISOString().split('T')[0]}.png`;
-    link.href = canvas.toDataURL();
-    link.click();
+      const link = document.createElement('a');
+      link.download = `road-progress-map-${new Date().toISOString().split('T')[0]}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    } catch (error) {
+      console.error('Error exporting map image:', error);
+      alert('Error exporting map. Please try again.');
+    }
   };
 
   return (

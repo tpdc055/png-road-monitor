@@ -67,6 +67,28 @@ function MobileGPSCollectorComponent() {
 
   useEffect(() => {
     setIsMounted(true);
+
+    // Add global error handlers
+    const handleUnhandledRejection = (event: any) => {
+      console.error('Unhandled promise rejection:', event.reason);
+      event.preventDefault();
+    };
+
+    const handleError = (event: any) => {
+      console.error('Global error:', event.error);
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('unhandledrejection', handleUnhandledRejection);
+      window.addEventListener('error', handleError);
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+        window.removeEventListener('error', handleError);
+      }
+    };
   }, []);
 
   if (!isMounted) {
@@ -117,6 +139,8 @@ function MobileGPSCollectorComponent() {
         battery.addEventListener('levelchange', () => {
           setBatteryLevel(Math.round(battery.level * 100));
         });
+      }).catch((error: any) => {
+        console.log('Battery API not supported:', error);
       });
     }
 
@@ -190,10 +214,16 @@ function MobileGPSCollectorComponent() {
         stream.getTracks().forEach(track => track.stop());
       };
 
+      mediaRecorderRef.current.onerror = (event) => {
+        console.error('MediaRecorder error:', event);
+        setIsRecordingAudio(false);
+      };
+
       mediaRecorderRef.current.start();
       setIsRecordingAudio(true);
     } catch (error) {
       console.error('Error starting audio recording:', error);
+      alert('Could not access microphone. Please check permissions.');
     }
   };
 
