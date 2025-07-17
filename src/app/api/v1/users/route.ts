@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { MockAPIService } from '@/lib/mockApiService';
+import { MockAPIService } from "@/lib/mockApiService";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
@@ -7,11 +7,14 @@ export async function GET() {
     const result = await MockAPIService.getUsers();
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Error fetching users:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to fetch users',
-      details: error.message
-    }, { status: 500 });
+    console.error("Error fetching users:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to fetch users",
+        details: error.message,
+      },
+      { status: 500 },
+    );
   }
 }

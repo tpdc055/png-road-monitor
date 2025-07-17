@@ -1,40 +1,64 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
-  Users,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useAuth } from "@/contexts/AuthContext";
+import { MockAPIService } from "@/lib/mockApiService";
+import {
+  AlertCircle,
+  Building2,
+  Calendar,
+  CheckCircle,
+  Edit,
+  Eye,
+  EyeOff,
+  Loader2,
+  Mail,
   Plus,
   Save,
-  X,
-  Edit,
-  Trash2,
   Shield,
+  Trash2,
   UserPlus,
-  Mail,
-  Calendar,
-  Building2,
-  CheckCircle,
+  Users,
+  X,
   XCircle,
-  Loader2,
-  AlertCircle,
-  Eye,
-  EyeOff
 } from "lucide-react";
-import { MockAPIService } from "@/lib/mockApiService";
+import { useEffect, useState } from "react";
 
 interface User {
   id: string;
   name: string;
   email: string;
-  role: "ADMIN" | "PROJECT_MANAGER" | "SITE_ENGINEER" | "FINANCIAL_OFFICER" | "USER";
+  role:
+    | "ADMIN"
+    | "PROJECT_MANAGER"
+    | "SITE_ENGINEER"
+    | "FINANCIAL_OFFICER"
+    | "USER";
   isActive: boolean;
   createdAt: string;
   _count: {
@@ -45,11 +69,36 @@ interface User {
 }
 
 const userRoles = [
-  { value: "ADMIN", label: "Administrator", color: "bg-red-100 text-red-800", description: "Full system access" },
-  { value: "PROJECT_MANAGER", label: "Project Manager", color: "bg-blue-100 text-blue-800", description: "Manage projects and teams" },
-  { value: "SITE_ENGINEER", label: "Site Engineer", color: "bg-green-100 text-green-800", description: "Field operations and GPS tracking" },
-  { value: "FINANCIAL_OFFICER", label: "Financial Officer", color: "bg-purple-100 text-purple-800", description: "Financial management" },
-  { value: "USER", label: "General User", color: "bg-gray-100 text-gray-800", description: "Basic access" }
+  {
+    value: "ADMIN",
+    label: "Administrator",
+    color: "bg-red-100 text-red-800",
+    description: "Full system access",
+  },
+  {
+    value: "PROJECT_MANAGER",
+    label: "Project Manager",
+    color: "bg-blue-100 text-blue-800",
+    description: "Manage projects and teams",
+  },
+  {
+    value: "SITE_ENGINEER",
+    label: "Site Engineer",
+    color: "bg-green-100 text-green-800",
+    description: "Field operations and GPS tracking",
+  },
+  {
+    value: "FINANCIAL_OFFICER",
+    label: "Financial Officer",
+    color: "bg-purple-100 text-purple-800",
+    description: "Financial management",
+  },
+  {
+    value: "USER",
+    label: "General User",
+    color: "bg-gray-100 text-gray-800",
+    description: "Basic access",
+  },
 ];
 
 export default function UserManagement() {
@@ -67,7 +116,7 @@ export default function UserManagement() {
     email: "",
     password: "",
     role: "USER" as User["role"],
-    isActive: true
+    isActive: true,
   });
 
   // Check if current user is admin
@@ -92,7 +141,7 @@ export default function UserManagement() {
         setError("Failed to fetch users");
       }
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
       setError("Failed to load users");
     } finally {
       setIsLoading(false);
@@ -126,7 +175,7 @@ export default function UserManagement() {
           email: "",
           password: "",
           role: "USER",
-          isActive: true
+          isActive: true,
         });
         setShowCreateForm(false);
 
@@ -136,7 +185,7 @@ export default function UserManagement() {
         setError(data.error || "Failed to create user");
       }
     } catch (error) {
-      console.error('Error creating user:', error);
+      console.error("Error creating user:", error);
       setError("Failed to create user. Please try again.");
     } finally {
       setIsSaving(false);
@@ -160,13 +209,13 @@ export default function UserManagement() {
         email: formData.email,
         role: formData.role,
         isActive: formData.isActive,
-        ...(formData.password && { password: formData.password })
+        ...(formData.password && { password: formData.password }),
       };
 
       const response = await fetch(`/api/v1/users/${editingUser.id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(updateData),
       });
@@ -180,7 +229,7 @@ export default function UserManagement() {
           email: "",
           password: "",
           role: "USER",
-          isActive: true
+          isActive: true,
         });
 
         // Refresh users list
@@ -189,7 +238,7 @@ export default function UserManagement() {
         setError(data.error || "Failed to update user");
       }
     } catch (error) {
-      console.error('Error updating user:', error);
+      console.error("Error updating user:", error);
       setError("Failed to update user. Please try again.");
     } finally {
       setIsSaving(false);
@@ -197,13 +246,17 @@ export default function UserManagement() {
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this user? This action cannot be undone.",
+      )
+    ) {
       return;
     }
 
     try {
       const response = await fetch(`/api/v1/users/${userId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       const data = await response.json();
@@ -214,7 +267,7 @@ export default function UserManagement() {
         setError(data.error || "Failed to delete user");
       }
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error("Error deleting user:", error);
       setError("Failed to delete user. Please try again.");
     }
   };
@@ -226,7 +279,7 @@ export default function UserManagement() {
       email: user.email,
       password: "",
       role: user.role,
-      isActive: user.isActive
+      isActive: user.isActive,
     });
     setShowCreateForm(false);
   };
@@ -238,17 +291,15 @@ export default function UserManagement() {
       email: "",
       password: "",
       role: "USER",
-      isActive: true
+      isActive: true,
     });
     setError(null);
   };
 
   const getRoleBadge = (role: User["role"]) => {
-    const roleConfig = userRoles.find(r => r.value === role);
+    const roleConfig = userRoles.find((r) => r.value === role);
     return roleConfig ? (
-      <Badge className={roleConfig.color}>
-        {roleConfig.label}
-      </Badge>
+      <Badge className={roleConfig.color}>{roleConfig.label}</Badge>
     ) : null;
   };
 
@@ -263,7 +314,9 @@ export default function UserManagement() {
         <CardContent className="p-12 text-center">
           <Shield className="h-16 w-16 text-red-500 mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">Access Denied</h3>
-          <p className="text-gray-600">Only administrators can access user management.</p>
+          <p className="text-gray-600">
+            Only administrators can access user management.
+          </p>
         </CardContent>
       </Card>
     );
@@ -284,8 +337,12 @@ export default function UserManagement() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">User Management</h2>
-          <p className="text-gray-600">Manage team members and their access levels</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            User Management
+          </h2>
+          <p className="text-gray-600">
+            Manage team members and their access levels
+          </p>
         </div>
         <Button
           onClick={() => {
@@ -296,7 +353,7 @@ export default function UserManagement() {
               email: "",
               password: "",
               role: "USER",
-              isActive: true
+              isActive: true,
             });
           }}
           className="bg-blue-600 hover:bg-blue-700"
@@ -331,7 +388,7 @@ export default function UserManagement() {
               <div>
                 <p className="text-sm text-gray-600">Active Users</p>
                 <p className="font-semibold text-green-600">
-                  {users.filter(u => u.isActive).length}
+                  {users.filter((u) => u.isActive).length}
                 </p>
               </div>
             </div>
@@ -347,7 +404,7 @@ export default function UserManagement() {
               <div>
                 <p className="text-sm text-gray-600">Administrators</p>
                 <p className="font-semibold text-red-600">
-                  {users.filter(u => u.role === "ADMIN").length}
+                  {users.filter((u) => u.role === "ADMIN").length}
                 </p>
               </div>
             </div>
@@ -363,7 +420,7 @@ export default function UserManagement() {
               <div>
                 <p className="text-sm text-gray-600">Project Managers</p>
                 <p className="font-semibold text-purple-600">
-                  {users.filter(u => u.role === "PROJECT_MANAGER").length}
+                  {users.filter((u) => u.role === "PROJECT_MANAGER").length}
                 </p>
               </div>
             </div>
@@ -380,11 +437,16 @@ export default function UserManagement() {
               {editingUser ? "Edit User" : "Add New User"}
             </CardTitle>
             <CardDescription>
-              {editingUser ? "Update user information and permissions" : "Create a new user account for the team"}
+              {editingUser
+                ? "Update user information and permissions"
+                : "Create a new user account for the team"}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={editingUser ? handleEditUser : handleCreateUser} className="space-y-4">
+            <form
+              onSubmit={editingUser ? handleEditUser : handleCreateUser}
+              className="space-y-4"
+            >
               {/* Error Display */}
               {error && (
                 <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700">
@@ -399,7 +461,9 @@ export default function UserManagement() {
                   <Input
                     id="name"
                     value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     placeholder="Enter full name"
                   />
                 </div>
@@ -410,7 +474,9 @@ export default function UserManagement() {
                     id="email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     placeholder="Enter email address"
                   />
                 </div>
@@ -419,22 +485,33 @@ export default function UserManagement() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="password">
-                    Password {editingUser ? "(leave blank to keep current)" : "*"}
+                    Password{" "}
+                    {editingUser ? "(leave blank to keep current)" : "*"}
                   </Label>
                   <div className="relative">
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       value={formData.password}
-                      onChange={(e) => setFormData({...formData, password: e.target.value})}
-                      placeholder={editingUser ? "New password (optional)" : "Enter password"}
+                      onChange={(e) =>
+                        setFormData({ ...formData, password: e.target.value })
+                      }
+                      placeholder={
+                        editingUser
+                          ? "New password (optional)"
+                          : "Enter password"
+                      }
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -443,17 +520,21 @@ export default function UserManagement() {
                   <Label htmlFor="role">Role *</Label>
                   <Select
                     value={formData.role}
-                    onValueChange={(value) => setFormData({...formData, role: value as User["role"]})}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, role: value as User["role"] })
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select role" />
                     </SelectTrigger>
                     <SelectContent>
-                      {userRoles.map(role => (
+                      {userRoles.map((role) => (
                         <SelectItem key={role.value} value={role.value}>
                           <div className="flex flex-col">
                             <span>{role.label}</span>
-                            <span className="text-xs text-gray-500">{role.description}</span>
+                            <span className="text-xs text-gray-500">
+                              {role.description}
+                            </span>
                           </div>
                         </SelectItem>
                       ))}
@@ -467,7 +548,9 @@ export default function UserManagement() {
                   type="checkbox"
                   id="isActive"
                   checked={formData.isActive}
-                  onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, isActive: e.target.checked })
+                  }
                   className="rounded border-gray-300"
                 />
                 <Label htmlFor="isActive">Active user account</Label>
@@ -494,7 +577,9 @@ export default function UserManagement() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={editingUser ? cancelEditing : () => setShowCreateForm(false)}
+                  onClick={
+                    editingUser ? cancelEditing : () => setShowCreateForm(false)
+                  }
                 >
                   <X className="h-4 w-4 mr-2" />
                   Cancel
@@ -509,7 +594,9 @@ export default function UserManagement() {
       <Card>
         <CardHeader>
           <CardTitle>Team Members</CardTitle>
-          <CardDescription>Manage user accounts and permissions</CardDescription>
+          <CardDescription>
+            Manage user accounts and permissions
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -536,9 +623,7 @@ export default function UserManagement() {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      {getRoleBadge(user.role)}
-                    </TableCell>
+                    <TableCell>{getRoleBadge(user.role)}</TableCell>
                     <TableCell>
                       {user.isActive ? (
                         <Badge className="bg-green-100 text-green-800">
@@ -600,8 +685,13 @@ export default function UserManagement() {
           <CardContent className="p-12 text-center">
             <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">No users found</h3>
-            <p className="text-gray-600 mb-4">Start building your team by adding the first user.</p>
-            <Button onClick={() => setShowCreateForm(true)} className="bg-blue-600 hover:bg-blue-700">
+            <p className="text-gray-600 mb-4">
+              Start building your team by adding the first user.
+            </p>
+            <Button
+              onClick={() => setShowCreateForm(true)}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
               <UserPlus className="h-4 w-4 mr-2" />
               Add First User
             </Button>

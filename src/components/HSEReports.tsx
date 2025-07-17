@@ -1,21 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -24,20 +17,39 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Activity,
   AlertTriangle,
-  Shield,
+  Calendar,
+  Edit3,
+  Eye,
+  FileText,
   Heart,
   Leaf,
   Plus,
-  Calendar,
+  Shield,
   TrendingUp,
   Users,
-  FileText,
-  Activity,
-  Eye,
-  Edit3
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface HSEIncident {
   id: string;
@@ -68,7 +80,9 @@ export default function HSEReports() {
   const [incidents, setIncidents] = useState<HSEIncident[]>([]);
   const [metrics, setMetrics] = useState<SafetyMetric[]>([]);
   const [showIncidentDialog, setShowIncidentDialog] = useState(false);
-  const [selectedIncident, setSelectedIncident] = useState<HSEIncident | null>(null);
+  const [selectedIncident, setSelectedIncident] = useState<HSEIncident | null>(
+    null,
+  );
 
   useEffect(() => {
     loadHSEData();
@@ -82,49 +96,112 @@ export default function HSEReports() {
         type: "safety",
         severity: "high",
         title: "Worker Fall from Height",
-        description: "Worker fell from scaffolding during bridge construction work",
+        description:
+          "Worker fell from scaffolding during bridge construction work",
         location: "Mt. Hagen-Kagamuga Bridge Site",
         projectId: "PNG001",
         reportedBy: "John Kila",
         reportedDate: "2025-01-08",
         status: "investigating",
-        actions: ["Site cordoned off", "Investigation team assigned", "Safety briefing scheduled"]
+        actions: [
+          "Site cordoned off",
+          "Investigation team assigned",
+          "Safety briefing scheduled",
+        ],
       },
       {
         id: "HSE002",
         type: "environmental",
         severity: "medium",
         title: "Fuel Spill Near River",
-        description: "Small diesel spill during equipment refueling near Markham River",
+        description:
+          "Small diesel spill during equipment refueling near Markham River",
         location: "Lae-Nadzab Highway, km 15",
         projectId: "PNG003",
         reportedBy: "Maria Temu",
         reportedDate: "2025-01-07",
         status: "resolved",
-        actions: ["Spill contained", "Cleanup completed", "Environmental assessment done"]
+        actions: [
+          "Spill contained",
+          "Cleanup completed",
+          "Environmental assessment done",
+        ],
       },
       {
         id: "HSE003",
         type: "health",
         severity: "low",
         title: "Heat Exhaustion Case",
-        description: "Worker experienced heat exhaustion during afternoon shift",
+        description:
+          "Worker experienced heat exhaustion during afternoon shift",
         location: "Port Moresby Ring Road",
         projectId: "PNG002",
         reportedBy: "Peter Namaliu",
         reportedDate: "2025-01-06",
         status: "closed",
-        actions: ["First aid provided", "Worker sent to clinic", "Additional shade structures installed"]
-      }
+        actions: [
+          "First aid provided",
+          "Worker sent to clinic",
+          "Additional shade structures installed",
+        ],
+      },
     ];
 
     const mockMetrics: SafetyMetric[] = [
-      { id: "1", metric: "Lost Time Injury Rate", value: 2.3, target: 1.5, unit: "per 100,000 hours", trend: "down", period: "Q4 2024" },
-      { id: "2", metric: "Near Miss Reports", value: 45, target: 40, unit: "reports", trend: "up", period: "December 2024" },
-      { id: "3", metric: "Safety Training Hours", value: 1250, target: 1000, unit: "hours", trend: "up", period: "December 2024" },
-      { id: "4", metric: "Environmental Compliance", value: 98, target: 95, unit: "%", trend: "stable", period: "Q4 2024" },
-      { id: "5", metric: "PPE Compliance Rate", value: 94, target: 98, unit: "%", trend: "down", period: "December 2024" },
-      { id: "6", metric: "Health Screenings Completed", value: 156, target: 150, unit: "screenings", trend: "up", period: "December 2024" }
+      {
+        id: "1",
+        metric: "Lost Time Injury Rate",
+        value: 2.3,
+        target: 1.5,
+        unit: "per 100,000 hours",
+        trend: "down",
+        period: "Q4 2024",
+      },
+      {
+        id: "2",
+        metric: "Near Miss Reports",
+        value: 45,
+        target: 40,
+        unit: "reports",
+        trend: "up",
+        period: "December 2024",
+      },
+      {
+        id: "3",
+        metric: "Safety Training Hours",
+        value: 1250,
+        target: 1000,
+        unit: "hours",
+        trend: "up",
+        period: "December 2024",
+      },
+      {
+        id: "4",
+        metric: "Environmental Compliance",
+        value: 98,
+        target: 95,
+        unit: "%",
+        trend: "stable",
+        period: "Q4 2024",
+      },
+      {
+        id: "5",
+        metric: "PPE Compliance Rate",
+        value: 94,
+        target: 98,
+        unit: "%",
+        trend: "down",
+        period: "December 2024",
+      },
+      {
+        id: "6",
+        metric: "Health Screenings Completed",
+        value: 156,
+        target: 150,
+        unit: "screenings",
+        trend: "up",
+        period: "December 2024",
+      },
     ];
 
     setIncidents(mockIncidents);
@@ -133,27 +210,41 @@ export default function HSEReports() {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "low": return "bg-green-100 text-green-800";
-      case "medium": return "bg-yellow-100 text-yellow-800";
-      case "high": return "bg-orange-100 text-orange-800";
-      case "critical": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "low":
+        return "bg-green-100 text-green-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "critical":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "open": return "bg-red-100 text-red-800";
-      case "investigating": return "bg-blue-100 text-blue-800";
-      case "resolved": return "bg-green-100 text-green-800";
-      case "closed": return "bg-gray-100 text-gray-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "open":
+        return "bg-red-100 text-red-800";
+      case "investigating":
+        return "bg-blue-100 text-blue-800";
+      case "resolved":
+        return "bg-green-100 text-green-800";
+      case "closed":
+        return "bg-gray-100 text-gray-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getTrendIcon = (trend: string) => {
-    if (trend === "up") return <TrendingUp className="h-4 w-4 text-green-600" />;
-    if (trend === "down") return <TrendingUp className="h-4 w-4 text-red-600 transform rotate-180" />;
+    if (trend === "up")
+      return <TrendingUp className="h-4 w-4 text-green-600" />;
+    if (trend === "down")
+      return (
+        <TrendingUp className="h-4 w-4 text-red-600 transform rotate-180" />
+      );
     return <Activity className="h-4 w-4 text-gray-600" />;
   };
 
@@ -163,7 +254,7 @@ export default function HSEReports() {
     { id: "safety", label: "Safety", icon: Shield },
     { id: "health", label: "Health", icon: Heart },
     { id: "environment", label: "Environment", icon: Leaf },
-    { id: "training", label: "Training", icon: Users }
+    { id: "training", label: "Training", icon: Users },
   ];
 
   const renderOverview = () => (
@@ -192,7 +283,9 @@ export default function HSEReports() {
               </div>
               <div>
                 <div className="text-2xl font-bold">24</div>
-                <div className="text-sm text-gray-600">Days Without Accident</div>
+                <div className="text-sm text-gray-600">
+                  Days Without Accident
+                </div>
               </div>
             </div>
           </CardContent>
@@ -217,7 +310,9 @@ export default function HSEReports() {
       <Card>
         <CardHeader>
           <CardTitle>Safety Performance Metrics</CardTitle>
-          <CardDescription>Key performance indicators for health, safety, and environment</CardDescription>
+          <CardDescription>
+            Key performance indicators for health, safety, and environment
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -233,7 +328,9 @@ export default function HSEReports() {
                 <div className="text-sm text-gray-600">
                   Target: {metric.target} {metric.unit}
                 </div>
-                <div className="text-xs text-gray-500 mt-1">{metric.period}</div>
+                <div className="text-xs text-gray-500 mt-1">
+                  {metric.period}
+                </div>
               </div>
             ))}
           </div>
@@ -244,7 +341,9 @@ export default function HSEReports() {
       <Card>
         <CardHeader>
           <CardTitle>Recent Incidents</CardTitle>
-          <CardDescription>Latest health, safety, and environmental incidents</CardDescription>
+          <CardDescription>
+            Latest health, safety, and environmental incidents
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -261,7 +360,9 @@ export default function HSEReports() {
                       </Badge>
                     </div>
                     <h4 className="font-medium">{incident.title}</h4>
-                    <p className="text-sm text-gray-600 mt-1">{incident.description}</p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {incident.description}
+                    </p>
                     <div className="text-xs text-gray-500 mt-2">
                       {incident.location} • {incident.reportedDate}
                     </div>
@@ -283,7 +384,9 @@ export default function HSEReports() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold">Incident Management</h3>
-          <p className="text-gray-600">Track and manage health, safety, and environmental incidents</p>
+          <p className="text-gray-600">
+            Track and manage health, safety, and environmental incidents
+          </p>
         </div>
         <Dialog open={showIncidentDialog} onOpenChange={setShowIncidentDialog}>
           <DialogTrigger asChild>
@@ -295,7 +398,9 @@ export default function HSEReports() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Report New Incident</DialogTitle>
-              <DialogDescription>Submit a new health, safety, or environmental incident report</DialogDescription>
+              <DialogDescription>
+                Submit a new health, safety, or environmental incident report
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
@@ -339,7 +444,10 @@ export default function HSEReports() {
               </div>
               <div className="flex gap-2 pt-4">
                 <Button className="flex-1">Submit Report</Button>
-                <Button variant="outline" onClick={() => setShowIncidentDialog(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowIncidentDialog(false)}
+                >
                   Cancel
                 </Button>
               </div>
@@ -447,13 +555,25 @@ export default function HSEReports() {
       case "incidents":
         return renderIncidents();
       case "safety":
-        return renderPlaceholder("Safety Management", "Safety protocols, training records, and compliance tracking");
+        return renderPlaceholder(
+          "Safety Management",
+          "Safety protocols, training records, and compliance tracking",
+        );
       case "health":
-        return renderPlaceholder("Health Monitoring", "Worker health screenings, medical records, and wellness programs");
+        return renderPlaceholder(
+          "Health Monitoring",
+          "Worker health screenings, medical records, and wellness programs",
+        );
       case "environment":
-        return renderPlaceholder("Environmental Management", "Environmental impact monitoring and compliance");
+        return renderPlaceholder(
+          "Environmental Management",
+          "Environmental impact monitoring and compliance",
+        );
       case "training":
-        return renderPlaceholder("Training Records", "Safety training schedules, certifications, and competency tracking");
+        return renderPlaceholder(
+          "Training Records",
+          "Safety training schedules, certifications, and competency tracking",
+        );
       default:
         return renderOverview();
     }
@@ -464,7 +584,9 @@ export default function HSEReports() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">HSE Reports</h2>
-          <p className="text-gray-600">Health, Safety & Environment monitoring and reporting</p>
+          <p className="text-gray-600">
+            Health, Safety & Environment monitoring and reporting
+          </p>
         </div>
       </div>
 

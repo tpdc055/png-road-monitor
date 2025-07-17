@@ -1,21 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -24,23 +17,42 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  CheckCircle,
-  XCircle,
-  Clock,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import {
   AlertTriangle,
-  Plus,
-  FileText,
-  TestTube,
   Award,
-  Layers,
-  TrendingUp,
   Calendar,
-  MapPin,
-  Eye,
+  CheckCircle,
+  Clock,
+  Download,
   Edit3,
-  Download
+  Eye,
+  FileText,
+  Layers,
+  MapPin,
+  Plus,
+  TestTube,
+  TrendingUp,
+  XCircle,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface QualityInspection {
   id: string;
@@ -52,7 +64,12 @@ interface QualityInspection {
   projectName: string;
   inspector: string;
   date: string;
-  status: "scheduled" | "in_progress" | "completed" | "failed" | "rework_required";
+  status:
+    | "scheduled"
+    | "in_progress"
+    | "completed"
+    | "failed"
+    | "rework_required";
   score: number;
   maxScore: number;
   findings: string[];
@@ -62,7 +79,13 @@ interface QualityInspection {
 
 interface QualityTest {
   id: string;
-  testType: "compaction" | "moisture" | "strength" | "thickness" | "density" | "gradation";
+  testType:
+    | "compaction"
+    | "moisture"
+    | "strength"
+    | "thickness"
+    | "density"
+    | "gradation";
   material: string;
   location: string;
   projectId: string;
@@ -106,7 +129,8 @@ export default function QualityManagement() {
         id: "QI001",
         inspectionType: "materials",
         title: "Aggregate Quality Inspection",
-        description: "Base course aggregate quality check for gradation and cleanliness",
+        description:
+          "Base course aggregate quality check for gradation and cleanliness",
         location: "Mt. Hagen-Kagamuga Road, Km 5.2",
         projectId: "PNG001",
         projectName: "Mt. Hagen-Kagamuga Road Upgrade",
@@ -115,15 +139,20 @@ export default function QualityManagement() {
         status: "completed",
         score: 92,
         maxScore: 100,
-        findings: ["Aggregate meets PNG Works specification", "Minor oversized particles found", "Moisture content within limits"],
+        findings: [
+          "Aggregate meets PNG Works specification",
+          "Minor oversized particles found",
+          "Moisture content within limits",
+        ],
         recommendations: ["Remove oversized particles", "Continue monitoring"],
-        photos: []
+        photos: [],
       },
       {
         id: "QI002",
         inspectionType: "workmanship",
         title: "Pavement Layer Compaction",
-        description: "Check compaction quality and density of base course layer",
+        description:
+          "Check compaction quality and density of base course layer",
         location: "Port Moresby Ring Road, Section A",
         projectId: "PNG002",
         projectName: "Port Moresby Ring Road",
@@ -132,15 +161,24 @@ export default function QualityManagement() {
         status: "rework_required",
         score: 75,
         maxScore: 100,
-        findings: ["Compaction below specification", "Uneven surface finish", "Good material quality"],
-        recommendations: ["Re-compact affected areas", "Check roller equipment", "Additional quality control"],
-        photos: []
+        findings: [
+          "Compaction below specification",
+          "Uneven surface finish",
+          "Good material quality",
+        ],
+        recommendations: [
+          "Re-compact affected areas",
+          "Check roller equipment",
+          "Additional quality control",
+        ],
+        photos: [],
       },
       {
         id: "QI003",
         inspectionType: "safety",
         title: "Work Zone Safety Inspection",
-        description: "Safety compliance check for traffic management and worker protection",
+        description:
+          "Safety compliance check for traffic management and worker protection",
         location: "Lae-Nadzab Highway, Bridge Site",
         projectId: "PNG003",
         projectName: "Lae-Nadzab Highway Extension",
@@ -151,8 +189,8 @@ export default function QualityManagement() {
         maxScore: 100,
         findings: [],
         recommendations: [],
-        photos: []
-      }
+        photos: [],
+      },
     ];
 
     const mockTests: QualityTest[] = [
@@ -169,7 +207,7 @@ export default function QualityManagement() {
         requiredValue: 95,
         unit: "% Standard Proctor",
         technician: "Michael Popondetta",
-        certified: true
+        certified: true,
       },
       {
         id: "QT002",
@@ -184,7 +222,7 @@ export default function QualityManagement() {
         requiredValue: 25,
         unit: "MPa",
         technician: "Grace Vanimo",
-        certified: true
+        certified: true,
       },
       {
         id: "QT003",
@@ -199,8 +237,8 @@ export default function QualityManagement() {
         requiredValue: 40,
         unit: "mm",
         technician: "John Kerema",
-        certified: false
-      }
+        certified: false,
+      },
     ];
 
     const mockCompliance: ComplianceItem[] = [
@@ -212,7 +250,7 @@ export default function QualityManagement() {
         status: "compliant",
         lastChecked: "2025-01-05",
         nextReview: "2025-02-05",
-        responsible: "Materials Engineer"
+        responsible: "Materials Engineer",
       },
       {
         id: "CP002",
@@ -222,7 +260,7 @@ export default function QualityManagement() {
         status: "under_review",
         lastChecked: "2025-01-03",
         nextReview: "2025-01-17",
-        responsible: "Safety Officer"
+        responsible: "Safety Officer",
       },
       {
         id: "CP003",
@@ -232,8 +270,8 @@ export default function QualityManagement() {
         status: "non_compliant",
         lastChecked: "2025-01-04",
         nextReview: "2025-01-11",
-        responsible: "Environmental Officer"
-      }
+        responsible: "Environmental Officer",
+      },
     ];
 
     setInspections(mockInspections);
@@ -290,7 +328,7 @@ export default function QualityManagement() {
     { id: "inspections", label: "Inspections", icon: CheckCircle },
     { id: "testing", label: "Material Testing", icon: TestTube },
     { id: "compliance", label: "Compliance", icon: Award },
-    { id: "reports", label: "Reports", icon: FileText }
+    { id: "reports", label: "Reports", icon: FileText },
   ];
 
   const renderOverview = () => (
@@ -318,7 +356,9 @@ export default function QualityManagement() {
                 <TestTube className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold">{tests.filter(t => t.result === "pass").length}</div>
+                <div className="text-2xl font-bold">
+                  {tests.filter((t) => t.result === "pass").length}
+                </div>
                 <div className="text-sm text-gray-600">Tests Passed</div>
               </div>
             </div>
@@ -333,7 +373,12 @@ export default function QualityManagement() {
               </div>
               <div>
                 <div className="text-2xl font-bold">
-                  {Math.round((compliance.filter(c => c.status === "compliant").length / compliance.length) * 100)}%
+                  {Math.round(
+                    (compliance.filter((c) => c.status === "compliant").length /
+                      compliance.length) *
+                      100,
+                  )}
+                  %
                 </div>
                 <div className="text-sm text-gray-600">Compliance Rate</div>
               </div>
@@ -349,7 +394,17 @@ export default function QualityManagement() {
               </div>
               <div>
                 <div className="text-2xl font-bold">
-                  {inspections.length > 0 ? Math.round(inspections.reduce((sum, i) => sum + (i.score / i.maxScore), 0) / inspections.length * 100) : 0}%
+                  {inspections.length > 0
+                    ? Math.round(
+                        (inspections.reduce(
+                          (sum, i) => sum + i.score / i.maxScore,
+                          0,
+                        ) /
+                          inspections.length) *
+                          100,
+                      )
+                    : 0}
+                  %
                 </div>
                 <div className="text-sm text-gray-600">Avg Quality Score</div>
               </div>
@@ -362,7 +417,9 @@ export default function QualityManagement() {
       <Card>
         <CardHeader>
           <CardTitle>Recent Quality Inspections</CardTitle>
-          <CardDescription>Latest quality control inspections across all projects</CardDescription>
+          <CardDescription>
+            Latest quality control inspections across all projects
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -373,12 +430,16 @@ export default function QualityManagement() {
                     <div className="flex items-center gap-2 mb-2">
                       {getStatusIcon(inspection.status)}
                       <Badge className={getStatusColor(inspection.status)}>
-                        {inspection.status.replace('_', ' ')}
+                        {inspection.status.replace("_", " ")}
                       </Badge>
-                      <Badge variant="secondary">{inspection.inspectionType}</Badge>
+                      <Badge variant="secondary">
+                        {inspection.inspectionType}
+                      </Badge>
                     </div>
                     <h4 className="font-medium">{inspection.title}</h4>
-                    <p className="text-sm text-gray-600 mt-1">{inspection.description}</p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {inspection.description}
+                    </p>
                     <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
                       <span className="flex items-center gap-1">
                         <MapPin className="h-3 w-3" />
@@ -410,7 +471,9 @@ export default function QualityManagement() {
       <Card>
         <CardHeader>
           <CardTitle>Material Testing Summary</CardTitle>
-          <CardDescription>Recent material test results and compliance</CardDescription>
+          <CardDescription>
+            Recent material test results and compliance
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -420,9 +483,13 @@ export default function QualityManagement() {
                   <Badge className={getStatusColor(test.result)}>
                     {test.result}
                   </Badge>
-                  {test.certified && <Award className="h-4 w-4 text-yellow-600" />}
+                  {test.certified && (
+                    <Award className="h-4 w-4 text-yellow-600" />
+                  )}
                 </div>
-                <h4 className="font-medium text-sm">{test.testType.toUpperCase()}</h4>
+                <h4 className="font-medium text-sm">
+                  {test.testType.toUpperCase()}
+                </h4>
                 <p className="text-xs text-gray-600">{test.material}</p>
                 <div className="mt-2 text-xs">
                   <div>Sample: {test.sampleId}</div>
@@ -431,7 +498,10 @@ export default function QualityManagement() {
                     <div className="mt-1">
                       Result: {test.actualValue} {test.unit}
                       {test.result === "fail" && (
-                        <span className="text-red-600"> (Required: {test.requiredValue})</span>
+                        <span className="text-red-600">
+                          {" "}
+                          (Required: {test.requiredValue})
+                        </span>
                       )}
                     </div>
                   )}
@@ -449,9 +519,14 @@ export default function QualityManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold">Quality Inspections</h3>
-          <p className="text-gray-600">Manage quality control inspections and assessments</p>
+          <p className="text-gray-600">
+            Manage quality control inspections and assessments
+          </p>
         </div>
-        <Dialog open={showInspectionDialog} onOpenChange={setShowInspectionDialog}>
+        <Dialog
+          open={showInspectionDialog}
+          onOpenChange={setShowInspectionDialog}
+        >
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
@@ -461,7 +536,9 @@ export default function QualityManagement() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Schedule New Inspection</DialogTitle>
-              <DialogDescription>Create a new quality control inspection</DialogDescription>
+              <DialogDescription>
+                Create a new quality control inspection
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
@@ -500,7 +577,10 @@ export default function QualityManagement() {
               </div>
               <div className="flex gap-2 pt-4">
                 <Button className="flex-1">Schedule</Button>
-                <Button variant="outline" onClick={() => setShowInspectionDialog(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowInspectionDialog(false)}
+                >
                   Cancel
                 </Button>
               </div>
@@ -530,19 +610,25 @@ export default function QualityManagement() {
                 <TableRow key={inspection.id}>
                   <TableCell className="font-medium">{inspection.id}</TableCell>
                   <TableCell>
-                    <Badge variant="secondary">{inspection.inspectionType}</Badge>
+                    <Badge variant="secondary">
+                      {inspection.inspectionType}
+                    </Badge>
                   </TableCell>
                   <TableCell>{inspection.title}</TableCell>
-                  <TableCell className="text-sm">{inspection.location}</TableCell>
+                  <TableCell className="text-sm">
+                    {inspection.location}
+                  </TableCell>
                   <TableCell>{inspection.inspector}</TableCell>
                   <TableCell>{inspection.date}</TableCell>
                   <TableCell>
                     <Badge className={getStatusColor(inspection.status)}>
-                      {inspection.status.replace('_', ' ')}
+                      {inspection.status.replace("_", " ")}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {inspection.score > 0 ? `${inspection.score}/${inspection.maxScore}` : "-"}
+                    {inspection.score > 0
+                      ? `${inspection.score}/${inspection.maxScore}`
+                      : "-"}
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
@@ -610,11 +696,20 @@ export default function QualityManagement() {
       case "inspections":
         return renderInspections();
       case "testing":
-        return renderPlaceholder("Material Testing", "Laboratory test results, sample tracking, and certification management");
+        return renderPlaceholder(
+          "Material Testing",
+          "Laboratory test results, sample tracking, and certification management",
+        );
       case "compliance":
-        return renderPlaceholder("Compliance Management", "Standards compliance tracking, audit reports, and certification management");
+        return renderPlaceholder(
+          "Compliance Management",
+          "Standards compliance tracking, audit reports, and certification management",
+        );
       case "reports":
-        return renderPlaceholder("Quality Reports", "Quality assurance reports, trending analysis, and documentation");
+        return renderPlaceholder(
+          "Quality Reports",
+          "Quality assurance reports, trending analysis, and documentation",
+        );
       default:
         return renderOverview();
     }
@@ -624,8 +719,12 @@ export default function QualityManagement() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Quality Management</h2>
-          <p className="text-gray-600">Quality control, testing, and compliance management</p>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Quality Management
+          </h2>
+          <p className="text-gray-600">
+            Quality control, testing, and compliance management
+          </p>
         </div>
       </div>
 

@@ -1,11 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown, Activity, Calendar, Download } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Activity,
+  Calendar,
+  Download,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface CashFlowItem {
   month: string;
@@ -41,7 +60,7 @@ export default function CashFlowChart({ projectId }: CashFlowChartProps) {
         actualOutflow: 7500000,
         plannedBalance: 7000000,
         actualBalance: 7500000,
-        variance: 500000
+        variance: 500000,
       },
       {
         month: "Feb 2023",
@@ -51,7 +70,7 @@ export default function CashFlowChart({ projectId }: CashFlowChartProps) {
         actualOutflow: 11000000,
         plannedBalance: 9000000,
         actualBalance: 8500000,
-        variance: -500000
+        variance: -500000,
       },
       {
         month: "Mar 2023",
@@ -61,7 +80,7 @@ export default function CashFlowChart({ projectId }: CashFlowChartProps) {
         actualOutflow: 14000000,
         plannedBalance: 12000000,
         actualBalance: 10500000,
-        variance: -1500000
+        variance: -1500000,
       },
       {
         month: "Apr 2023",
@@ -71,7 +90,7 @@ export default function CashFlowChart({ projectId }: CashFlowChartProps) {
         actualOutflow: 19000000,
         plannedBalance: 14000000,
         actualBalance: 11500000,
-        variance: -2500000
+        variance: -2500000,
       },
       {
         month: "May 2023",
@@ -81,7 +100,7 @@ export default function CashFlowChart({ projectId }: CashFlowChartProps) {
         actualOutflow: 15000000,
         plannedBalance: 16000000,
         actualBalance: 14500000,
-        variance: -1500000
+        variance: -1500000,
       },
       {
         month: "Jun 2023",
@@ -91,8 +110,8 @@ export default function CashFlowChart({ projectId }: CashFlowChartProps) {
         actualOutflow: 21000000,
         plannedBalance: 18000000,
         actualBalance: 15500000,
-        variance: -2500000
-      }
+        variance: -2500000,
+      },
     ];
 
     setCashFlowData(mockData);
@@ -114,20 +133,42 @@ export default function CashFlowChart({ projectId }: CashFlowChartProps) {
     return <Activity className="h-4 w-4 text-gray-500" />;
   };
 
-  const totalPlannedInflow = cashFlowData.reduce((sum, item) => sum + item.plannedInflow, 0);
-  const totalActualInflow = cashFlowData.reduce((sum, item) => sum + item.actualInflow, 0);
-  const totalPlannedOutflow = cashFlowData.reduce((sum, item) => sum + item.plannedOutflow, 0);
-  const totalActualOutflow = cashFlowData.reduce((sum, item) => sum + item.actualOutflow, 0);
-  const currentBalance = cashFlowData.length > 0 ? cashFlowData[cashFlowData.length - 1].actualBalance : 0;
-  const totalVariance = totalActualInflow - totalActualOutflow - (totalPlannedInflow - totalPlannedOutflow);
+  const totalPlannedInflow = cashFlowData.reduce(
+    (sum, item) => sum + item.plannedInflow,
+    0,
+  );
+  const totalActualInflow = cashFlowData.reduce(
+    (sum, item) => sum + item.actualInflow,
+    0,
+  );
+  const totalPlannedOutflow = cashFlowData.reduce(
+    (sum, item) => sum + item.plannedOutflow,
+    0,
+  );
+  const totalActualOutflow = cashFlowData.reduce(
+    (sum, item) => sum + item.actualOutflow,
+    0,
+  );
+  const currentBalance =
+    cashFlowData.length > 0
+      ? cashFlowData[cashFlowData.length - 1].actualBalance
+      : 0;
+  const totalVariance =
+    totalActualInflow -
+    totalActualOutflow -
+    (totalPlannedInflow - totalPlannedOutflow);
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold text-gray-900">Cash Flow Analysis</h3>
-          <p className="text-gray-600">Monitor project cash inflows and outflows</p>
+          <h3 className="text-xl font-bold text-gray-900">
+            Cash Flow Analysis
+          </h3>
+          <p className="text-gray-600">
+            Monitor project cash inflows and outflows
+          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
@@ -196,11 +237,13 @@ export default function CashFlowChart({ projectId }: CashFlowChartProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Net Variance</p>
-                <p className={`text-2xl font-bold ${getVarianceColor(totalVariance)}`}>
+                <p
+                  className={`text-2xl font-bold ${getVarianceColor(totalVariance)}`}
+                >
                   {formatCurrency(Math.abs(totalVariance))}
                 </p>
                 <p className="text-xs text-gray-500">
-                  {totalVariance >= 0 ? 'Favorable' : 'Unfavorable'}
+                  {totalVariance >= 0 ? "Favorable" : "Unfavorable"}
                 </p>
               </div>
               {getVarianceIcon(totalVariance)}
@@ -213,14 +256,18 @@ export default function CashFlowChart({ projectId }: CashFlowChartProps) {
       <Card>
         <CardHeader>
           <CardTitle>Cash Flow Trend</CardTitle>
-          <CardDescription>Monthly cash inflows vs outflows comparison</CardDescription>
+          <CardDescription>
+            Monthly cash inflows vs outflows comparison
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-64 flex items-center justify-center text-gray-500 border-2 border-dashed border-gray-200 rounded-lg">
             <div className="text-center">
               <Activity className="h-12 w-12 mx-auto mb-2" />
               <p>Cash Flow Chart</p>
-              <p className="text-sm">Interactive cash flow chart will be displayed here</p>
+              <p className="text-sm">
+                Interactive cash flow chart will be displayed here
+              </p>
             </div>
           </div>
         </CardContent>
@@ -230,7 +277,9 @@ export default function CashFlowChart({ projectId }: CashFlowChartProps) {
       <Card>
         <CardHeader>
           <CardTitle>Monthly Cash Flow Statement</CardTitle>
-          <CardDescription>Detailed breakdown of planned vs actual cash flows</CardDescription>
+          <CardDescription>
+            Detailed breakdown of planned vs actual cash flows
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -253,7 +302,13 @@ export default function CashFlowChart({ projectId }: CashFlowChartProps) {
                     {formatCurrency(item.plannedInflow)}
                   </TableCell>
                   <TableCell className="text-right">
-                    <span className={item.actualInflow >= item.plannedInflow ? 'text-green-600' : 'text-red-600'}>
+                    <span
+                      className={
+                        item.actualInflow >= item.plannedInflow
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }
+                    >
                       {formatCurrency(item.actualInflow)}
                     </span>
                   </TableCell>
@@ -261,7 +316,13 @@ export default function CashFlowChart({ projectId }: CashFlowChartProps) {
                     {formatCurrency(item.plannedOutflow)}
                   </TableCell>
                   <TableCell className="text-right">
-                    <span className={item.actualOutflow <= item.plannedOutflow ? 'text-green-600' : 'text-red-600'}>
+                    <span
+                      className={
+                        item.actualOutflow <= item.plannedOutflow
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }
+                    >
                       {formatCurrency(item.actualOutflow)}
                     </span>
                   </TableCell>
@@ -287,7 +348,9 @@ export default function CashFlowChart({ projectId }: CashFlowChartProps) {
       <Card>
         <CardHeader>
           <CardTitle>3-Month Cash Flow Forecast</CardTitle>
-          <CardDescription>Projected cash flows based on current trends</CardDescription>
+          <CardDescription>
+            Projected cash flows based on current trends
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -330,15 +393,23 @@ export default function CashFlowChart({ projectId }: CashFlowChartProps) {
               <h4 className="font-semibold mb-3">Key Ratios</h4>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Cash Flow Adequacy</span>
-                  <Badge className="bg-green-100 text-green-800">Adequate</Badge>
+                  <span className="text-sm text-gray-600">
+                    Cash Flow Adequacy
+                  </span>
+                  <Badge className="bg-green-100 text-green-800">
+                    Adequate
+                  </Badge>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Liquidity Position</span>
+                  <span className="text-sm text-gray-600">
+                    Liquidity Position
+                  </span>
                   <Badge className="bg-blue-100 text-blue-800">Good</Badge>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Payment Capability</span>
+                  <span className="text-sm text-gray-600">
+                    Payment Capability
+                  </span>
                   <Badge className="bg-green-100 text-green-800">Strong</Badge>
                 </div>
               </div>
@@ -347,15 +418,25 @@ export default function CashFlowChart({ projectId }: CashFlowChartProps) {
               <h4 className="font-semibold mb-3">Risk Factors</h4>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Seasonal Variations</span>
-                  <Badge className="bg-yellow-100 text-yellow-800">Medium</Badge>
+                  <span className="text-sm text-gray-600">
+                    Seasonal Variations
+                  </span>
+                  <Badge className="bg-yellow-100 text-yellow-800">
+                    Medium
+                  </Badge>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Donor Disbursement Risk</span>
-                  <Badge className="bg-yellow-100 text-yellow-800">Medium</Badge>
+                  <span className="text-sm text-gray-600">
+                    Donor Disbursement Risk
+                  </span>
+                  <Badge className="bg-yellow-100 text-yellow-800">
+                    Medium
+                  </Badge>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Currency Fluctuation</span>
+                  <span className="text-sm text-gray-600">
+                    Currency Fluctuation
+                  </span>
                   <Badge className="bg-orange-100 text-orange-800">High</Badge>
                 </div>
               </div>

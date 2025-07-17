@@ -1,33 +1,45 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import dynamic from 'next/dynamic';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import {
-  MapPin,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  AlertTriangle,
+  Battery,
   Camera,
+  CheckCircle,
+  CheckSquare,
+  Clock,
+  MapPin,
   Mic,
   Navigation,
-  Target,
-  CheckCircle,
-  Clock,
   Satellite,
+  Save,
   Signal,
-  Battery,
+  Square,
+  Target,
+  Upload,
   Wifi,
   WifiOff,
-  Save,
-  Upload,
-  AlertTriangle,
-  CheckSquare,
-  Square
 } from "lucide-react";
+import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 
 interface GPSReading {
   latitude: number;
@@ -54,13 +66,15 @@ const WORK_TYPES = [
   { id: "drainage", name: "Drainage", icon: "🌊", color: "#4682B4" },
   { id: "base_course", name: "Base Course", icon: "🏗️", color: "#696969" },
   { id: "surfacing", name: "Surfacing", icon: "🛣️", color: "#2F4F4F" },
-  { id: "bridge", name: "Bridge Work", icon: "🌉", color: "#8B0000" }
+  { id: "bridge", name: "Bridge Work", icon: "🌉", color: "#8B0000" },
 ];
 
 function MobileGPSCollectorComponent() {
   const [isMounted, setIsMounted] = useState(false);
   const [isGPSEnabled, setIsGPSEnabled] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState<GPSReading | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<GPSReading | null>(
+    null,
+  );
   const [isConnected, setIsConnected] = useState(true);
   const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
   const [gpsEntries, setGpsEntries] = useState<MobileGPSEntry[]>([]);
@@ -70,38 +84,43 @@ function MobileGPSCollectorComponent() {
 
     // Add global error handlers
     const handleUnhandledRejection = (event: any) => {
-      console.error('Unhandled promise rejection:', event.reason);
+      console.error("Unhandled promise rejection:", event.reason);
       event.preventDefault();
     };
 
     const handleError = (event: any) => {
-      console.error('Global error:', event.error);
+      console.error("Global error:", event.error);
     };
 
-    if (typeof window !== 'undefined') {
-      window.addEventListener('unhandledrejection', handleUnhandledRejection);
-      window.addEventListener('error', handleError);
+    if (typeof window !== "undefined") {
+      window.addEventListener("unhandledrejection", handleUnhandledRejection);
+      window.addEventListener("error", handleError);
     }
 
     return () => {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('unhandledrejection', handleUnhandledRejection);
-        window.removeEventListener('error', handleError);
+      if (typeof window !== "undefined") {
+        window.removeEventListener(
+          "unhandledrejection",
+          handleUnhandledRejection,
+        );
+        window.removeEventListener("error", handleError);
       }
     };
   }, []);
 
   if (!isMounted) {
-    return <div className="min-h-screen bg-gray-50 p-2 flex items-center justify-center">
-      <div>Loading GPS Collector...</div>
-    </div>;
+    return (
+      <div className="min-h-screen bg-gray-50 p-2 flex items-center justify-center">
+        <div>Loading GPS Collector...</div>
+      </div>
+    );
   }
 
   const [currentEntry, setCurrentEntry] = useState({
     workType: "",
     description: "",
     photos: [] as File[],
-    audioNote: null as File | null
+    audioNote: null as File | null,
   });
 
   const [isCapturingLocation, setIsCapturingLocation] = useState(false);
@@ -116,10 +135,10 @@ function MobileGPSCollectorComponent() {
   // Check GPS and network status
   useEffect(() => {
     // Only run in browser environment
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     const checkGPS = () => {
-      if (typeof navigator !== 'undefined' && "geolocation" in navigator) {
+      if (typeof navigator !== "undefined" && "geolocation" in navigator) {
         setIsGPSEnabled(true);
       }
     };
@@ -128,34 +147,37 @@ function MobileGPSCollectorComponent() {
     const handleOffline = () => setIsConnected(false);
 
     // Set initial online status
-    if (typeof navigator !== 'undefined') {
+    if (typeof navigator !== "undefined") {
       setIsConnected(navigator.onLine);
     }
 
     // Battery API (if supported)
-    if (typeof navigator !== 'undefined' && 'getBattery' in navigator) {
-      (navigator as any).getBattery().then((battery: any) => {
-        setBatteryLevel(Math.round(battery.level * 100));
-        battery.addEventListener('levelchange', () => {
+    if (typeof navigator !== "undefined" && "getBattery" in navigator) {
+      (navigator as any)
+        .getBattery()
+        .then((battery: any) => {
           setBatteryLevel(Math.round(battery.level * 100));
+          battery.addEventListener("levelchange", () => {
+            setBatteryLevel(Math.round(battery.level * 100));
+          });
+        })
+        .catch((error: any) => {
+          console.log("Battery API not supported:", error);
         });
-      }).catch((error: any) => {
-        console.log('Battery API not supported:', error);
-      });
     }
 
     checkGPS();
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
   }, []);
 
   const captureCurrentLocation = () => {
-    if (typeof navigator === 'undefined' || !isGPSEnabled) {
+    if (typeof navigator === "undefined" || !isGPSEnabled) {
       setLocationError("GPS not available on this device");
       return;
     }
@@ -170,7 +192,7 @@ function MobileGPSCollectorComponent() {
           longitude: position.coords.longitude,
           accuracy: position.coords.accuracy,
           altitude: position.coords.altitude || undefined,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
         setCurrentLocation(gpsReading);
         setIsCapturingLocation(false);
@@ -182,19 +204,19 @@ function MobileGPSCollectorComponent() {
       {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 60000
-      }
+        maximumAge: 60000,
+      },
     );
   };
 
   const handlePhotoCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    setSelectedPhotos(prev => [...prev, ...files]);
+    setSelectedPhotos((prev) => [...prev, ...files]);
   };
 
   const startAudioRecording = async () => {
-    if (typeof navigator === 'undefined' || !navigator.mediaDevices) {
-      console.error('Media devices not supported');
+    if (typeof navigator === "undefined" || !navigator.mediaDevices) {
+      console.error("Media devices not supported");
       return;
     }
 
@@ -208,22 +230,26 @@ function MobileGPSCollectorComponent() {
       };
 
       mediaRecorderRef.current.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-        const audioFile = new File([audioBlob], `audio-${Date.now()}.wav`, { type: 'audio/wav' });
-        setCurrentEntry(prev => ({ ...prev, audioNote: audioFile }));
-        stream.getTracks().forEach(track => track.stop());
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: "audio/wav",
+        });
+        const audioFile = new File([audioBlob], `audio-${Date.now()}.wav`, {
+          type: "audio/wav",
+        });
+        setCurrentEntry((prev) => ({ ...prev, audioNote: audioFile }));
+        stream.getTracks().forEach((track) => track.stop());
       };
 
       mediaRecorderRef.current.onerror = (event) => {
-        console.error('MediaRecorder error:', event);
+        console.error("MediaRecorder error:", event);
         setIsRecordingAudio(false);
       };
 
       mediaRecorderRef.current.start();
       setIsRecordingAudio(true);
     } catch (error) {
-      console.error('Error starting audio recording:', error);
-      alert('Could not access microphone. Please check permissions.');
+      console.error("Error starting audio recording:", error);
+      alert("Could not access microphone. Please check permissions.");
     }
   };
 
@@ -248,22 +274,24 @@ function MobileGPSCollectorComponent() {
       photos: selectedPhotos,
       audioNote: currentEntry.audioNote,
       status: isConnected ? "synced" : "pending",
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
-    setGpsEntries(prev => [entry, ...prev]);
+    setGpsEntries((prev) => [entry, ...prev]);
 
     // Reset form
     setCurrentEntry({
       workType: "",
       description: "",
       photos: [],
-      audioNote: null
+      audioNote: null,
     });
     setSelectedPhotos([]);
     setCurrentLocation(null);
 
-    alert(`GPS entry saved ${isConnected ? "and synced" : "locally (will sync when online)"}`);
+    alert(
+      `GPS entry saved ${isConnected ? "and synced" : "locally (will sync when online)"}`,
+    );
   };
 
   const getAccuracyColor = (accuracy: number) => {
@@ -297,7 +325,9 @@ function MobileGPSCollectorComponent() {
 
             <div className="flex items-center gap-1">
               <Satellite className="h-4 w-4 text-blue-600" />
-              <span className={isGPSEnabled ? "text-green-600" : "text-red-600"}>
+              <span
+                className={isGPSEnabled ? "text-green-600" : "text-red-600"}
+              >
                 {isGPSEnabled ? "GPS Ready" : "No GPS"}
               </span>
             </div>
@@ -312,7 +342,7 @@ function MobileGPSCollectorComponent() {
             )}
 
             <Badge variant="outline" className="text-xs">
-              {gpsEntries.filter(e => e.status === 'pending').length} pending
+              {gpsEntries.filter((e) => e.status === "pending").length} pending
             </Badge>
           </div>
         </div>
@@ -366,24 +396,33 @@ function MobileGPSCollectorComponent() {
                 <div>
                   <span className="font-medium">Latitude:</span>
                   <br />
-                  <span className="font-mono">{currentLocation.latitude.toFixed(6)}</span>
+                  <span className="font-mono">
+                    {currentLocation.latitude.toFixed(6)}
+                  </span>
                 </div>
                 <div>
                   <span className="font-medium">Longitude:</span>
                   <br />
-                  <span className="font-mono">{currentLocation.longitude.toFixed(6)}</span>
+                  <span className="font-mono">
+                    {currentLocation.longitude.toFixed(6)}
+                  </span>
                 </div>
                 <div>
                   <span className="font-medium">Accuracy:</span>
                   <br />
-                  <span className={`font-medium ${getAccuracyColor(currentLocation.accuracy)}`}>
-                    ±{currentLocation.accuracy.toFixed(1)}m ({getAccuracyText(currentLocation.accuracy)})
+                  <span
+                    className={`font-medium ${getAccuracyColor(currentLocation.accuracy)}`}
+                  >
+                    ±{currentLocation.accuracy.toFixed(1)}m (
+                    {getAccuracyText(currentLocation.accuracy)})
                   </span>
                 </div>
                 <div>
                   <span className="font-medium">Time:</span>
                   <br />
-                  <span className="text-xs">{new Date(currentLocation.timestamp).toLocaleTimeString()}</span>
+                  <span className="text-xs">
+                    {new Date(currentLocation.timestamp).toLocaleTimeString()}
+                  </span>
                 </div>
               </div>
             </div>
@@ -401,9 +440,13 @@ function MobileGPSCollectorComponent() {
             {WORK_TYPES.map((type) => (
               <Button
                 key={type.id}
-                variant={currentEntry.workType === type.id ? "default" : "outline"}
+                variant={
+                  currentEntry.workType === type.id ? "default" : "outline"
+                }
                 className="h-16 flex-col gap-1"
-                onClick={() => setCurrentEntry(prev => ({ ...prev, workType: type.id }))}
+                onClick={() =>
+                  setCurrentEntry((prev) => ({ ...prev, workType: type.id }))
+                }
               >
                 <span className="text-xl">{type.icon}</span>
                 <span className="text-xs">{type.name}</span>
@@ -422,7 +465,12 @@ function MobileGPSCollectorComponent() {
           <Textarea
             placeholder="Describe the work being performed..."
             value={currentEntry.description}
-            onChange={(e) => setCurrentEntry(prev => ({ ...prev, description: e.target.value }))}
+            onChange={(e) =>
+              setCurrentEntry((prev) => ({
+                ...prev,
+                description: e.target.value,
+              }))
+            }
             rows={3}
             className="text-base"
           />
@@ -460,7 +508,11 @@ function MobileGPSCollectorComponent() {
                 {selectedPhotos.map((file, index) => (
                   <div key={index} className="relative">
                     <img
-                      src={typeof window !== 'undefined' ? URL.createObjectURL(file) : ''}
+                      src={
+                        typeof window !== "undefined"
+                          ? URL.createObjectURL(file)
+                          : ""
+                      }
                       alt={`Photo ${index + 1}`}
                       className="w-full h-20 object-cover rounded border"
                     />
@@ -468,7 +520,11 @@ function MobileGPSCollectorComponent() {
                       size="sm"
                       variant="destructive"
                       className="absolute top-1 right-1 h-6 w-6 p-0"
-                      onClick={() => setSelectedPhotos(prev => prev.filter((_, i) => i !== index))}
+                      onClick={() =>
+                        setSelectedPhotos((prev) =>
+                          prev.filter((_, i) => i !== index),
+                        )
+                      }
                     >
                       ×
                     </Button>
@@ -481,11 +537,15 @@ function MobileGPSCollectorComponent() {
           {/* Audio Recording */}
           <div>
             <Button
-              onClick={isRecordingAudio ? stopAudioRecording : startAudioRecording}
+              onClick={
+                isRecordingAudio ? stopAudioRecording : startAudioRecording
+              }
               variant={isRecordingAudio ? "destructive" : "outline"}
               className="w-full h-12"
             >
-              <Mic className={`h-5 w-5 mr-2 ${isRecordingAudio ? 'animate-pulse' : ''}`} />
+              <Mic
+                className={`h-5 w-5 mr-2 ${isRecordingAudio ? "animate-pulse" : ""}`}
+              />
               {isRecordingAudio ? "Stop Recording" : "Record Audio Note"}
               {currentEntry.audioNote && " ✓"}
             </Button>
@@ -510,7 +570,9 @@ function MobileGPSCollectorComponent() {
       {gpsEntries.length > 0 && (
         <Card className="mb-20">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Recent Entries ({gpsEntries.length})</CardTitle>
+            <CardTitle className="text-lg">
+              Recent Entries ({gpsEntries.length})
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -518,18 +580,26 @@ function MobileGPSCollectorComponent() {
                 <div key={entry.id} className="border rounded p-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium">
-                      {WORK_TYPES.find(w => w.id === entry.workType)?.name}
+                      {WORK_TYPES.find((w) => w.id === entry.workType)?.name}
                     </span>
                     <Badge
-                      variant={entry.status === 'synced' ? 'default' : 'secondary'}
+                      variant={
+                        entry.status === "synced" ? "default" : "secondary"
+                      }
                       className="text-xs"
                     >
                       {entry.status}
                     </Badge>
                   </div>
                   <div className="text-sm text-gray-600">
-                    <div>📍 {entry.coordinates.latitude.toFixed(6)}, {entry.coordinates.longitude.toFixed(6)}</div>
-                    <div>📷 {entry.photos.length} photos {entry.audioNote ? '🎤 Audio' : ''}</div>
+                    <div>
+                      📍 {entry.coordinates.latitude.toFixed(6)},{" "}
+                      {entry.coordinates.longitude.toFixed(6)}
+                    </div>
+                    <div>
+                      📷 {entry.photos.length} photos{" "}
+                      {entry.audioNote ? "🎤 Audio" : ""}
+                    </div>
                     <div>🕒 {new Date(entry.timestamp).toLocaleString()}</div>
                   </div>
                 </div>
@@ -545,7 +615,9 @@ function MobileGPSCollectorComponent() {
 // Export with dynamic import to prevent SSR issues
 export default dynamic(() => Promise.resolve(MobileGPSCollectorComponent), {
   ssr: false,
-  loading: () => <div className="min-h-screen bg-gray-50 p-2 flex items-center justify-center">
-    <div>Loading GPS Collector...</div>
-  </div>
+  loading: () => (
+    <div className="min-h-screen bg-gray-50 p-2 flex items-center justify-center">
+      <div>Loading GPS Collector...</div>
+    </div>
+  ),
 });

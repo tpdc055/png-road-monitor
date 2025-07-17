@@ -1,22 +1,34 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Info,
+  Layers,
   Map as MapIcon,
   MapPin,
+  Maximize2,
   Navigation,
-  ZoomIn,
-  ZoomOut,
-  Layers,
   Route,
   Target,
-  Info,
-  Maximize2
+  ZoomIn,
+  ZoomOut,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface SurveyPeg {
   id: string;
@@ -57,18 +69,35 @@ export default function ProgressMapping() {
       {
         id: "PNG001",
         name: "Mt. Hagen-Kagamuga Road Upgrade",
-        phases: ["Survey", "Clearing", "Earthworks", "Base Course", "Surfacing"]
+        phases: [
+          "Survey",
+          "Clearing",
+          "Earthworks",
+          "Base Course",
+          "Surfacing",
+        ],
       },
       {
         id: "PNG002",
         name: "Port Moresby Ring Road",
-        phases: ["Survey", "Bridge Construction", "Road Construction", "Drainage", "Finishing"]
+        phases: [
+          "Survey",
+          "Bridge Construction",
+          "Road Construction",
+          "Drainage",
+          "Finishing",
+        ],
       },
       {
         id: "PNG003",
         name: "Lae-Nadzab Highway Extension",
-        phases: ["Environmental Study", "Land Acquisition", "Construction", "Testing"]
-      }
+        phases: [
+          "Environmental Study",
+          "Land Acquisition",
+          "Construction",
+          "Testing",
+        ],
+      },
     ];
     setProjects(mockProjects);
   };
@@ -87,7 +116,7 @@ export default function ProgressMapping() {
         projectName: "Mt. Hagen-Kagamuga Road Upgrade",
         phase: "Survey",
         dateEntered: "2025-01-05",
-        status: "completed"
+        status: "completed",
       },
       {
         id: "2",
@@ -99,7 +128,7 @@ export default function ProgressMapping() {
         projectName: "Mt. Hagen-Kagamuga Road Upgrade",
         phase: "Survey",
         dateEntered: "2025-01-05",
-        status: "completed"
+        status: "completed",
       },
       {
         id: "3",
@@ -111,19 +140,19 @@ export default function ProgressMapping() {
         projectName: "Mt. Hagen-Kagamuga Road Upgrade",
         phase: "Earthworks",
         dateEntered: "2025-01-05",
-        status: "planned"
+        status: "planned",
       },
       {
         id: "4",
         pegId: "MH-KAG-004",
-        latitude: -5.826180,
-        longitude: 144.296020,
+        latitude: -5.82618,
+        longitude: 144.29602,
         description: "Kagamuga Airport Access Road",
         projectId: "PNG001",
         projectName: "Mt. Hagen-Kagamuga Road Upgrade",
         phase: "Earthworks",
         dateEntered: "2025-01-05",
-        status: "planned"
+        status: "planned",
       },
 
       // Port Moresby Ring Road Extension (NCD)
@@ -137,7 +166,7 @@ export default function ProgressMapping() {
         projectName: "Port Moresby Ring Road",
         phase: "Survey",
         dateEntered: "2025-01-06",
-        status: "completed"
+        status: "completed",
       },
       {
         id: "6",
@@ -149,7 +178,7 @@ export default function ProgressMapping() {
         projectName: "Port Moresby Ring Road",
         phase: "Bridge Construction",
         dateEntered: "2025-01-06",
-        status: "verified"
+        status: "verified",
       },
       {
         id: "7",
@@ -161,7 +190,7 @@ export default function ProgressMapping() {
         projectName: "Port Moresby Ring Road",
         phase: "Road Construction",
         dateEntered: "2025-01-06",
-        status: "planned"
+        status: "planned",
       },
 
       // Lae-Nadzab Highway (Morobe Province)
@@ -175,7 +204,7 @@ export default function ProgressMapping() {
         projectName: "Lae-Nadzab Highway Extension",
         phase: "Environmental Study",
         dateEntered: "2025-01-07",
-        status: "completed"
+        status: "completed",
       },
       {
         id: "9",
@@ -187,7 +216,7 @@ export default function ProgressMapping() {
         projectName: "Lae-Nadzab Highway Extension",
         phase: "Land Acquisition",
         dateEntered: "2025-01-07",
-        status: "planned"
+        status: "planned",
       },
       {
         id: "10",
@@ -199,42 +228,62 @@ export default function ProgressMapping() {
         projectName: "Lae-Nadzab Highway Extension",
         phase: "Construction",
         dateEntered: "2025-01-07",
-        status: "planned"
-      }
+        status: "planned",
+      },
     ];
     setSurveyPegs(realPNGPegs);
   };
 
-  const filteredPegs = surveyPegs.filter(peg => {
-    if (selectedProject && selectedProject !== "all" && peg.projectId !== selectedProject) return false;
-    if (selectedPhase && selectedPhase !== "all" && peg.phase !== selectedPhase) return false;
+  const filteredPegs = surveyPegs.filter((peg) => {
+    if (
+      selectedProject &&
+      selectedProject !== "all" &&
+      peg.projectId !== selectedProject
+    )
+      return false;
+    if (selectedPhase && selectedPhase !== "all" && peg.phase !== selectedPhase)
+      return false;
     return true;
   });
 
   const getStatusColor = (status: SurveyPeg["status"]) => {
     switch (status) {
-      case "completed": return "bg-green-500";
-      case "planned": return "bg-yellow-500";
-      case "verified": return "bg-blue-500";
-      default: return "bg-gray-500";
+      case "completed":
+        return "bg-green-500";
+      case "planned":
+        return "bg-yellow-500";
+      case "verified":
+        return "bg-blue-500";
+      default:
+        return "bg-gray-500";
     }
   };
 
   const getPhaseColor = (phase: string) => {
     const colors = [
-      "bg-red-500", "bg-blue-500", "bg-green-500", "bg-purple-500", "bg-orange-500"
+      "bg-red-500",
+      "bg-blue-500",
+      "bg-green-500",
+      "bg-purple-500",
+      "bg-orange-500",
     ];
     return colors[phase.length % colors.length];
   };
 
-  const selectedProjectData = selectedProject === "all" ? null : projects.find(p => p.id === selectedProject);
+  const selectedProjectData =
+    selectedProject === "all"
+      ? null
+      : projects.find((p) => p.id === selectedProject);
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Progress Mapping</h2>
-          <p className="text-gray-600">Interactive visualization of PNG road construction project progress with real GPS coordinates</p>
+          <p className="text-gray-600">
+            Interactive visualization of PNG road construction project progress
+            with real GPS coordinates
+          </p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -257,7 +306,7 @@ export default function ProgressMapping() {
         <Card>
           <CardContent className="p-4 text-center">
             <div className="text-3xl font-bold text-green-600">
-              {surveyPegs.filter(p => p.status === 'completed').length}
+              {surveyPegs.filter((p) => p.status === "completed").length}
             </div>
             <div className="text-sm text-gray-600">Completed Pegs</div>
           </CardContent>
@@ -265,7 +314,7 @@ export default function ProgressMapping() {
         <Card>
           <CardContent className="p-4 text-center">
             <div className="text-3xl font-bold text-yellow-600">
-              {surveyPegs.filter(p => p.status === 'planned').length}
+              {surveyPegs.filter((p) => p.status === "planned").length}
             </div>
             <div className="text-sm text-gray-600">Planned Pegs</div>
           </CardContent>
@@ -273,7 +322,7 @@ export default function ProgressMapping() {
         <Card>
           <CardContent className="p-4 text-center">
             <div className="text-3xl font-bold text-blue-600">
-              {surveyPegs.filter(p => p.status === 'verified').length}
+              {surveyPegs.filter((p) => p.status === "verified").length}
             </div>
             <div className="text-sm text-gray-600">Verified Pegs</div>
           </CardContent>
@@ -281,7 +330,12 @@ export default function ProgressMapping() {
         <Card>
           <CardContent className="p-4 text-center">
             <div className="text-3xl font-bold text-purple-600">
-              {Math.round((surveyPegs.filter(p => p.status === 'completed').length / surveyPegs.length) * 100)}%
+              {Math.round(
+                (surveyPegs.filter((p) => p.status === "completed").length /
+                  surveyPegs.length) *
+                  100,
+              )}
+              %
             </div>
             <div className="text-sm text-gray-600">Overall Progress</div>
           </CardContent>
@@ -297,13 +351,16 @@ export default function ProgressMapping() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
               <label className="text-sm font-medium">Project</label>
-              <Select value={selectedProject} onValueChange={setSelectedProject}>
+              <Select
+                value={selectedProject}
+                onValueChange={setSelectedProject}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="All projects" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All projects</SelectItem>
-                  {projects.map(project => (
+                  {projects.map((project) => (
                     <SelectItem key={project.id} value={project.id}>
                       {project.name}
                     </SelectItem>
@@ -320,7 +377,7 @@ export default function ProgressMapping() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All phases</SelectItem>
-                  {selectedProjectData?.phases.map(phase => (
+                  {selectedProjectData?.phases.map((phase) => (
                     <SelectItem key={phase} value={phase}>
                       {phase}
                     </SelectItem>
@@ -380,18 +437,26 @@ export default function ProgressMapping() {
 
                 {/* Grid Lines */}
                 <div className="absolute inset-0 opacity-20">
-                  {Array.from({length: 20}).map((_, i) => (
-                    <div key={`h-${i}`} className="absolute w-full border-t border-gray-400" style={{top: `${i * 5}%`}}></div>
+                  {Array.from({ length: 20 }).map((_, i) => (
+                    <div
+                      key={`h-${i}`}
+                      className="absolute w-full border-t border-gray-400"
+                      style={{ top: `${i * 5}%` }}
+                    ></div>
                   ))}
-                  {Array.from({length: 20}).map((_, i) => (
-                    <div key={`v-${i}`} className="absolute h-full border-l border-gray-400" style={{left: `${i * 5}%`}}></div>
+                  {Array.from({ length: 20 }).map((_, i) => (
+                    <div
+                      key={`v-${i}`}
+                      className="absolute h-full border-l border-gray-400"
+                      style={{ left: `${i * 5}%` }}
+                    ></div>
                   ))}
                 </div>
 
                 {/* Mock Survey Pegs */}
                 {filteredPegs.map((peg, index) => {
-                  const x = 20 + (index * 15) % 60;
-                  const y = 20 + (index * 20) % 60;
+                  const x = 20 + ((index * 15) % 60);
+                  const y = 20 + ((index * 20) % 60);
 
                   return (
                     <div key={peg.id}>
@@ -399,16 +464,20 @@ export default function ProgressMapping() {
                       {showConnections && index > 0 && (
                         <svg
                           className="absolute inset-0 w-full h-full pointer-events-none"
-                          style={{zIndex: 1}}
+                          style={{ zIndex: 1 }}
                         >
                           <line
-                            x1={`${20 + ((index - 1) * 15) % 60}%`}
-                            y1={`${20 + ((index - 1) * 20) % 60}%`}
+                            x1={`${20 + (((index - 1) * 15) % 60)}%`}
+                            y1={`${20 + (((index - 1) * 20) % 60)}%`}
                             x2={`${x}%`}
                             y2={`${y}%`}
-                            stroke={peg.status === "completed" ? "#10b981" : "#f59e0b"}
+                            stroke={
+                              peg.status === "completed" ? "#10b981" : "#f59e0b"
+                            }
                             strokeWidth="3"
-                            strokeDasharray={peg.status === "planned" ? "5,5" : "none"}
+                            strokeDasharray={
+                              peg.status === "planned" ? "5,5" : "none"
+                            }
                           />
                         </svg>
                       )}
@@ -419,12 +488,16 @@ export default function ProgressMapping() {
                         style={{
                           left: `${x}%`,
                           top: `${y}%`,
-                          zIndex: 10
+                          zIndex: 10,
                         }}
                         onClick={() => setSelectedPeg(peg)}
                       >
-                        <div className={`w-6 h-6 rounded-full ${getStatusColor(peg.status)} border-2 border-white shadow-lg flex items-center justify-center`}>
-                          <span className="text-white text-xs font-bold">{index + 1}</span>
+                        <div
+                          className={`w-6 h-6 rounded-full ${getStatusColor(peg.status)} border-2 border-white shadow-lg flex items-center justify-center`}
+                        >
+                          <span className="text-white text-xs font-bold">
+                            {index + 1}
+                          </span>
                         </div>
                         <div className="mt-1 bg-white px-2 py-1 rounded shadow text-xs font-medium whitespace-nowrap">
                           {peg.pegId}
@@ -437,10 +510,15 @@ export default function ProgressMapping() {
                 {/* Project Information Overlay */}
                 <div className="absolute bottom-4 left-4 bg-white bg-opacity-90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
                   <div className="text-sm">
-                    <div className="font-bold text-gray-900">PNG Road Projects Visualization</div>
-                    <div className="text-gray-600">Real coordinates from PNG road construction</div>
+                    <div className="font-bold text-gray-900">
+                      PNG Road Projects Visualization
+                    </div>
+                    <div className="text-gray-600">
+                      Real coordinates from PNG road construction
+                    </div>
                     <div className="text-xs text-gray-500 mt-1">
-                      Click survey pegs for details • Toggle connections to see progress
+                      Click survey pegs for details • Toggle connections to see
+                      progress
                     </div>
                   </div>
                 </div>
@@ -487,7 +565,13 @@ export default function ProgressMapping() {
                 <span className="text-sm">Completed Route</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-1 bg-yellow-500" style={{backgroundImage: "repeating-linear-gradient(to right, transparent, transparent 2px, #f59e0b 2px, #f59e0b 4px)"}}></div>
+                <div
+                  className="w-4 h-1 bg-yellow-500"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(to right, transparent, transparent 2px, #f59e0b 2px, #f59e0b 4px)",
+                  }}
+                ></div>
                 <span className="text-sm">Planned Route</span>
               </div>
             </CardContent>
@@ -505,14 +589,17 @@ export default function ProgressMapping() {
               <CardContent className="space-y-3">
                 <div>
                   <div className="text-sm font-medium">{selectedPeg.pegId}</div>
-                  <Badge className={`${getStatusColor(selectedPeg.status).replace('bg-', 'bg-opacity-20 text-')} text-xs`}>
+                  <Badge
+                    className={`${getStatusColor(selectedPeg.status).replace("bg-", "bg-opacity-20 text-")} text-xs`}
+                  >
                     {selectedPeg.status}
                   </Badge>
                 </div>
                 <div>
                   <div className="text-xs text-gray-600">Coordinates</div>
                   <div className="text-sm font-mono">
-                    {selectedPeg.latitude.toFixed(6)}<br/>
+                    {selectedPeg.latitude.toFixed(6)}
+                    <br />
                     {selectedPeg.longitude.toFixed(6)}
                   </div>
                 </div>
@@ -553,25 +640,33 @@ export default function ProgressMapping() {
               <div className="flex justify-between text-sm">
                 <span>Completed:</span>
                 <span className="font-medium text-green-600">
-                  {filteredPegs.filter(p => p.status === "completed").length}
+                  {filteredPegs.filter((p) => p.status === "completed").length}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span>Planned:</span>
                 <span className="font-medium text-yellow-600">
-                  {filteredPegs.filter(p => p.status === "planned").length}
+                  {filteredPegs.filter((p) => p.status === "planned").length}
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-green-500 h-2 rounded-full transition-all duration-300"
                   style={{
-                    width: `${filteredPegs.length > 0 ? (filteredPegs.filter(p => p.status === "completed").length / filteredPegs.length) * 100 : 0}%`
+                    width: `${filteredPegs.length > 0 ? (filteredPegs.filter((p) => p.status === "completed").length / filteredPegs.length) * 100 : 0}%`,
                   }}
                 ></div>
               </div>
               <div className="text-xs text-center text-gray-600">
-                {filteredPegs.length > 0 ? Math.round((filteredPegs.filter(p => p.status === "completed").length / filteredPegs.length) * 100) : 0}% Complete
+                {filteredPegs.length > 0
+                  ? Math.round(
+                      (filteredPegs.filter((p) => p.status === "completed")
+                        .length /
+                        filteredPegs.length) *
+                        100,
+                    )
+                  : 0}
+                % Complete
               </div>
             </CardContent>
           </Card>

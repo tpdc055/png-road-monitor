@@ -1,21 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -24,26 +17,45 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  Users,
-  Building,
-  Star,
-  DollarSign,
-  Calendar,
-  Phone,
-  Mail,
-  MapPin,
-  Award,
-  TrendingUp,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Activity,
   AlertTriangle,
+  Award,
+  Building,
+  Calendar,
   CheckCircle,
   Clock,
-  Plus,
-  Eye,
+  DollarSign,
   Edit3,
+  Eye,
   FileText,
-  Activity
+  Mail,
+  MapPin,
+  Phone,
+  Plus,
+  Star,
+  TrendingUp,
+  Users,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface Contractor {
   id: string;
@@ -107,7 +119,8 @@ export default function ContractorManagement() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [metrics, setMetrics] = useState<PerformanceMetric[]>([]);
   const [showContractorDialog, setShowContractorDialog] = useState(false);
-  const [selectedContractor, setSelectedContractor] = useState<Contractor | null>(null);
+  const [selectedContractor, setSelectedContractor] =
+    useState<Contractor | null>(null);
 
   useEffect(() => {
     loadContractorData();
@@ -131,9 +144,13 @@ export default function ContractorManagement() {
         activeProjects: 2,
         totalValue: 45000000,
         performanceScore: 87,
-        certifications: ["ISO 9001", "PNG Construction License", "Safety Certification"],
+        certifications: [
+          "ISO 9001",
+          "PNG Construction License",
+          "Safety Certification",
+        ],
         insuranceExpiry: "2025-12-31",
-        licenseExpiry: "2026-03-15"
+        licenseExpiry: "2026-03-15",
       },
       {
         id: "C002",
@@ -142,7 +159,11 @@ export default function ContractorManagement() {
         phone: "+675 542 1234",
         address: "Kagamuga Road, Mt. Hagen, WHP",
         license: "PNG-CONST-002-2023",
-        specialty: ["Mountain Roads", "Slope Stabilization", "Drainage Systems"],
+        specialty: [
+          "Mountain Roads",
+          "Slope Stabilization",
+          "Drainage Systems",
+        ],
         rating: 4.5,
         isActive: true,
         registrationDate: "2018-08-22",
@@ -150,9 +171,13 @@ export default function ContractorManagement() {
         activeProjects: 1,
         totalValue: 67000000,
         performanceScore: 92,
-        certifications: ["ISO 14001", "Mountain Construction Specialist", "Environmental Compliance"],
+        certifications: [
+          "ISO 14001",
+          "Mountain Construction Specialist",
+          "Environmental Compliance",
+        ],
         insuranceExpiry: "2025-08-22",
-        licenseExpiry: "2025-08-22"
+        licenseExpiry: "2025-08-22",
       },
       {
         id: "C003",
@@ -161,7 +186,11 @@ export default function ContractorManagement() {
         phone: "+675 472 3456",
         address: "Markham Road, Lae, Morobe Province",
         license: "PNG-CONST-003-2022",
-        specialty: ["Highway Construction", "Airport Access Roads", "Industrial Roads"],
+        specialty: [
+          "Highway Construction",
+          "Airport Access Roads",
+          "Industrial Roads",
+        ],
         rating: 3.8,
         isActive: true,
         registrationDate: "2019-01-10",
@@ -169,10 +198,13 @@ export default function ContractorManagement() {
         activeProjects: 1,
         totalValue: 25000000,
         performanceScore: 78,
-        certifications: ["PNG Construction License", "Heavy Equipment Certification"],
+        certifications: [
+          "PNG Construction License",
+          "Heavy Equipment Certification",
+        ],
         insuranceExpiry: "2025-01-10",
-        licenseExpiry: "2025-01-10"
-      }
+        licenseExpiry: "2025-01-10",
+      },
     ];
 
     const mockProjects: ContractorProject[] = [
@@ -187,7 +219,7 @@ export default function ContractorManagement() {
         progress: 65,
         paymentStatus: "current",
         qualityScore: 88,
-        safetyScore: 92
+        safetyScore: 92,
       },
       {
         id: "CP002",
@@ -200,7 +232,7 @@ export default function ContractorManagement() {
         progress: 35,
         paymentStatus: "pending",
         qualityScore: 85,
-        safetyScore: 90
+        safetyScore: 90,
       },
       {
         id: "CP003",
@@ -213,8 +245,8 @@ export default function ContractorManagement() {
         progress: 45,
         paymentStatus: "overdue",
         qualityScore: 75,
-        safetyScore: 82
-      }
+        safetyScore: 82,
+      },
     ];
 
     const mockPayments: Payment[] = [
@@ -227,7 +259,7 @@ export default function ContractorManagement() {
         paidDate: "2025-01-12",
         status: "paid",
         invoiceNumber: "INV-MH-001",
-        description: "Monthly progress payment for Mt. Hagen road works"
+        description: "Monthly progress payment for Mt. Hagen road works",
       },
       {
         id: "PAY002",
@@ -237,7 +269,7 @@ export default function ContractorManagement() {
         dueDate: "2025-01-20",
         status: "pending",
         invoiceNumber: "INV-POM-002",
-        description: "Progress payment for Port Moresby ring road section"
+        description: "Progress payment for Port Moresby ring road section",
       },
       {
         id: "PAY003",
@@ -247,20 +279,83 @@ export default function ContractorManagement() {
         dueDate: "2024-12-31",
         status: "overdue",
         invoiceNumber: "INV-LAE-003",
-        description: "Delayed payment for Lae-Nadzab highway works"
-      }
+        description: "Delayed payment for Lae-Nadzab highway works",
+      },
     ];
 
     const mockMetrics: PerformanceMetric[] = [
-      { contractorId: "C001", metric: "On-Time Delivery", value: 85, target: 90, unit: "%", trend: "up" },
-      { contractorId: "C001", metric: "Quality Score", value: 87, target: 85, unit: "%", trend: "stable" },
-      { contractorId: "C001", metric: "Safety Rating", value: 91, target: 95, unit: "%", trend: "up" },
-      { contractorId: "C002", metric: "On-Time Delivery", value: 92, target: 90, unit: "%", trend: "stable" },
-      { contractorId: "C002", metric: "Quality Score", value: 94, target: 85, unit: "%", trend: "up" },
-      { contractorId: "C002", metric: "Safety Rating", value: 96, target: 95, unit: "%", trend: "stable" },
-      { contractorId: "C003", metric: "On-Time Delivery", value: 72, target: 90, unit: "%", trend: "down" },
-      { contractorId: "C003", metric: "Quality Score", value: 78, target: 85, unit: "%", trend: "down" },
-      { contractorId: "C003", metric: "Safety Rating", value: 82, target: 95, unit: "%", trend: "stable" }
+      {
+        contractorId: "C001",
+        metric: "On-Time Delivery",
+        value: 85,
+        target: 90,
+        unit: "%",
+        trend: "up",
+      },
+      {
+        contractorId: "C001",
+        metric: "Quality Score",
+        value: 87,
+        target: 85,
+        unit: "%",
+        trend: "stable",
+      },
+      {
+        contractorId: "C001",
+        metric: "Safety Rating",
+        value: 91,
+        target: 95,
+        unit: "%",
+        trend: "up",
+      },
+      {
+        contractorId: "C002",
+        metric: "On-Time Delivery",
+        value: 92,
+        target: 90,
+        unit: "%",
+        trend: "stable",
+      },
+      {
+        contractorId: "C002",
+        metric: "Quality Score",
+        value: 94,
+        target: 85,
+        unit: "%",
+        trend: "up",
+      },
+      {
+        contractorId: "C002",
+        metric: "Safety Rating",
+        value: 96,
+        target: 95,
+        unit: "%",
+        trend: "stable",
+      },
+      {
+        contractorId: "C003",
+        metric: "On-Time Delivery",
+        value: 72,
+        target: 90,
+        unit: "%",
+        trend: "down",
+      },
+      {
+        contractorId: "C003",
+        metric: "Quality Score",
+        value: 78,
+        target: 85,
+        unit: "%",
+        trend: "down",
+      },
+      {
+        contractorId: "C003",
+        metric: "Safety Rating",
+        value: 82,
+        target: 95,
+        unit: "%",
+        trend: "stable",
+      },
     ];
 
     setContractors(mockContractors);
@@ -296,10 +391,17 @@ export default function ContractorManagement() {
     const hasHalfStar = rating % 1 >= 0.5;
 
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />);
+      stars.push(
+        <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />,
+      );
     }
     if (hasHalfStar) {
-      stars.push(<Star key="half" className="h-4 w-4 fill-yellow-400 text-yellow-400 opacity-50" />);
+      stars.push(
+        <Star
+          key="half"
+          className="h-4 w-4 fill-yellow-400 text-yellow-400 opacity-50"
+        />,
+      );
     }
     const remainingStars = 5 - Math.ceil(rating);
     for (let i = 0; i < remainingStars; i++) {
@@ -309,8 +411,12 @@ export default function ContractorManagement() {
   };
 
   const getTrendIcon = (trend: string) => {
-    if (trend === "up") return <TrendingUp className="h-4 w-4 text-green-600" />;
-    if (trend === "down") return <TrendingUp className="h-4 w-4 text-red-600 transform rotate-180" />;
+    if (trend === "up")
+      return <TrendingUp className="h-4 w-4 text-green-600" />;
+    if (trend === "down")
+      return (
+        <TrendingUp className="h-4 w-4 text-red-600 transform rotate-180" />
+      );
     return <Activity className="h-4 w-4 text-gray-600" />;
   };
 
@@ -319,7 +425,7 @@ export default function ContractorManagement() {
     { id: "contractors", label: "Contractors", icon: Users },
     { id: "projects", label: "Projects", icon: Building },
     { id: "payments", label: "Payments", icon: DollarSign },
-    { id: "performance", label: "Performance", icon: TrendingUp }
+    { id: "performance", label: "Performance", icon: TrendingUp },
   ];
 
   const renderOverview = () => (
@@ -333,7 +439,9 @@ export default function ContractorManagement() {
                 <Users className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold">{contractors.filter(c => c.isActive).length}</div>
+                <div className="text-2xl font-bold">
+                  {contractors.filter((c) => c.isActive).length}
+                </div>
                 <div className="text-sm text-gray-600">Active Contractors</div>
               </div>
             </div>
@@ -347,7 +455,9 @@ export default function ContractorManagement() {
                 <Building className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold">{projects.filter(p => p.status === "active").length}</div>
+                <div className="text-2xl font-bold">
+                  {projects.filter((p) => p.status === "active").length}
+                </div>
                 <div className="text-sm text-gray-600">Active Projects</div>
               </div>
             </div>
@@ -361,8 +471,17 @@ export default function ContractorManagement() {
                 <DollarSign className="h-6 w-6 text-yellow-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold">K {(contractors.reduce((sum, c) => sum + c.totalValue, 0) / 1000000).toFixed(0)}M</div>
-                <div className="text-sm text-gray-600">Total Contract Value</div>
+                <div className="text-2xl font-bold">
+                  K{" "}
+                  {(
+                    contractors.reduce((sum, c) => sum + c.totalValue, 0) /
+                    1000000
+                  ).toFixed(0)}
+                  M
+                </div>
+                <div className="text-sm text-gray-600">
+                  Total Contract Value
+                </div>
               </div>
             </div>
           </CardContent>
@@ -376,7 +495,12 @@ export default function ContractorManagement() {
               </div>
               <div>
                 <div className="text-2xl font-bold">
-                  {contractors.length > 0 ? (contractors.reduce((sum, c) => sum + c.rating, 0) / contractors.length).toFixed(1) : "0.0"}
+                  {contractors.length > 0
+                    ? (
+                        contractors.reduce((sum, c) => sum + c.rating, 0) /
+                        contractors.length
+                      ).toFixed(1)
+                    : "0.0"}
                 </div>
                 <div className="text-sm text-gray-600">Avg Rating</div>
               </div>
@@ -389,7 +513,9 @@ export default function ContractorManagement() {
       <Card>
         <CardHeader>
           <CardTitle>Top Performing Contractors</CardTitle>
-          <CardDescription>Contractors ranked by performance score</CardDescription>
+          <CardDescription>
+            Contractors ranked by performance score
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -397,11 +523,20 @@ export default function ContractorManagement() {
               .sort((a, b) => b.performanceScore - a.performanceScore)
               .slice(0, 3)
               .map((contractor, index) => (
-                <div key={contractor.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div
+                  key={contractor.id}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
                   <div className="flex items-center gap-4">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
-                      index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : 'bg-orange-500'
-                    }`}>
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
+                        index === 0
+                          ? "bg-yellow-500"
+                          : index === 1
+                            ? "bg-gray-400"
+                            : "bg-orange-500"
+                      }`}
+                    >
                       {index + 1}
                     </div>
                     <div>
@@ -414,10 +549,14 @@ export default function ContractorManagement() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-lg font-bold">{contractor.performanceScore}%</div>
+                    <div className="text-lg font-bold">
+                      {contractor.performanceScore}%
+                    </div>
                     <div className="flex items-center gap-1">
                       {getRatingStars(contractor.rating).slice(0, 5)}
-                      <span className="text-sm text-gray-600 ml-1">({contractor.rating})</span>
+                      <span className="text-sm text-gray-600 ml-1">
+                        ({contractor.rating})
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -437,19 +576,21 @@ export default function ContractorManagement() {
               <div className="flex justify-between items-center">
                 <span className="text-sm">Paid</span>
                 <Badge className="bg-green-100 text-green-800">
-                  {payments.filter(p => p.status === "paid").length} payments
+                  {payments.filter((p) => p.status === "paid").length} payments
                 </Badge>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm">Pending</span>
                 <Badge className="bg-yellow-100 text-yellow-800">
-                  {payments.filter(p => p.status === "pending").length} payments
+                  {payments.filter((p) => p.status === "pending").length}{" "}
+                  payments
                 </Badge>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm">Overdue</span>
                 <Badge className="bg-red-100 text-red-800">
-                  {payments.filter(p => p.status === "overdue").length} payments
+                  {payments.filter((p) => p.status === "overdue").length}{" "}
+                  payments
                 </Badge>
               </div>
             </div>
@@ -465,19 +606,22 @@ export default function ContractorManagement() {
               <div className="flex justify-between items-center">
                 <span className="text-sm">Active</span>
                 <Badge className="bg-green-100 text-green-800">
-                  {projects.filter(p => p.status === "active").length} projects
+                  {projects.filter((p) => p.status === "active").length}{" "}
+                  projects
                 </Badge>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm">Delayed</span>
                 <Badge className="bg-red-100 text-red-800">
-                  {projects.filter(p => p.status === "delayed").length} projects
+                  {projects.filter((p) => p.status === "delayed").length}{" "}
+                  projects
                 </Badge>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm">Completed</span>
                 <Badge className="bg-blue-100 text-blue-800">
-                  {projects.filter(p => p.status === "completed").length} projects
+                  {projects.filter((p) => p.status === "completed").length}{" "}
+                  projects
                 </Badge>
               </div>
             </div>
@@ -492,9 +636,14 @@ export default function ContractorManagement() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold">Contractor Registry</h3>
-          <p className="text-gray-600">Manage contractor information and qualifications</p>
+          <p className="text-gray-600">
+            Manage contractor information and qualifications
+          </p>
         </div>
-        <Dialog open={showContractorDialog} onOpenChange={setShowContractorDialog}>
+        <Dialog
+          open={showContractorDialog}
+          onOpenChange={setShowContractorDialog}
+        >
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
@@ -504,7 +653,9 @@ export default function ContractorManagement() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Add New Contractor</DialogTitle>
-              <DialogDescription>Register a new contractor in the system</DialogDescription>
+              <DialogDescription>
+                Register a new contractor in the system
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
@@ -543,7 +694,10 @@ export default function ContractorManagement() {
               </div>
               <div className="flex gap-2 pt-4">
                 <Button className="flex-1">Register</Button>
-                <Button variant="outline" onClick={() => setShowContractorDialog(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowContractorDialog(false)}
+                >
                   Cancel
                 </Button>
               </div>
@@ -554,17 +708,28 @@ export default function ContractorManagement() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {contractors.map((contractor) => (
-          <Card key={contractor.id} className="hover:shadow-lg transition-shadow">
+          <Card
+            key={contractor.id}
+            className="hover:shadow-lg transition-shadow"
+          >
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div>
                   <CardTitle className="text-lg">{contractor.name}</CardTitle>
                   <div className="flex items-center gap-1 mt-1">
                     {getRatingStars(contractor.rating)}
-                    <span className="text-sm text-gray-600 ml-1">({contractor.rating})</span>
+                    <span className="text-sm text-gray-600 ml-1">
+                      ({contractor.rating})
+                    </span>
                   </div>
                 </div>
-                <Badge className={contractor.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}>
+                <Badge
+                  className={
+                    contractor.isActive
+                      ? "bg-green-100 text-green-800"
+                      : "bg-gray-100 text-gray-800"
+                  }
+                >
                   {contractor.isActive ? "Active" : "Inactive"}
                 </Badge>
               </div>
@@ -580,7 +745,7 @@ export default function ContractorManagement() {
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <MapPin className="h-4 w-4" />
-                {contractor.address.split(',').slice(0, 2).join(', ')}
+                {contractor.address.split(",").slice(0, 2).join(", ")}
               </div>
               <div className="pt-2">
                 <div className="text-sm font-medium mb-1">Specialties:</div>
@@ -601,11 +766,15 @@ export default function ContractorManagement() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <div className="text-gray-600">Projects</div>
-                    <div className="font-medium">{contractor.activeProjects} active</div>
+                    <div className="font-medium">
+                      {contractor.activeProjects} active
+                    </div>
                   </div>
                   <div>
                     <div className="text-gray-600">Performance</div>
-                    <div className="font-medium">{contractor.performanceScore}%</div>
+                    <div className="font-medium">
+                      {contractor.performanceScore}%
+                    </div>
                   </div>
                 </div>
               </div>
@@ -637,7 +806,9 @@ export default function ContractorManagement() {
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-blue-600">8</div>
               <div className="text-sm text-gray-600">Active Contractors</div>
-              <div className="text-xs text-blue-600 mt-1">Approved & Working</div>
+              <div className="text-xs text-blue-600 mt-1">
+                Approved & Working
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -651,7 +822,9 @@ export default function ContractorManagement() {
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-orange-600">K 45M</div>
               <div className="text-sm text-gray-600">Total Contract Value</div>
-              <div className="text-xs text-orange-600 mt-1">Active contracts</div>
+              <div className="text-xs text-orange-600 mt-1">
+                Active contracts
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -673,11 +846,20 @@ export default function ContractorManagement() {
       case "contractors":
         return renderContractors();
       case "projects":
-        return renderPlaceholder("Project Management", "Track contractor project assignments, progress, and deliverables");
+        return renderPlaceholder(
+          "Project Management",
+          "Track contractor project assignments, progress, and deliverables",
+        );
       case "payments":
-        return renderPlaceholder("Payment Tracking", "Manage contractor payments, invoices, and financial records");
+        return renderPlaceholder(
+          "Payment Tracking",
+          "Manage contractor payments, invoices, and financial records",
+        );
       case "performance":
-        return renderPlaceholder("Performance Analytics", "Analyze contractor performance metrics, trends, and evaluations");
+        return renderPlaceholder(
+          "Performance Analytics",
+          "Analyze contractor performance metrics, trends, and evaluations",
+        );
       default:
         return renderOverview();
     }
@@ -687,8 +869,12 @@ export default function ContractorManagement() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Contractor Management</h2>
-          <p className="text-gray-600">Manage contractor relationships, performance, and payments</p>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Contractor Management
+          </h2>
+          <p className="text-gray-600">
+            Manage contractor relationships, performance, and payments
+          </p>
         </div>
       </div>
 

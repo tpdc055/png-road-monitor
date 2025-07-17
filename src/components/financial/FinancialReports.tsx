@@ -1,26 +1,38 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {
-  FileText,
-  Download,
-  Calendar,
-  TrendingUp,
-  DollarSign,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
   BarChart3,
-  PieChart,
+  Calendar,
+  DollarSign,
+  Download,
+  Edit,
+  Eye,
   FileSpreadsheet,
+  FileText,
+  PieChart,
+  Plus,
   Printer,
   Send,
-  Edit,
-  Plus,
-  Eye
+  TrendingUp,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface ReportTemplate {
   id: string;
@@ -37,7 +49,10 @@ interface FinancialReportsProps {
   projectName: string;
 }
 
-export default function FinancialReports({ projectId, projectName }: FinancialReportsProps) {
+export default function FinancialReports({
+  projectId,
+  projectName,
+}: FinancialReportsProps) {
   const [reportTemplates, setReportTemplates] = useState<ReportTemplate[]>([]);
   const [selectedPeriod, setSelectedPeriod] = useState("current-month");
   const [selectedFormat, setSelectedFormat] = useState("pdf");
@@ -57,7 +72,10 @@ export default function FinancialReports({ projectId, projectName }: FinancialRe
         type: "financial",
         frequency: "monthly",
         lastGenerated: new Date("2023-07-01"),
-        recipients: ["project.manager@connectpng.com", "finance@connectpng.com"]
+        recipients: [
+          "project.manager@connectpng.com",
+          "finance@connectpng.com",
+        ],
       },
       {
         id: "rpt2",
@@ -66,7 +84,7 @@ export default function FinancialReports({ projectId, projectName }: FinancialRe
         type: "variance",
         frequency: "monthly",
         lastGenerated: new Date("2023-07-01"),
-        recipients: ["project.director@connectpng.com"]
+        recipients: ["project.director@connectpng.com"],
       },
       {
         id: "rpt3",
@@ -75,7 +93,7 @@ export default function FinancialReports({ projectId, projectName }: FinancialRe
         type: "cash-flow",
         frequency: "monthly",
         lastGenerated: new Date("2023-07-01"),
-        recipients: ["finance@connectpng.com", "treasury@gov.pg"]
+        recipients: ["finance@connectpng.com", "treasury@gov.pg"],
       },
       {
         id: "rpt4",
@@ -84,7 +102,7 @@ export default function FinancialReports({ projectId, projectName }: FinancialRe
         type: "donor",
         frequency: "quarterly",
         lastGenerated: new Date("2023-06-30"),
-        recipients: ["adb@connectpng.com", "worldbank@connectpng.com"]
+        recipients: ["adb@connectpng.com", "worldbank@connectpng.com"],
       },
       {
         id: "rpt5",
@@ -93,7 +111,7 @@ export default function FinancialReports({ projectId, projectName }: FinancialRe
         type: "progress",
         frequency: "monthly",
         lastGenerated: new Date("2023-07-01"),
-        recipients: ["project.manager@connectpng.com"]
+        recipients: ["project.manager@connectpng.com"],
       },
       {
         id: "rpt6",
@@ -102,8 +120,8 @@ export default function FinancialReports({ projectId, projectName }: FinancialRe
         type: "audit",
         frequency: "quarterly",
         lastGenerated: new Date("2023-06-30"),
-        recipients: ["audit@gov.pg", "compliance@connectpng.com"]
-      }
+        recipients: ["audit@gov.pg", "compliance@connectpng.com"],
+      },
     ];
 
     setReportTemplates(mockTemplates);
@@ -111,37 +129,51 @@ export default function FinancialReports({ projectId, projectName }: FinancialRe
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case "financial": return "bg-blue-100 text-blue-800";
-      case "progress": return "bg-green-100 text-green-800";
-      case "variance": return "bg-orange-100 text-orange-800";
-      case "cash-flow": return "bg-purple-100 text-purple-800";
-      case "donor": return "bg-indigo-100 text-indigo-800";
-      case "audit": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "financial":
+        return "bg-blue-100 text-blue-800";
+      case "progress":
+        return "bg-green-100 text-green-800";
+      case "variance":
+        return "bg-orange-100 text-orange-800";
+      case "cash-flow":
+        return "bg-purple-100 text-purple-800";
+      case "donor":
+        return "bg-indigo-100 text-indigo-800";
+      case "audit":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case "financial": return <DollarSign className="h-4 w-4" />;
-      case "progress": return <TrendingUp className="h-4 w-4" />;
-      case "variance": return <BarChart3 className="h-4 w-4" />;
-      case "cash-flow": return <TrendingUp className="h-4 w-4" />;
-      case "donor": return <FileText className="h-4 w-4" />;
-      case "audit": return <FileText className="h-4 w-4" />;
-      default: return <FileText className="h-4 w-4" />;
+      case "financial":
+        return <DollarSign className="h-4 w-4" />;
+      case "progress":
+        return <TrendingUp className="h-4 w-4" />;
+      case "variance":
+        return <BarChart3 className="h-4 w-4" />;
+      case "cash-flow":
+        return <TrendingUp className="h-4 w-4" />;
+      case "donor":
+        return <FileText className="h-4 w-4" />;
+      case "audit":
+        return <FileText className="h-4 w-4" />;
+      default:
+        return <FileText className="h-4 w-4" />;
     }
   };
 
   const generateReport = (reportId: string) => {
-    const template = reportTemplates.find(t => t.id === reportId);
+    const template = reportTemplates.find((t) => t.id === reportId);
     if (template) {
       // Update last generated date
-      setReportTemplates(prev => prev.map(t =>
-        t.id === reportId
-          ? { ...t, lastGenerated: new Date() }
-          : t
-      ));
+      setReportTemplates((prev) =>
+        prev.map((t) =>
+          t.id === reportId ? { ...t, lastGenerated: new Date() } : t,
+        ),
+      );
 
       alert(`Generating ${template.name} for ${projectName}...`);
     }
@@ -151,23 +183,23 @@ export default function FinancialReports({ projectId, projectName }: FinancialRe
     {
       title: "Executive Summary",
       description: "High-level financial overview for management",
-      icon: <FileText className="h-8 w-8 text-blue-500" />
+      icon: <FileText className="h-8 w-8 text-blue-500" />,
     },
     {
       title: "Budget Performance Report",
       description: "Detailed budget vs actual analysis",
-      icon: <BarChart3 className="h-8 w-8 text-green-500" />
+      icon: <BarChart3 className="h-8 w-8 text-green-500" />,
     },
     {
       title: "Cash Flow Analysis",
       description: "Comprehensive cash flow statement and forecast",
-      icon: <TrendingUp className="h-8 w-8 text-purple-500" />
+      icon: <TrendingUp className="h-8 w-8 text-purple-500" />,
     },
     {
       title: "Variance Analysis Report",
       description: "Detailed variance analysis by category",
-      icon: <PieChart className="h-8 w-8 text-orange-500" />
-    }
+      icon: <PieChart className="h-8 w-8 text-orange-500" />,
+    },
   ];
 
   return (
@@ -176,7 +208,9 @@ export default function FinancialReports({ projectId, projectName }: FinancialRe
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-xl font-bold text-gray-900">Financial Reports</h3>
-          <p className="text-gray-600">Generate and manage financial reports for {projectName}</p>
+          <p className="text-gray-600">
+            Generate and manage financial reports for {projectName}
+          </p>
         </div>
         <div className="flex gap-2">
           <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
@@ -220,10 +254,17 @@ export default function FinancialReports({ projectId, projectName }: FinancialRe
                   <div className="flex items-start gap-4">
                     {report.icon}
                     <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900 mb-2">{report.title}</h4>
-                      <p className="text-sm text-gray-600 mb-4">{report.description}</p>
+                      <h4 className="font-semibold text-gray-900 mb-2">
+                        {report.title}
+                      </h4>
+                      <p className="text-sm text-gray-600 mb-4">
+                        {report.description}
+                      </p>
                       <div className="flex gap-2">
-                        <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                        <Button
+                          size="sm"
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
                           <Download className="h-4 w-4 mr-2" />
                           Generate
                         </Button>
@@ -251,22 +292,26 @@ export default function FinancialReports({ projectId, projectName }: FinancialRe
             <CardContent>
               <div className="space-y-4">
                 {reportTemplates.map((template) => (
-                  <div key={template.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={template.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
                       {getTypeIcon(template.type)}
                       <div>
                         <h4 className="font-semibold">{template.name}</h4>
-                        <p className="text-sm text-gray-600">{template.description}</p>
+                        <p className="text-sm text-gray-600">
+                          {template.description}
+                        </p>
                         <div className="flex items-center gap-2 mt-1">
                           <Badge className={getTypeColor(template.type)}>
                             {template.type}
                           </Badge>
-                          <Badge variant="outline">
-                            {template.frequency}
-                          </Badge>
+                          <Badge variant="outline">{template.frequency}</Badge>
                           {template.lastGenerated && (
                             <span className="text-xs text-gray-500">
-                              Last: {template.lastGenerated.toLocaleDateString()}
+                              Last:{" "}
+                              {template.lastGenerated.toLocaleDateString()}
                             </span>
                           )}
                         </div>
@@ -304,9 +349,12 @@ export default function FinancialReports({ projectId, projectName }: FinancialRe
             <CardContent>
               <div className="text-center py-12">
                 <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Custom Report Builder</h3>
+                <h3 className="text-lg font-semibold mb-2">
+                  Custom Report Builder
+                </h3>
                 <p className="text-gray-600 mb-4">
-                  Advanced report builder with custom data selection and formatting options
+                  Advanced report builder with custom data selection and
+                  formatting options
                 </p>
                 <Button className="bg-blue-600 hover:bg-blue-700">
                   <Plus className="h-4 w-4 mr-2" />
@@ -354,8 +402,12 @@ export default function FinancialReports({ projectId, projectName }: FinancialRe
             <div className="flex items-center justify-between p-2 border rounded">
               <div className="flex items-center gap-2">
                 <FileText className="h-4 w-4 text-gray-500" />
-                <span className="text-sm">Monthly Financial Summary - July 2023</span>
-                <Badge variant="outline" className="text-xs">PDF</Badge>
+                <span className="text-sm">
+                  Monthly Financial Summary - July 2023
+                </span>
+                <Badge variant="outline" className="text-xs">
+                  PDF
+                </Badge>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-gray-500">2 hours ago</span>
@@ -367,8 +419,12 @@ export default function FinancialReports({ projectId, projectName }: FinancialRe
             <div className="flex items-center justify-between p-2 border rounded">
               <div className="flex items-center gap-2">
                 <FileSpreadsheet className="h-4 w-4 text-gray-500" />
-                <span className="text-sm">Budget Variance Analysis - Q2 2023</span>
-                <Badge variant="outline" className="text-xs">Excel</Badge>
+                <span className="text-sm">
+                  Budget Variance Analysis - Q2 2023
+                </span>
+                <Badge variant="outline" className="text-xs">
+                  Excel
+                </Badge>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-gray-500">1 day ago</span>
@@ -381,7 +437,9 @@ export default function FinancialReports({ projectId, projectName }: FinancialRe
               <div className="flex items-center gap-2">
                 <FileText className="h-4 w-4 text-gray-500" />
                 <span className="text-sm">Donor Progress Report - ADB</span>
-                <Badge variant="outline" className="text-xs">PDF</Badge>
+                <Badge variant="outline" className="text-xs">
+                  PDF
+                </Badge>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-gray-500">3 days ago</span>

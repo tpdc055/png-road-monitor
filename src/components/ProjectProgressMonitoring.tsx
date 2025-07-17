@@ -1,12 +1,31 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -16,24 +35,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  MapPin,
-  Plus,
-  Edit3,
-  Trash2,
-  Map as MapIcon,
+  Activity,
   Calendar,
-  Target,
+  Edit3,
+  Map as MapIcon,
+  MapPin,
   Navigation,
-  Activity
+  Plus,
+  Target,
+  Trash2,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface SurveyPeg {
   id: string;
@@ -67,7 +79,7 @@ export default function ProjectProgressMonitoring() {
     latitude: "",
     longitude: "",
     description: "",
-    phase: ""
+    phase: "",
   });
 
   useEffect(() => {
@@ -81,18 +93,35 @@ export default function ProjectProgressMonitoring() {
       {
         id: "PNG001",
         name: "Mt. Hagen-Kagamuga Road Upgrade",
-        phases: ["Survey", "Clearing", "Earthworks", "Base Course", "Surfacing"]
+        phases: [
+          "Survey",
+          "Clearing",
+          "Earthworks",
+          "Base Course",
+          "Surfacing",
+        ],
       },
       {
         id: "PNG002",
         name: "Port Moresby Ring Road",
-        phases: ["Survey", "Bridge Construction", "Road Construction", "Drainage", "Finishing"]
+        phases: [
+          "Survey",
+          "Bridge Construction",
+          "Road Construction",
+          "Drainage",
+          "Finishing",
+        ],
       },
       {
         id: "PNG003",
         name: "Lae-Nadzab Highway Extension",
-        phases: ["Environmental Study", "Land Acquisition", "Construction", "Testing"]
-      }
+        phases: [
+          "Environmental Study",
+          "Land Acquisition",
+          "Construction",
+          "Testing",
+        ],
+      },
     ];
     setProjects(mockProjects);
   };
@@ -111,7 +140,7 @@ export default function ProjectProgressMonitoring() {
         phase: "Survey",
         dateEntered: "2025-01-05",
         enteredBy: "John Kila",
-        status: "completed"
+        status: "completed",
       },
       {
         id: "2",
@@ -124,32 +153,38 @@ export default function ProjectProgressMonitoring() {
         phase: "Survey",
         dateEntered: "2025-01-05",
         enteredBy: "John Kila",
-        status: "completed"
+        status: "completed",
       },
       {
         id: "3",
         pegId: "PEG-003",
         latitude: -5.2095,
-        longitude: 145.7790,
+        longitude: 145.779,
         description: "Culvert installation point",
         projectId: "PNG001",
         projectName: "Mt. Hagen-Kagamuga Road Upgrade",
         phase: "Earthworks",
         dateEntered: "2025-01-05",
         enteredBy: "Maria Temu",
-        status: "planned"
-      }
+        status: "planned",
+      },
     ];
     setSurveyPegs(mockPegs);
   };
 
   const handleAddPeg = () => {
-    if (!newPeg.pegId || !newPeg.latitude || !newPeg.longitude || !selectedProject || !newPeg.phase) {
+    if (
+      !newPeg.pegId ||
+      !newPeg.latitude ||
+      !newPeg.longitude ||
+      !selectedProject ||
+      !newPeg.phase
+    ) {
       alert("Please fill in all required fields");
       return;
     }
 
-    const project = projects.find(p => p.id === selectedProject);
+    const project = projects.find((p) => p.id === selectedProject);
     if (!project) return;
 
     const peg: SurveyPeg = {
@@ -161,45 +196,59 @@ export default function ProjectProgressMonitoring() {
       projectId: selectedProject,
       projectName: project.name,
       phase: newPeg.phase,
-      dateEntered: new Date().toISOString().split('T')[0],
+      dateEntered: new Date().toISOString().split("T")[0],
       enteredBy: "Current User", // Replace with actual user
-      status: "planned"
+      status: "planned",
     };
 
     setSurveyPegs([...surveyPegs, peg]);
-    setNewPeg({ pegId: "", latitude: "", longitude: "", description: "", phase: "" });
+    setNewPeg({
+      pegId: "",
+      latitude: "",
+      longitude: "",
+      description: "",
+      phase: "",
+    });
     setShowAddDialog(false);
   };
 
   const handleDeletePeg = (id: string) => {
     if (confirm("Are you sure you want to delete this survey peg?")) {
-      setSurveyPegs(surveyPegs.filter(peg => peg.id !== id));
+      setSurveyPegs(surveyPegs.filter((peg) => peg.id !== id));
     }
   };
 
   const getStatusColor = (status: SurveyPeg["status"]) => {
     switch (status) {
-      case "completed": return "bg-green-100 text-green-800";
-      case "planned": return "bg-yellow-100 text-yellow-800";
-      case "verified": return "bg-blue-100 text-blue-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "planned":
+        return "bg-yellow-100 text-yellow-800";
+      case "verified":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-  const filteredPegs = surveyPegs.filter(peg => {
+  const filteredPegs = surveyPegs.filter((peg) => {
     if (selectedProject && peg.projectId !== selectedProject) return false;
     if (selectedPhase && peg.phase !== selectedPhase) return false;
     return true;
   });
 
-  const selectedProjectData = projects.find(p => p.id === selectedProject);
+  const selectedProjectData = projects.find((p) => p.id === selectedProject);
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Project Progress Monitoring</h2>
-          <p className="text-gray-600">Track project progress using survey peg coordinates</p>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Project Progress Monitoring
+          </h2>
+          <p className="text-gray-600">
+            Track project progress using survey peg coordinates
+          </p>
         </div>
         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
           <DialogTrigger asChild>
@@ -211,17 +260,22 @@ export default function ProjectProgressMonitoring() {
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Add Survey Peg</DialogTitle>
-              <DialogDescription>Enter the GPS coordinates of a new survey peg</DialogDescription>
+              <DialogDescription>
+                Enter the GPS coordinates of a new survey peg
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
                 <Label htmlFor="project">Project</Label>
-                <Select value={selectedProject} onValueChange={setSelectedProject}>
+                <Select
+                  value={selectedProject}
+                  onValueChange={setSelectedProject}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select project" />
                   </SelectTrigger>
                   <SelectContent>
-                    {projects.map(project => (
+                    {projects.map((project) => (
                       <SelectItem key={project.id} value={project.id}>
                         {project.name}
                       </SelectItem>
@@ -232,12 +286,17 @@ export default function ProjectProgressMonitoring() {
 
               <div>
                 <Label htmlFor="phase">Project Phase</Label>
-                <Select value={newPeg.phase} onValueChange={(value) => setNewPeg({...newPeg, phase: value})}>
+                <Select
+                  value={newPeg.phase}
+                  onValueChange={(value) =>
+                    setNewPeg({ ...newPeg, phase: value })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select phase" />
                   </SelectTrigger>
                   <SelectContent>
-                    {selectedProjectData?.phases.map(phase => (
+                    {selectedProjectData?.phases.map((phase) => (
                       <SelectItem key={phase} value={phase}>
                         {phase}
                       </SelectItem>
@@ -251,7 +310,9 @@ export default function ProjectProgressMonitoring() {
                 <Input
                   id="pegId"
                   value={newPeg.pegId}
-                  onChange={(e) => setNewPeg({...newPeg, pegId: e.target.value})}
+                  onChange={(e) =>
+                    setNewPeg({ ...newPeg, pegId: e.target.value })
+                  }
                   placeholder="e.g., PEG-001"
                 />
               </div>
@@ -262,7 +323,9 @@ export default function ProjectProgressMonitoring() {
                   <Input
                     id="latitude"
                     value={newPeg.latitude}
-                    onChange={(e) => setNewPeg({...newPeg, latitude: e.target.value})}
+                    onChange={(e) =>
+                      setNewPeg({ ...newPeg, latitude: e.target.value })
+                    }
                     placeholder="e.g., -5.2083"
                     type="number"
                     step="any"
@@ -273,7 +336,9 @@ export default function ProjectProgressMonitoring() {
                   <Input
                     id="longitude"
                     value={newPeg.longitude}
-                    onChange={(e) => setNewPeg({...newPeg, longitude: e.target.value})}
+                    onChange={(e) =>
+                      setNewPeg({ ...newPeg, longitude: e.target.value })
+                    }
                     placeholder="e.g., 145.7781"
                     type="number"
                     step="any"
@@ -286,7 +351,9 @@ export default function ProjectProgressMonitoring() {
                 <Input
                   id="description"
                   value={newPeg.description}
-                  onChange={(e) => setNewPeg({...newPeg, description: e.target.value})}
+                  onChange={(e) =>
+                    setNewPeg({ ...newPeg, description: e.target.value })
+                  }
                   placeholder="Brief description of the peg location"
                 />
               </div>
@@ -296,7 +363,10 @@ export default function ProjectProgressMonitoring() {
                   <MapPin className="h-4 w-4 mr-2" />
                   Add Peg
                 </Button>
-                <Button variant="outline" onClick={() => setShowAddDialog(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAddDialog(false)}
+                >
                   Cancel
                 </Button>
               </div>
@@ -314,13 +384,16 @@ export default function ProjectProgressMonitoring() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label>Project</Label>
-              <Select value={selectedProject} onValueChange={setSelectedProject}>
+              <Select
+                value={selectedProject}
+                onValueChange={setSelectedProject}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="All projects" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="">All projects</SelectItem>
-                  {projects.map(project => (
+                  {projects.map((project) => (
                     <SelectItem key={project.id} value={project.id}>
                       {project.name}
                     </SelectItem>
@@ -337,7 +410,7 @@ export default function ProjectProgressMonitoring() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="">All phases</SelectItem>
-                  {selectedProjectData?.phases.map(phase => (
+                  {selectedProjectData?.phases.map((phase) => (
                     <SelectItem key={phase} value={phase}>
                       {phase}
                     </SelectItem>
@@ -353,7 +426,9 @@ export default function ProjectProgressMonitoring() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold text-blue-600 mb-2">{filteredPegs.length}</div>
+            <div className="text-3xl font-bold text-blue-600 mb-2">
+              {filteredPegs.length}
+            </div>
             <div className="text-sm text-gray-600 flex items-center justify-center gap-1">
               <Target className="h-4 w-4" />
               Total Pegs
@@ -364,7 +439,7 @@ export default function ProjectProgressMonitoring() {
         <Card>
           <CardContent className="p-6 text-center">
             <div className="text-3xl font-bold text-green-600 mb-2">
-              {filteredPegs.filter(p => p.status === "completed").length}
+              {filteredPegs.filter((p) => p.status === "completed").length}
             </div>
             <div className="text-sm text-gray-600 flex items-center justify-center gap-1">
               <Activity className="h-4 w-4" />
@@ -376,7 +451,7 @@ export default function ProjectProgressMonitoring() {
         <Card>
           <CardContent className="p-6 text-center">
             <div className="text-3xl font-bold text-yellow-600 mb-2">
-              {filteredPegs.filter(p => p.status === "planned").length}
+              {filteredPegs.filter((p) => p.status === "planned").length}
             </div>
             <div className="text-sm text-gray-600 flex items-center justify-center gap-1">
               <Calendar className="h-4 w-4" />
@@ -388,7 +463,9 @@ export default function ProjectProgressMonitoring() {
         <Card>
           <CardContent className="p-6 text-center">
             <div className="text-3xl font-bold text-purple-600 mb-2">
-              {selectedProject ? selectedProjectData?.phases.length || 0 : projects.length}
+              {selectedProject
+                ? selectedProjectData?.phases.length || 0
+                : projects.length}
             </div>
             <div className="text-sm text-gray-600 flex items-center justify-center gap-1">
               <MapIcon className="h-4 w-4" />
@@ -459,7 +536,10 @@ export default function ProjectProgressMonitoring() {
                 ))}
                 {filteredPegs.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8 text-gray-500">
+                    <TableCell
+                      colSpan={8}
+                      className="text-center py-8 text-gray-500"
+                    >
                       No survey pegs found. Add your first peg to get started.
                     </TableCell>
                   </TableRow>

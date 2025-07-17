@@ -35,7 +35,9 @@ export default function LoadingSpinner() {
           </svg>
         </div>
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Loading PNG Road Construction Monitor...</p>
+        <p className="text-gray-600">
+          Loading PNG Road Construction Monitor...
+        </p>
       </div>
     </div>
   );

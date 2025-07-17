@@ -1,14 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useLanguage, LanguageSelector } from "@/contexts/LanguageContext";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Lock, User, Eye, EyeOff } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { LanguageSelector, useLanguage } from "@/contexts/LanguageContext";
+import { AlertCircle, Eye, EyeOff, Lock, User } from "lucide-react";
+import { useState } from "react";
 
 export default function LoginForm() {
   const { login, isLoading } = useAuth();
@@ -35,9 +41,21 @@ export default function LoginForm() {
 
   const demoCredentials = [
     { role: "Administrator", email: "admin@png.gov.pg", password: "admin123" },
-    { role: "Project Manager", email: "manager@png.gov.pg", password: "manager123" },
-    { role: "Site Engineer", email: "engineer@png.gov.pg", password: "engineer123" },
-    { role: "Financial Officer", email: "finance@png.gov.pg", password: "finance123" }
+    {
+      role: "Project Manager",
+      email: "manager@png.gov.pg",
+      password: "manager123",
+    },
+    {
+      role: "Site Engineer",
+      email: "engineer@png.gov.pg",
+      password: "engineer123",
+    },
+    {
+      role: "Financial Officer",
+      email: "finance@png.gov.pg",
+      password: "finance123",
+    },
   ];
 
   const handleDemoLogin = (email: string, password: string) => {
@@ -127,7 +145,11 @@ export default function LoginForm() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 hover:text-gray-600"
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -169,7 +191,9 @@ export default function LoginForm() {
               >
                 <div className="font-medium text-gray-900">{cred.role}</div>
                 <div className="text-sm text-gray-600">{cred.email}</div>
-                <div className="text-xs text-gray-500">Password: {cred.password}</div>
+                <div className="text-xs text-gray-500">
+                  Password: {cred.password}
+                </div>
               </div>
             ))}
           </CardContent>

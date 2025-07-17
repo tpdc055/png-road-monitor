@@ -54,7 +54,13 @@ export interface ChangeOrder {
   timeImpact: number; // days
   requestedBy: string;
   requestDate: Date;
-  status: "draft" | "submitted" | "under-review" | "approved" | "rejected" | "implemented";
+  status:
+    | "draft"
+    | "submitted"
+    | "under-review"
+    | "approved"
+    | "rejected"
+    | "implemented";
   approvedBy?: string;
   approvalDate?: Date;
   implementation?: {
@@ -68,7 +74,12 @@ export interface ChangeOrder {
 export interface FinancialAlert {
   id: string;
   projectId: string;
-  type: "budget-threshold" | "payment-overdue" | "variance-high" | "cash-flow" | "approval-required";
+  type:
+    | "budget-threshold"
+    | "payment-overdue"
+    | "variance-high"
+    | "cash-flow"
+    | "approval-required";
   severity: "low" | "medium" | "high" | "critical";
   message: string;
   details?: string;
@@ -121,7 +132,12 @@ export interface FundingSource {
   donorId: string;
   programId?: string;
   sourceName: string;
-  sourceType: "grant" | "loan" | "concessional-loan" | "commercial-loan" | "government-budget";
+  sourceType:
+    | "grant"
+    | "loan"
+    | "concessional-loan"
+    | "commercial-loan"
+    | "government-budget";
   amount: number;
   currency: string;
   exchangeRate?: number;
@@ -141,7 +157,13 @@ export interface FundingSource {
 export interface FundingCondition {
   id: string;
   fundingSourceId: string;
-  type: "procurement" | "environmental" | "social" | "technical" | "financial" | "legal";
+  type:
+    | "procurement"
+    | "environmental"
+    | "social"
+    | "technical"
+    | "financial"
+    | "legal";
   description: string;
   status: "pending" | "in-progress" | "completed" | "waived";
   dueDate?: Date;
@@ -168,10 +190,22 @@ export interface Disbursement {
 export interface ReportingRequirement {
   id: string;
   fundingSourceId: string;
-  type: "financial" | "progress" | "completion" | "audit" | "environmental" | "social";
+  type:
+    | "financial"
+    | "progress"
+    | "completion"
+    | "audit"
+    | "environmental"
+    | "social";
   title: string;
   description: string;
-  frequency: "monthly" | "quarterly" | "semi-annual" | "annual" | "milestone-based" | "one-time";
+  frequency:
+    | "monthly"
+    | "quarterly"
+    | "semi-annual"
+    | "annual"
+    | "milestone-based"
+    | "one-time";
   dueDate: Date;
   status: "pending" | "in-progress" | "submitted" | "approved" | "overdue";
   submittedDate?: Date;
@@ -192,8 +226,8 @@ export const PNG_COMMON_DONORS: Partial<DonorAgency>[] = [
       address: "Level 3, Pacific Place, Kumul Highway, Port Moresby",
       contactPerson: "PNG Resident Mission",
       phone: "+675 321 0400",
-      email: "adbpng@adb.org"
-    }
+      email: "adbpng@adb.org",
+    },
   },
   {
     name: "World Bank",
@@ -203,32 +237,36 @@ export const PNG_COMMON_DONORS: Partial<DonorAgency>[] = [
       address: "Level 8, Pacific Place, Kumul Highway, Port Moresby",
       contactPerson: "PNG Country Office",
       phone: "+675 321 1500",
-      email: "png@worldbank.org"
-    }
+      email: "png@worldbank.org",
+    },
   },
   {
     name: "Australian Department of Foreign Affairs and Trade",
     type: "bilateral",
     country: "Australia",
-    specializations: ["Infrastructure", "Governance", "Health", "Education"]
+    specializations: ["Infrastructure", "Governance", "Health", "Education"],
   },
   {
     name: "Japan International Cooperation Agency",
     type: "bilateral",
     country: "Japan",
-    specializations: ["Infrastructure", "Technical Cooperation", "Capacity Building"]
+    specializations: [
+      "Infrastructure",
+      "Technical Cooperation",
+      "Capacity Building",
+    ],
   },
   {
     name: "European Union",
     type: "multilateral",
-    specializations: ["Rural Development", "Governance", "Trade"]
+    specializations: ["Rural Development", "Governance", "Trade"],
   },
   {
     name: "China EXIM Bank",
     type: "bilateral",
     country: "China",
-    specializations: ["Infrastructure", "Transport", "Energy"]
-  }
+    specializations: ["Infrastructure", "Transport", "Energy"],
+  },
 ];
 
 export const PNG_FUNDING_PROGRAMS = [
@@ -237,7 +275,7 @@ export const PNG_FUNDING_PROGRAMS = [
   "World Bank PNG Rural Communications Project",
   "EU Rural Development Programme",
   "JICA Transport Infrastructure Development",
-  "China Belt and Road Initiative - PNG"
+  "China Belt and Road Initiative - PNG",
 ];
 
 // Budget categories specific to PNG road construction
@@ -254,5 +292,5 @@ export const PNG_BUDGET_CATEGORIES = [
   "Social Safeguards",
   "Project Management",
   "Supervision",
-  "Contingency"
+  "Contingency",
 ];

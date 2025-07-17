@@ -1,38 +1,50 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  AlertTriangle,
-  Download,
-  Eye,
-  Calculator,
-  BarChart3,
-  PieChart,
-  Activity,
-  FileText,
-  Bell,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Target,
-  Building
-} from "lucide-react";
-import { type FinancialSummary, FinancialTransaction, UnplannedCost, ChangeOrder, type FinancialAlert } from "@/types/financial";
+import AlertsPanel from "@/components/financial/AlertsPanel";
 import BudgetVsActualChart from "@/components/financial/BudgetVsActualChart";
-import ProgressMonitor from "@/components/financial/ProgressMonitor";
-import UnplannedCostsLog from "@/components/financial/UnplannedCostsLog";
 import CashFlowChart from "@/components/financial/CashFlowChart";
 import ChangeOrdersManager from "@/components/financial/ChangeOrdersManager";
 import FinancialReports from "@/components/financial/FinancialReports";
-import AlertsPanel from "@/components/financial/AlertsPanel";
 import FundingSourcesManager from "@/components/financial/FundingSourcesManager";
+import ProgressMonitor from "@/components/financial/ProgressMonitor";
+import UnplannedCostsLog from "@/components/financial/UnplannedCostsLog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  ChangeOrder,
+  type FinancialAlert,
+  type FinancialSummary,
+  FinancialTransaction,
+  UnplannedCost,
+} from "@/types/financial";
+import {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Bell,
+  Building,
+  Calculator,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  Eye,
+  FileText,
+  PieChart,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  XCircle,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface FinancialDashboardProps {
   projectId: string;
@@ -45,9 +57,10 @@ export default function FinancialDashboard({
   projectId,
   projectName,
   projectBudget,
-  projectProgress
+  projectProgress,
 }: FinancialDashboardProps) {
-  const [financialSummary, setFinancialSummary] = useState<FinancialSummary | null>(null);
+  const [financialSummary, setFinancialSummary] =
+    useState<FinancialSummary | null>(null);
   const [alerts, setAlerts] = useState<FinancialAlert[]>([]);
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -62,7 +75,8 @@ export default function FinancialDashboard({
       totalBudget: projectBudget,
       totalSpent: projectBudget * (projectProgress / 100) * 1.05, // Slightly over budget
       totalCommitted: projectBudget * 0.15,
-      remainingBudget: projectBudget - (projectBudget * (projectProgress / 100) * 1.05),
+      remainingBudget:
+        projectBudget - projectBudget * (projectProgress / 100) * 1.05,
       percentageSpent: (projectProgress / 100) * 105,
       forecastFinalCost: projectBudget * 1.08,
       varianceAmount: projectBudget * 0.08,
@@ -72,7 +86,7 @@ export default function FinancialDashboard({
       unplannedCosts: projectBudget * 0.025,
       changeOrdersCost: projectBudget * 0.015,
       costPerformanceIndex: 0.95,
-      schedulePerformanceIndex: 1.02
+      schedulePerformanceIndex: 1.02,
     };
 
     setFinancialSummary(mockSummary);
@@ -86,17 +100,18 @@ export default function FinancialDashboard({
         severity: "high",
         message: "Earthworks category has exceeded 90% of allocated budget",
         createdAt: new Date(),
-        acknowledged: false
+        acknowledged: false,
       },
       {
         id: "alert2",
         projectId,
         type: "payment-overdue",
         severity: "medium",
-        message: "Invoice #INV-2024-0234 from Pacific Construction is 15 days overdue",
+        message:
+          "Invoice #INV-2024-0234 from Pacific Construction is 15 days overdue",
         createdAt: new Date(),
-        acknowledged: false
-      }
+        acknowledged: false,
+      },
     ];
 
     setAlerts(mockAlerts);
@@ -119,19 +134,28 @@ export default function FinancialDashboard({
   };
 
   const handleAcknowledgeAlert = (alertId: string) => {
-    setAlerts(prev => prev.map(alert =>
-      alert.id === alertId
-        ? { ...alert, acknowledged: true, acknowledgedBy: "Current User", acknowledgedAt: new Date() }
-        : alert
-    ));
+    setAlerts((prev) =>
+      prev.map((alert) =>
+        alert.id === alertId
+          ? {
+              ...alert,
+              acknowledged: true,
+              acknowledgedBy: "Current User",
+              acknowledgedAt: new Date(),
+            }
+          : alert,
+      ),
+    );
   };
 
   const handleResolveAlert = (alertId: string) => {
-    setAlerts(prev => prev.map(alert =>
-      alert.id === alertId
-        ? { ...alert, acknowledged: true, resolvedAt: new Date() }
-        : alert
-    ));
+    setAlerts((prev) =>
+      prev.map((alert) =>
+        alert.id === alertId
+          ? { ...alert, acknowledged: true, resolvedAt: new Date() }
+          : alert,
+      ),
+    );
   };
 
   if (!financialSummary) {
@@ -140,7 +164,9 @@ export default function FinancialDashboard({
         <CardContent className="p-12 text-center">
           <Activity className="h-16 w-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">Loading Financial Data</h3>
-          <p className="text-gray-600">Analyzing financial performance for {projectName}...</p>
+          <p className="text-gray-600">
+            Analyzing financial performance for {projectName}...
+          </p>
         </CardContent>
       </Card>
     );
@@ -151,8 +177,12 @@ export default function FinancialDashboard({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold text-gray-900">Financial Dashboard</h3>
-          <p className="text-gray-600">{projectName} - Financial Monitoring & Reporting</p>
+          <h3 className="text-xl font-bold text-gray-900">
+            Financial Dashboard
+          </h3>
+          <p className="text-gray-600">
+            {projectName} - Financial Monitoring & Reporting
+          </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
@@ -161,7 +191,7 @@ export default function FinancialDashboard({
           </Button>
           <Button variant="outline" size="sm">
             <Bell className="h-4 w-4 mr-2" />
-            Alerts ({alerts.filter(a => !a.acknowledged).length})
+            Alerts ({alerts.filter((a) => !a.acknowledged).length})
           </Button>
         </div>
       </div>
@@ -204,18 +234,21 @@ export default function FinancialDashboard({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Budget Variance</p>
-                <p className={`text-2xl font-bold ${getVarianceColor(financialSummary.variancePercentage)}`}>
-                  {financialSummary.variancePercentage > 0 ? '+' : ''}
+                <p
+                  className={`text-2xl font-bold ${getVarianceColor(financialSummary.variancePercentage)}`}
+                >
+                  {financialSummary.variancePercentage > 0 ? "+" : ""}
                   {financialSummary.variancePercentage.toFixed(1)}%
                 </p>
                 <p className="text-xs text-gray-500">
                   {formatCurrency(Math.abs(financialSummary.varianceAmount))}
                 </p>
               </div>
-              {financialSummary.variancePercentage > 0 ?
-                <TrendingUp className="h-8 w-8 text-red-500" /> :
+              {financialSummary.variancePercentage > 0 ? (
+                <TrendingUp className="h-8 w-8 text-red-500" />
+              ) : (
                 <TrendingDown className="h-8 w-8 text-green-500" />
-              }
+              )}
             </div>
           </CardContent>
         </Card>
@@ -228,9 +261,7 @@ export default function FinancialDashboard({
                 <p className="text-2xl font-bold text-purple-600">
                   {formatCurrency(financialSummary.forecastFinalCost)}
                 </p>
-                <p className="text-xs text-gray-500">
-                  Based on current trends
-                </p>
+                <p className="text-xs text-gray-500">Based on current trends</p>
               </div>
               <Target className="h-8 w-8 text-purple-500" />
             </div>
@@ -245,11 +276,15 @@ export default function FinancialDashboard({
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Cost Performance Index</p>
-                <p className={`text-xl font-bold ${getPerformanceColor(financialSummary.costPerformanceIndex)}`}>
+                <p
+                  className={`text-xl font-bold ${getPerformanceColor(financialSummary.costPerformanceIndex)}`}
+                >
                   {financialSummary.costPerformanceIndex.toFixed(2)}
                 </p>
                 <p className="text-xs text-gray-500">
-                  {financialSummary.costPerformanceIndex >= 1.0 ? 'Under budget' : 'Over budget'}
+                  {financialSummary.costPerformanceIndex >= 1.0
+                    ? "Under budget"
+                    : "Over budget"}
                 </p>
               </div>
               <Calculator className="h-6 w-6 text-gray-400" />
@@ -261,12 +296,18 @@ export default function FinancialDashboard({
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Schedule Performance Index</p>
-                <p className={`text-xl font-bold ${getPerformanceColor(financialSummary.schedulePerformanceIndex)}`}>
+                <p className="text-sm text-gray-600">
+                  Schedule Performance Index
+                </p>
+                <p
+                  className={`text-xl font-bold ${getPerformanceColor(financialSummary.schedulePerformanceIndex)}`}
+                >
                   {financialSummary.schedulePerformanceIndex.toFixed(2)}
                 </p>
                 <p className="text-xs text-gray-500">
-                  {financialSummary.schedulePerformanceIndex >= 1.0 ? 'Ahead of schedule' : 'Behind schedule'}
+                  {financialSummary.schedulePerformanceIndex >= 1.0
+                    ? "Ahead of schedule"
+                    : "Behind schedule"}
                 </p>
               </div>
               <Clock className="h-6 w-6 text-gray-400" />
@@ -282,9 +323,7 @@ export default function FinancialDashboard({
                 <p className="text-xl font-bold text-red-600">
                   {formatCurrency(financialSummary.unplannedCosts)}
                 </p>
-                <p className="text-xs text-gray-500">
-                  External factors impact
-                </p>
+                <p className="text-xs text-gray-500">External factors impact</p>
               </div>
               <AlertTriangle className="h-6 w-6 text-red-500" />
             </div>
@@ -293,32 +332,49 @@ export default function FinancialDashboard({
       </div>
 
       {/* Alerts Summary */}
-      {alerts.filter(a => !a.acknowledged).length > 0 && (
+      {alerts.filter((a) => !a.acknowledged).length > 0 && (
         <Card className="border-red-200 bg-red-50">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-red-800">
               <AlertTriangle className="h-5 w-5" />
-              Active Financial Alerts ({alerts.filter(a => !a.acknowledged).length})
+              Active Financial Alerts (
+              {alerts.filter((a) => !a.acknowledged).length})
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {alerts.filter(a => !a.acknowledged).slice(0, 3).map(alert => (
-                <div key={alert.id} className="flex items-center justify-between p-2 bg-white rounded border">
-                  <div className="flex items-center gap-2">
-                    <Badge variant={alert.severity === "high" ? "destructive" : "secondary"}>
-                      {alert.severity}
-                    </Badge>
-                    <span className="text-sm">{alert.message}</span>
+              {alerts
+                .filter((a) => !a.acknowledged)
+                .slice(0, 3)
+                .map((alert) => (
+                  <div
+                    key={alert.id}
+                    className="flex items-center justify-between p-2 bg-white rounded border"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        variant={
+                          alert.severity === "high"
+                            ? "destructive"
+                            : "secondary"
+                        }
+                      >
+                        {alert.severity}
+                      </Badge>
+                      <span className="text-sm">{alert.message}</span>
+                    </div>
+                    <Button size="sm" variant="outline">
+                      Review
+                    </Button>
                   </div>
-                  <Button size="sm" variant="outline">
-                    Review
-                  </Button>
-                </div>
-              ))}
-              {alerts.filter(a => !a.acknowledged).length > 3 && (
-                <Button variant="outline" size="sm" onClick={() => setActiveTab("alerts")}>
-                  View All {alerts.filter(a => !a.acknowledged).length} Alerts
+                ))}
+              {alerts.filter((a) => !a.acknowledged).length > 3 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setActiveTab("alerts")}
+                >
+                  View All {alerts.filter((a) => !a.acknowledged).length} Alerts
                 </Button>
               )}
             </div>
@@ -345,7 +401,9 @@ export default function FinancialDashboard({
             <Card>
               <CardHeader>
                 <CardTitle>Budget Breakdown</CardTitle>
-                <CardDescription>Current allocation vs spending by category</CardDescription>
+                <CardDescription>
+                  Current allocation vs spending by category
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="h-64 flex items-center justify-center text-gray-500">
@@ -358,7 +416,9 @@ export default function FinancialDashboard({
             <Card>
               <CardHeader>
                 <CardTitle>Spending Trend</CardTitle>
-                <CardDescription>Monthly expenditure vs planned</CardDescription>
+                <CardDescription>
+                  Monthly expenditure vs planned
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="h-64 flex items-center justify-center text-gray-500">
@@ -385,7 +445,9 @@ export default function FinancialDashboard({
                   <div className="text-2xl font-bold text-green-600">
                     {formatCurrency(financialSummary.contingencyRemaining)}
                   </div>
-                  <div className="text-sm text-gray-600">Contingency Remaining</div>
+                  <div className="text-sm text-gray-600">
+                    Contingency Remaining
+                  </div>
                 </div>
                 <div className="text-center p-4 bg-orange-50 rounded-lg">
                   <div className="text-2xl font-bold text-orange-600">
@@ -397,7 +459,9 @@ export default function FinancialDashboard({
                   <div className="text-2xl font-bold text-red-600">
                     {formatCurrency(financialSummary.changeOrdersCost)}
                   </div>
-                  <div className="text-sm text-gray-600">Change Orders Cost</div>
+                  <div className="text-sm text-gray-600">
+                    Change Orders Cost
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -409,7 +473,10 @@ export default function FinancialDashboard({
         </TabsContent>
 
         <TabsContent value="progress">
-          <ProgressMonitor projectId={projectId} financialSummary={financialSummary} />
+          <ProgressMonitor
+            projectId={projectId}
+            financialSummary={financialSummary}
+          />
         </TabsContent>
 
         <TabsContent value="unplanned">
@@ -425,7 +492,10 @@ export default function FinancialDashboard({
         </TabsContent>
 
         <TabsContent value="funding">
-          <FundingSourcesManager projectId={projectId} projectName={projectName} />
+          <FundingSourcesManager
+            projectId={projectId}
+            projectName={projectName}
+          />
         </TabsContent>
 
         <TabsContent value="reports">

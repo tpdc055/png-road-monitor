@@ -1,30 +1,30 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import {
-  Bell,
-  X,
   AlertTriangle,
+  Bell,
   CheckCircle,
   Clock,
   DollarSign,
-  TrendingUp,
+  Eye,
+  EyeOff,
   MapPin,
   Settings,
+  TrendingUp,
   Volume2,
   VolumeX,
-  Eye,
-  EyeOff
-} from 'lucide-react';
+  X,
+} from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
 
 interface Notification {
   id: string;
-  type: 'milestone' | 'budget' | 'schedule' | 'gps' | 'system';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  type: "milestone" | "budget" | "schedule" | "gps" | "system";
+  priority: "low" | "medium" | "high" | "critical";
   title: string;
   message: string;
   projectId?: string;
@@ -55,7 +55,10 @@ interface NotificationSystemProps {
   className?: string;
 }
 
-export default function NotificationSystem({ projects = [], className }: NotificationSystemProps) {
+export default function NotificationSystem({
+  projects = [],
+  className,
+}: NotificationSystemProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showPanel, setShowPanel] = useState(false);
@@ -71,9 +74,9 @@ export default function NotificationSystem({ projects = [], className }: Notific
     gps: true,
     thresholds: {
       budgetVariance: 10, // 10% budget variance
-      scheduleDelay: 3,   // 3 days schedule delay
-      progressUpdate: 24  // 24 hours since last progress update
-    }
+      scheduleDelay: 3, // 3 days schedule delay
+      progressUpdate: 24, // 24 hours since last progress update
+    },
   });
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -83,7 +86,9 @@ export default function NotificationSystem({ projects = [], className }: Notific
     // Create a simple beep sound programmatically instead of loading an mp3 file
     const createBeepSound = () => {
       try {
-        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const audioContext = new (
+          window.AudioContext || (window as any).webkitAudioContext
+        )();
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
 
@@ -97,7 +102,7 @@ export default function NotificationSystem({ projects = [], className }: Notific
         oscillator.stop(audioContext.currentTime + 0.2); // 200ms beep
       } catch (error) {
         // Fallback for browsers that don't support Web Audio API
-        console.log('Audio notification not supported');
+        console.log("Audio notification not supported");
       }
     };
 
@@ -112,68 +117,77 @@ export default function NotificationSystem({ projects = [], className }: Notific
       const mockNotifications: Notification[] = [
         {
           id: `notif-${Date.now()}-1`,
-          type: 'milestone',
-          priority: 'high',
-          title: 'Milestone Completed',
-          message: 'Mt. Hagen-Kagamuga Road bridge construction milestone reached',
-          projectId: 'proj-1',
-          projectName: 'Mt. Hagen-Kagamuga Road Upgrade',
+          type: "milestone",
+          priority: "high",
+          title: "Milestone Completed",
+          message:
+            "Mt. Hagen-Kagamuga Road bridge construction milestone reached",
+          projectId: "proj-1",
+          projectName: "Mt. Hagen-Kagamuga Road Upgrade",
           timestamp: new Date(),
           read: false,
-          data: { milestone: 'Bridge Foundation Complete', progress: 68 }
+          data: { milestone: "Bridge Foundation Complete", progress: 68 },
         },
         {
           id: `notif-${Date.now()}-2`,
-          type: 'budget',
-          priority: 'critical',
-          title: 'Budget Alert',
-          message: 'Port Moresby Ring Road project spending approaching 90% of budget',
-          projectId: 'proj-2',
-          projectName: 'Port Moresby Ring Road Extension',
+          type: "budget",
+          priority: "critical",
+          title: "Budget Alert",
+          message:
+            "Port Moresby Ring Road project spending approaching 90% of budget",
+          projectId: "proj-2",
+          projectName: "Port Moresby Ring Road Extension",
           timestamp: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
           read: false,
-          data: { budgetUsed: 89.5, budgetRemaining: 10.5 }
+          data: { budgetUsed: 89.5, budgetRemaining: 10.5 },
         },
         {
           id: `notif-${Date.now()}-3`,
-          type: 'schedule',
-          priority: 'medium',
-          title: 'Schedule Update',
-          message: 'Highlands Highway maintenance is 3 days behind schedule due to weather',
-          projectId: 'proj-4',
-          projectName: 'Highlands Highway Maintenance Program',
+          type: "schedule",
+          priority: "medium",
+          title: "Schedule Update",
+          message:
+            "Highlands Highway maintenance is 3 days behind schedule due to weather",
+          projectId: "proj-4",
+          projectName: "Highlands Highway Maintenance Program",
           timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
           read: false,
-          data: { delayDays: 3, reason: 'Weather conditions' }
+          data: { delayDays: 3, reason: "Weather conditions" },
         },
         {
           id: `notif-${Date.now()}-4`,
-          type: 'gps',
-          priority: 'low',
-          title: 'GPS Update',
-          message: 'New GPS data points recorded for Lae-Nadzab Highway project',
-          projectId: 'proj-3',
-          projectName: 'Lae-Nadzab Highway Reconstruction',
+          type: "gps",
+          priority: "low",
+          title: "GPS Update",
+          message:
+            "New GPS data points recorded for Lae-Nadzab Highway project",
+          projectId: "proj-3",
+          projectName: "Lae-Nadzab Highway Reconstruction",
           timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4), // 4 hours ago
           read: false,
-          data: { newPoints: 5, totalPoints: 23 }
-        }
+          data: { newPoints: 5, totalPoints: 23 },
+        },
       ];
 
       // Filter notifications based on settings
-      const filteredNotifications = mockNotifications.filter(notif => {
+      const filteredNotifications = mockNotifications.filter((notif) => {
         switch (notif.type) {
-          case 'milestone': return settings.milestones;
-          case 'budget': return settings.budget;
-          case 'schedule': return settings.schedule;
-          case 'gps': return settings.gps;
-          default: return true;
+          case "milestone":
+            return settings.milestones;
+          case "budget":
+            return settings.budget;
+          case "schedule":
+            return settings.schedule;
+          case "gps":
+            return settings.gps;
+          default:
+            return true;
         }
       });
 
-      setNotifications(prev => {
+      setNotifications((prev) => {
         const newNotifications = [...filteredNotifications, ...prev];
-        const unread = newNotifications.filter(n => !n.read).length;
+        const unread = newNotifications.filter((n) => !n.read).length;
         setUnreadCount(unread);
         return newNotifications.slice(0, 50); // Keep only latest 50 notifications
       });
@@ -186,12 +200,16 @@ export default function NotificationSystem({ projects = [], className }: Notific
       }
 
       // Show browser notification
-      if (settings.desktop && filteredNotifications.length > 0 && 'Notification' in window) {
-        filteredNotifications.forEach(notif => {
-          if (Notification.permission === 'granted') {
+      if (
+        settings.desktop &&
+        filteredNotifications.length > 0 &&
+        "Notification" in window
+      ) {
+        filteredNotifications.forEach((notif) => {
+          if (Notification.permission === "granted") {
             new Notification(notif.title, {
               body: notif.message,
-              tag: notif.id
+              tag: notif.id,
               // Removed icon to prevent 404 errors
             });
           }
@@ -205,23 +223,28 @@ export default function NotificationSystem({ projects = [], className }: Notific
     // Set up periodic notification generation (for demo purposes) - optimized
     const interval = setInterval(() => {
       // Reduce frequency and make it lighter
-      if (Math.random() > 0.85) { // 15% chance every interval (reduced from 30%)
+      if (Math.random() > 0.85) {
+        // 15% chance every interval (reduced from 30%)
         // Generate only one notification at a time to reduce processing
         const mockNotifications: Notification[] = [
           {
             id: `notif-${Date.now()}`,
-            type: ['milestone', 'budget', 'schedule', 'gps'][Math.floor(Math.random() * 4)] as any,
-            priority: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as any,
-            title: 'Real-time Update',
-            message: 'New project status update available',
+            type: ["milestone", "budget", "schedule", "gps"][
+              Math.floor(Math.random() * 4)
+            ] as any,
+            priority: ["low", "medium", "high"][
+              Math.floor(Math.random() * 3)
+            ] as any,
+            title: "Real-time Update",
+            message: "New project status update available",
             timestamp: new Date(),
             read: false,
-          }
+          },
         ];
 
-        setNotifications(prev => {
+        setNotifications((prev) => {
           const newNotifications = [...mockNotifications, ...prev].slice(0, 50);
-          const unread = newNotifications.filter(n => !n.read).length;
+          const unread = newNotifications.filter((n) => !n.read).length;
           setUnreadCount(unread);
           return newNotifications;
         });
@@ -240,47 +263,63 @@ export default function NotificationSystem({ projects = [], className }: Notific
 
   // Request desktop notification permission
   useEffect(() => {
-    if (settings.desktop && 'Notification' in window && Notification.permission === 'default') {
+    if (
+      settings.desktop &&
+      "Notification" in window &&
+      Notification.permission === "default"
+    ) {
       Notification.requestPermission();
     }
   }, [settings.desktop]);
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'critical': return 'bg-red-500';
-      case 'high': return 'bg-orange-500';
-      case 'medium': return 'bg-yellow-500';
-      case 'low': return 'bg-blue-500';
-      default: return 'bg-gray-500';
+      case "critical":
+        return "bg-red-500";
+      case "high":
+        return "bg-orange-500";
+      case "medium":
+        return "bg-yellow-500";
+      case "low":
+        return "bg-blue-500";
+      default:
+        return "bg-gray-500";
     }
   };
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'milestone': return <CheckCircle className="h-4 w-4" />;
-      case 'budget': return <DollarSign className="h-4 w-4" />;
-      case 'schedule': return <Clock className="h-4 w-4" />;
-      case 'gps': return <MapPin className="h-4 w-4" />;
-      default: return <AlertTriangle className="h-4 w-4" />;
+      case "milestone":
+        return <CheckCircle className="h-4 w-4" />;
+      case "budget":
+        return <DollarSign className="h-4 w-4" />;
+      case "schedule":
+        return <Clock className="h-4 w-4" />;
+      case "gps":
+        return <MapPin className="h-4 w-4" />;
+      default:
+        return <AlertTriangle className="h-4 w-4" />;
     }
   };
 
   const markAsRead = (notificationId: string) => {
-    setNotifications(prev => prev.map(notif =>
-      notif.id === notificationId ? { ...notif, read: true } : notif
-    ));
-    setUnreadCount(prev => Math.max(0, prev - 1));
+    setNotifications((prev) =>
+      prev.map((notif) =>
+        notif.id === notificationId ? { ...notif, read: true } : notif,
+      ),
+    );
+    setUnreadCount((prev) => Math.max(0, prev - 1));
   };
 
   const markAllAsRead = () => {
-    setNotifications(prev => prev.map(notif => ({ ...notif, read: true })));
+    setNotifications((prev) => prev.map((notif) => ({ ...notif, read: true })));
     setUnreadCount(0);
   };
 
   const deleteNotification = (notificationId: string) => {
-    setNotifications(prev => {
-      const filtered = prev.filter(notif => notif.id !== notificationId);
-      const unread = filtered.filter(n => !n.read).length;
+    setNotifications((prev) => {
+      const filtered = prev.filter((notif) => notif.id !== notificationId);
+      const unread = filtered.filter((n) => !n.read).length;
       setUnreadCount(unread);
       return filtered;
     });
@@ -293,7 +332,7 @@ export default function NotificationSystem({ projects = [], className }: Notific
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffMins < 1) return 'Just now';
+    if (diffMins < 1) return "Just now";
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     return `${diffDays}d ago`;
@@ -314,7 +353,7 @@ export default function NotificationSystem({ projects = [], className }: Notific
             variant="destructive"
             className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
           >
-            {unreadCount > 99 ? '99+' : unreadCount}
+            {unreadCount > 99 ? "99+" : unreadCount}
           </Badge>
         )}
       </Button>
@@ -344,7 +383,9 @@ export default function NotificationSystem({ projects = [], className }: Notific
             </div>
             {unreadCount > 0 && (
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">{unreadCount} unread</span>
+                <span className="text-sm text-gray-600">
+                  {unreadCount} unread
+                </span>
                 <Button variant="ghost" size="sm" onClick={markAllAsRead}>
                   Mark all read
                 </Button>
@@ -362,19 +403,23 @@ export default function NotificationSystem({ projects = [], className }: Notific
                     <Switch
                       checked={settings.enabled}
                       onCheckedChange={(checked) =>
-                        setSettings(prev => ({ ...prev, enabled: checked }))
+                        setSettings((prev) => ({ ...prev, enabled: checked }))
                       }
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm flex items-center gap-2">
-                      {settings.sound ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                      {settings.sound ? (
+                        <Volume2 className="h-4 w-4" />
+                      ) : (
+                        <VolumeX className="h-4 w-4" />
+                      )}
                       Sound
                     </span>
                     <Switch
                       checked={settings.sound}
                       onCheckedChange={(checked) =>
-                        setSettings(prev => ({ ...prev, sound: checked }))
+                        setSettings((prev) => ({ ...prev, sound: checked }))
                       }
                     />
                   </div>
@@ -383,7 +428,7 @@ export default function NotificationSystem({ projects = [], className }: Notific
                     <Switch
                       checked={settings.desktop}
                       onCheckedChange={(checked) =>
-                        setSettings(prev => ({ ...prev, desktop: checked }))
+                        setSettings((prev) => ({ ...prev, desktop: checked }))
                       }
                     />
                   </div>
@@ -391,40 +436,42 @@ export default function NotificationSystem({ projects = [], className }: Notific
                     <div className="flex items-center justify-between">
                       <span>Milestones</span>
                       <Switch
-
                         checked={settings.milestones}
                         onCheckedChange={(checked) =>
-                          setSettings(prev => ({ ...prev, milestones: checked }))
+                          setSettings((prev) => ({
+                            ...prev,
+                            milestones: checked,
+                          }))
                         }
                       />
                     </div>
                     <div className="flex items-center justify-between">
                       <span>Budget</span>
                       <Switch
-
                         checked={settings.budget}
                         onCheckedChange={(checked) =>
-                          setSettings(prev => ({ ...prev, budget: checked }))
+                          setSettings((prev) => ({ ...prev, budget: checked }))
                         }
                       />
                     </div>
                     <div className="flex items-center justify-between">
                       <span>Schedule</span>
                       <Switch
-
                         checked={settings.schedule}
                         onCheckedChange={(checked) =>
-                          setSettings(prev => ({ ...prev, schedule: checked }))
+                          setSettings((prev) => ({
+                            ...prev,
+                            schedule: checked,
+                          }))
                         }
                       />
                     </div>
                     <div className="flex items-center justify-between">
                       <span>GPS</span>
                       <Switch
-
                         checked={settings.gps}
                         onCheckedChange={(checked) =>
-                          setSettings(prev => ({ ...prev, gps: checked }))
+                          setSettings((prev) => ({ ...prev, gps: checked }))
                         }
                       />
                     </div>
@@ -445,21 +492,24 @@ export default function NotificationSystem({ projects = [], className }: Notific
                   <div
                     key={notification.id}
                     className={`p-3 border-b hover:bg-gray-50 transition-colors ${
-                      notification.read ? 'opacity-60' : ''
+                      notification.read ? "opacity-60" : ""
                     }`}
                   >
                     <div className="flex items-start gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${getPriorityColor(notification.priority)}`}>
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${getPriorityColor(notification.priority)}`}
+                      >
                         {getTypeIcon(notification.type)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-sm truncate">{notification.title}</h4>
+                          <h4 className="font-medium text-sm truncate">
+                            {notification.title}
+                          </h4>
                           <div className="flex gap-1">
                             {!notification.read && (
                               <Button
                                 variant="ghost"
-
                                 onClick={() => markAsRead(notification.id)}
                                 className="h-6 w-6 p-0"
                               >
@@ -468,15 +518,18 @@ export default function NotificationSystem({ projects = [], className }: Notific
                             )}
                             <Button
                               variant="ghost"
-
-                              onClick={() => deleteNotification(notification.id)}
+                              onClick={() =>
+                                deleteNotification(notification.id)
+                              }
                               className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
                             >
                               <X className="h-3 w-3" />
                             </Button>
                           </div>
                         </div>
-                        <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {notification.message}
+                        </p>
                         <div className="flex items-center justify-between mt-2">
                           {notification.projectName && (
                             <Badge variant="outline" className="text-xs">

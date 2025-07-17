@@ -14,18 +14,22 @@ interface SystemSettingsContextType {
   updateSettings: (newSettings: Partial<SystemSettings>) => void;
 }
 
-const SystemSettingsContext = createContext<SystemSettingsContextType | undefined>(undefined);
+const SystemSettingsContext = createContext<
+  SystemSettingsContextType | undefined
+>(undefined);
 
-export function SystemSettingsProvider({ children }: { children: React.ReactNode }) {
+export function SystemSettingsProvider({
+  children,
+}: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<SystemSettings>({
     systemName: "PNG Road Construction Monitor",
     organizationName: "Papua New Guinea Department of Works",
     timezone: "Pacific/Port_Moresby",
-    language: "en"
+    language: "en",
   });
 
   const updateSettings = (newSettings: Partial<SystemSettings>) => {
-    setSettings(prev => ({ ...prev, ...newSettings }));
+    setSettings((prev) => ({ ...prev, ...newSettings }));
   };
 
   return (
@@ -38,7 +42,9 @@ export function SystemSettingsProvider({ children }: { children: React.ReactNode
 export function useSystemSettings() {
   const context = useContext(SystemSettingsContext);
   if (context === undefined) {
-    throw new Error("useSystemSettings must be used within a SystemSettingsProvider");
+    throw new Error(
+      "useSystemSettings must be used within a SystemSettingsProvider",
+    );
   }
   return context;
 }

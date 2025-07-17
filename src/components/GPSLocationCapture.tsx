@@ -1,20 +1,26 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Crosshair,
   MapPin,
   Navigation,
   RefreshCw,
-  CheckCircle,
-  AlertTriangle,
-  Crosshair,
   Satellite,
-  Clock
-} from 'lucide-react';
+} from "lucide-react";
+import React, { useState, useEffect } from "react";
 
 interface GPSLocation {
   latitude: number;
@@ -37,9 +43,11 @@ export default function GPSLocationCapture({
   onLocationUpdate,
   autoCapture = false,
   showMap = false,
-  className = ''
+  className = "",
 }: GPSLocationCaptureProps) {
-  const [currentLocation, setCurrentLocation] = useState<GPSLocation | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<GPSLocation | null>(
+    null,
+  );
   const [isCapturing, setIsCapturing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [watchId, setWatchId] = useState<number | null>(null);
@@ -60,7 +68,7 @@ export default function GPSLocationCapture({
 
   const startLocationTracking = () => {
     if (!navigator.geolocation) {
-      setError('Geolocation is not supported by this browser');
+      setError("Geolocation is not supported by this browser");
       return;
     }
 
@@ -70,7 +78,7 @@ export default function GPSLocationCapture({
     const options = {
       enableHighAccuracy: true,
       timeout: 10000,
-      maximumAge: 30000 // 30 seconds
+      maximumAge: 30000, // 30 seconds
     };
 
     const successCallback = (position: GeolocationPosition) => {
@@ -81,12 +89,12 @@ export default function GPSLocationCapture({
         altitude: position.coords.altitude || undefined,
         heading: position.coords.heading || undefined,
         speed: position.coords.speed || undefined,
-        timestamp: position.timestamp
+        timestamp: position.timestamp,
       };
 
       setCurrentLocation(location);
       setLastUpdate(new Date());
-      setLocationHistory(prev => [...prev.slice(-9), location]); // Keep last 10 locations
+      setLocationHistory((prev) => [...prev.slice(-9), location]); // Keep last 10 locations
       onLocationUpdate(location);
       setError(null);
     };
@@ -96,16 +104,16 @@ export default function GPSLocationCapture({
 
       switch (error.code) {
         case error.PERMISSION_DENIED:
-          setError('Location access denied. Please enable GPS permissions.');
+          setError("Location access denied. Please enable GPS permissions.");
           break;
         case error.POSITION_UNAVAILABLE:
-          setError('Location information unavailable. Check GPS signal.');
+          setError("Location information unavailable. Check GPS signal.");
           break;
         case error.TIMEOUT:
-          setError('Location request timed out. Try again.');
+          setError("Location request timed out. Try again.");
           break;
         default:
-          setError('An unknown error occurred while retrieving location.');
+          setError("An unknown error occurred while retrieving location.");
           break;
       }
     };
@@ -114,7 +122,7 @@ export default function GPSLocationCapture({
       const id = navigator.geolocation.watchPosition(
         successCallback,
         errorCallback,
-        options
+        options,
       );
       setWatchId(id);
     } else {
@@ -127,7 +135,7 @@ export default function GPSLocationCapture({
           errorCallback(error);
           setIsCapturing(false);
         },
-        options
+        options,
       );
     }
   };
@@ -149,23 +157,27 @@ export default function GPSLocationCapture({
   };
 
   const getAccuracyColor = (accuracy: number) => {
-    if (accuracy <= 5) return 'text-green-600 bg-green-100';
-    if (accuracy <= 10) return 'text-blue-600 bg-blue-100';
-    if (accuracy <= 20) return 'text-yellow-600 bg-yellow-100';
-    return 'text-red-600 bg-red-100';
+    if (accuracy <= 5) return "text-green-600 bg-green-100";
+    if (accuracy <= 10) return "text-blue-600 bg-blue-100";
+    if (accuracy <= 20) return "text-yellow-600 bg-yellow-100";
+    return "text-red-600 bg-red-100";
   };
 
   const getAccuracyText = (accuracy: number) => {
-    if (accuracy <= 5) return 'Excellent';
-    if (accuracy <= 10) return 'Good';
-    if (accuracy <= 20) return 'Fair';
-    return 'Poor';
+    if (accuracy <= 5) return "Excellent";
+    if (accuracy <= 10) return "Good";
+    if (accuracy <= 20) return "Fair";
+    return "Poor";
   };
 
   const formatCoordinate = (coord: number, isLongitude = false) => {
     const direction = isLongitude
-      ? (coord >= 0 ? 'E' : 'W')
-      : (coord >= 0 ? 'N' : 'S');
+      ? coord >= 0
+        ? "E"
+        : "W"
+      : coord >= 0
+        ? "N"
+        : "S";
     return `${Math.abs(coord).toFixed(6)}° ${direction}`;
   };
 
@@ -198,22 +210,31 @@ export default function GPSLocationCapture({
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <MapPin className="h-4 w-4 text-green-600" />
-                    <span className="font-medium text-green-800">Current Location</span>
+                    <span className="font-medium text-green-800">
+                      Current Location
+                    </span>
                   </div>
-                  <Badge className={`text-xs ${getAccuracyColor(currentLocation.accuracy)}`}>
-                    ±{currentLocation.accuracy.toFixed(1)}m • {getAccuracyText(currentLocation.accuracy)}
+                  <Badge
+                    className={`text-xs ${getAccuracyColor(currentLocation.accuracy)}`}
+                  >
+                    ±{currentLocation.accuracy.toFixed(1)}m •{" "}
+                    {getAccuracyText(currentLocation.accuracy)}
                   </Badge>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Latitude</label>
+                    <label className="text-xs font-medium text-gray-600">
+                      Latitude
+                    </label>
                     <div className="text-sm font-mono text-gray-900">
                       {formatCoordinate(currentLocation.latitude)}
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-gray-600">Longitude</label>
+                    <label className="text-xs font-medium text-gray-600">
+                      Longitude
+                    </label>
                     <div className="text-sm font-mono text-gray-900">
                       {formatCoordinate(currentLocation.longitude, true)}
                     </div>
@@ -221,21 +242,26 @@ export default function GPSLocationCapture({
 
                   {currentLocation.altitude && (
                     <div>
-                      <label className="text-xs font-medium text-gray-600">Altitude</label>
+                      <label className="text-xs font-medium text-gray-600">
+                        Altitude
+                      </label>
                       <div className="text-sm text-gray-900">
                         {currentLocation.altitude.toFixed(1)}m
                       </div>
                     </div>
                   )}
 
-                  {currentLocation.speed !== undefined && currentLocation.speed > 0 && (
-                    <div>
-                      <label className="text-xs font-medium text-gray-600">Speed</label>
-                      <div className="text-sm text-gray-900">
-                        {(currentLocation.speed * 3.6).toFixed(1)} km/h
+                  {currentLocation.speed !== undefined &&
+                    currentLocation.speed > 0 && (
+                      <div>
+                        <label className="text-xs font-medium text-gray-600">
+                          Speed
+                        </label>
+                        <div className="text-sm text-gray-900">
+                          {(currentLocation.speed * 3.6).toFixed(1)} km/h
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
 
                 {lastUpdate && (
@@ -265,12 +291,12 @@ export default function GPSLocationCapture({
                 {isCapturing ? (
                   <>
                     <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                    {autoCapture ? 'Stop Tracking' : 'Capturing...'}
+                    {autoCapture ? "Stop Tracking" : "Capturing..."}
                   </>
                 ) : (
                   <>
                     <Crosshair className="h-4 w-4 mr-2" />
-                    {autoCapture ? 'Start Tracking' : 'Capture Location'}
+                    {autoCapture ? "Start Tracking" : "Capture Location"}
                   </>
                 )}
               </Button>
@@ -294,19 +320,26 @@ export default function GPSLocationCapture({
                   Recent Locations ({locationHistory.length})
                 </h4>
                 <div className="space-y-1 max-h-32 overflow-y-auto">
-                  {locationHistory.slice(-5).reverse().map((location, index) => (
-                    <div key={location.timestamp} className="text-xs text-gray-600 p-2 bg-gray-50 rounded">
-                      <div className="flex justify-between">
-                        <span>
-                          {location.latitude.toFixed(6)}, {location.longitude.toFixed(6)}
-                        </span>
-                        <span>±{location.accuracy.toFixed(1)}m</span>
+                  {locationHistory
+                    .slice(-5)
+                    .reverse()
+                    .map((location, index) => (
+                      <div
+                        key={location.timestamp}
+                        className="text-xs text-gray-600 p-2 bg-gray-50 rounded"
+                      >
+                        <div className="flex justify-between">
+                          <span>
+                            {location.latitude.toFixed(6)},{" "}
+                            {location.longitude.toFixed(6)}
+                          </span>
+                          <span>±{location.accuracy.toFixed(1)}m</span>
+                        </div>
+                        <div className="text-gray-500">
+                          {formatTimeAgo(new Date(location.timestamp))}
+                        </div>
                       </div>
-                      <div className="text-gray-500">
-                        {formatTimeAgo(new Date(location.timestamp))}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               </div>
             )}

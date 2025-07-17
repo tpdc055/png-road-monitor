@@ -1,21 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -24,29 +17,48 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  FileText,
-  Download,
-  Calendar,
-  Clock,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import {
   BarChart3,
-  PieChart,
-  TrendingUp,
-  MapPin,
-  DollarSign,
-  Users,
-  Shield,
+  Calendar,
   CheckCircle,
-  Plus,
-  Eye,
+  Clock,
+  DollarSign,
+  Download,
   Edit3,
-  Send,
-  RefreshCw,
-  Filter,
-  FileSpreadsheet,
+  Eye,
   FileImage,
-  Mail
+  FileSpreadsheet,
+  FileText,
+  Filter,
+  Mail,
+  MapPin,
+  PieChart,
+  Plus,
+  RefreshCw,
+  Send,
+  Shield,
+  TrendingUp,
+  Users,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface Report {
   id: string;
@@ -94,7 +106,9 @@ export default function ReportsGenerator() {
   const [activeTab, setActiveTab] = useState("overview");
   const [reports, setReports] = useState<Report[]>([]);
   const [templates, setTemplates] = useState<ReportTemplate[]>([]);
-  const [generatedReports, setGeneratedReports] = useState<GeneratedReport[]>([]);
+  const [generatedReports, setGeneratedReports] = useState<GeneratedReport[]>(
+    [],
+  );
   const [showReportDialog, setShowReportDialog] = useState(false);
   const [showTemplateDialog, setShowTemplateDialog] = useState(false);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
@@ -110,7 +124,8 @@ export default function ReportsGenerator() {
         id: "RPT001",
         title: "Weekly Progress Report",
         type: "progress",
-        description: "Comprehensive weekly progress report for all active projects",
+        description:
+          "Comprehensive weekly progress report for all active projects",
         template: "TEMP001",
         frequency: "weekly",
         format: "pdf",
@@ -120,13 +135,13 @@ export default function ReportsGenerator() {
         status: "active",
         dateRange: {
           start: "2024-12-30",
-          end: "2025-01-06"
+          end: "2025-01-06",
         },
         parameters: {
           includePhotos: true,
           includeFinancials: true,
-          detailLevel: "summary"
-        }
+          detailLevel: "summary",
+        },
       },
       {
         id: "RPT002",
@@ -142,13 +157,13 @@ export default function ReportsGenerator() {
         status: "active",
         dateRange: {
           start: "2024-12-01",
-          end: "2024-12-31"
+          end: "2024-12-31",
         },
         parameters: {
           includeBudgetVariance: true,
           includeForecast: true,
-          currencyFormat: "PGK"
-        }
+          currencyFormat: "PGK",
+        },
       },
       {
         id: "RPT003",
@@ -164,14 +179,14 @@ export default function ReportsGenerator() {
         status: "generating",
         dateRange: {
           start: "2024-12-01",
-          end: "2024-12-31"
+          end: "2024-12-31",
         },
         parameters: {
           includeTestResults: true,
           includeNonCompliance: true,
-          detailLevel: "detailed"
-        }
-      }
+          detailLevel: "detailed",
+        },
+      },
     ];
 
     const mockTemplates: ReportTemplate[] = [
@@ -180,41 +195,70 @@ export default function ReportsGenerator() {
         name: "Project Progress Template",
         category: "Progress Reports",
         description: "Standard template for project progress reporting",
-        fields: ["Project Status", "Physical Progress", "Financial Progress", "Issues", "Next Actions"],
+        fields: [
+          "Project Status",
+          "Physical Progress",
+          "Financial Progress",
+          "Issues",
+          "Next Actions",
+        ],
         chartTypes: ["Progress Charts", "Gantt Charts", "Photos"],
         defaultFormat: "pdf",
-        isCustomizable: true
+        isCustomizable: true,
       },
       {
         id: "TEMP002",
         name: "Financial Analysis Template",
         category: "Financial Reports",
         description: "Comprehensive financial analysis and budget tracking",
-        fields: ["Budget vs Actual", "Cash Flow", "Variance Analysis", "Forecasts"],
+        fields: [
+          "Budget vs Actual",
+          "Cash Flow",
+          "Variance Analysis",
+          "Forecasts",
+        ],
         chartTypes: ["Bar Charts", "Line Charts", "Pie Charts"],
         defaultFormat: "excel",
-        isCustomizable: true
+        isCustomizable: true,
       },
       {
         id: "TEMP003",
         name: "Quality Control Template",
         category: "Quality Reports",
         description: "Quality inspections, test results, and compliance status",
-        fields: ["Inspection Results", "Test Data", "Compliance Status", "Recommendations"],
-        chartTypes: ["Quality Trends", "Pass/Fail Charts", "Compliance Metrics"],
+        fields: [
+          "Inspection Results",
+          "Test Data",
+          "Compliance Status",
+          "Recommendations",
+        ],
+        chartTypes: [
+          "Quality Trends",
+          "Pass/Fail Charts",
+          "Compliance Metrics",
+        ],
         defaultFormat: "pdf",
-        isCustomizable: false
+        isCustomizable: false,
       },
       {
         id: "TEMP004",
         name: "Safety Performance Template",
         category: "Safety Reports",
         description: "Safety incidents, training, and compliance tracking",
-        fields: ["Incident Reports", "Training Records", "Safety Metrics", "Action Items"],
-        chartTypes: ["Safety Trends", "Incident Analytics", "Training Progress"],
+        fields: [
+          "Incident Reports",
+          "Training Records",
+          "Safety Metrics",
+          "Action Items",
+        ],
+        chartTypes: [
+          "Safety Trends",
+          "Incident Analytics",
+          "Training Progress",
+        ],
         defaultFormat: "pdf",
-        isCustomizable: true
-      }
+        isCustomizable: true,
+      },
     ];
 
     const mockGeneratedReports: GeneratedReport[] = [
@@ -226,7 +270,7 @@ export default function ReportsGenerator() {
         format: "pdf",
         size: "2.4 MB",
         downloadUrl: "/reports/weekly-progress-2025-w1.pdf",
-        status: "ready"
+        status: "ready",
       },
       {
         id: "GEN002",
@@ -236,7 +280,7 @@ export default function ReportsGenerator() {
         format: "excel",
         size: "1.8 MB",
         downloadUrl: "/reports/financial-summary-2024-12.xlsx",
-        status: "ready"
+        status: "ready",
       },
       {
         id: "GEN003",
@@ -246,8 +290,8 @@ export default function ReportsGenerator() {
         format: "pdf",
         size: "3.2 MB",
         downloadUrl: "/reports/quality-assurance-2024-12.pdf",
-        status: "generating"
-      }
+        status: "generating",
+      },
     ];
 
     setReports(mockReports);
@@ -323,7 +367,7 @@ export default function ReportsGenerator() {
     { id: "reports", label: "Reports", icon: FileText },
     { id: "templates", label: "Templates", icon: Edit3 },
     { id: "generated", label: "Generated", icon: Download },
-    { id: "schedule", label: "Schedule", icon: Calendar }
+    { id: "schedule", label: "Schedule", icon: Calendar },
   ];
 
   const renderOverview = () => (
@@ -337,7 +381,9 @@ export default function ReportsGenerator() {
                 <FileText className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold">{reports.filter(r => r.status === "active").length}</div>
+                <div className="text-2xl font-bold">
+                  {reports.filter((r) => r.status === "active").length}
+                </div>
                 <div className="text-sm text-gray-600">Active Reports</div>
               </div>
             </div>
@@ -351,7 +397,9 @@ export default function ReportsGenerator() {
                 <Download className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold">{generatedReports.filter(r => r.status === "ready").length}</div>
+                <div className="text-2xl font-bold">
+                  {generatedReports.filter((r) => r.status === "ready").length}
+                </div>
                 <div className="text-sm text-gray-600">Ready for Download</div>
               </div>
             </div>
@@ -365,7 +413,15 @@ export default function ReportsGenerator() {
                 <Clock className="h-6 w-6 text-yellow-600" />
               </div>
               <div>
-                <div className="text-2xl font-bold">{reports.filter(r => new Date(r.nextDue) <= new Date(Date.now() + 7*24*60*60*1000)).length}</div>
+                <div className="text-2xl font-bold">
+                  {
+                    reports.filter(
+                      (r) =>
+                        new Date(r.nextDue) <=
+                        new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                    ).length
+                  }
+                </div>
                 <div className="text-sm text-gray-600">Due This Week</div>
               </div>
             </div>
@@ -390,7 +446,7 @@ export default function ReportsGenerator() {
       {/* Report Categories */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {["progress", "financial", "quality", "safety"].map((category) => {
-          const categoryReports = reports.filter(r => r.type === category);
+          const categoryReports = reports.filter((r) => r.type === category);
           return (
             <Card key={category}>
               <CardHeader className="pb-3">
@@ -403,18 +459,25 @@ export default function ReportsGenerator() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Total Reports:</span>
-                    <span className="font-medium">{categoryReports.length}</span>
+                    <span className="font-medium">
+                      {categoryReports.length}
+                    </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Active:</span>
                     <span className="font-medium text-green-600">
-                      {categoryReports.filter(r => r.status === "active").length}
+                      {
+                        categoryReports.filter((r) => r.status === "active")
+                          .length
+                      }
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Last Generated:</span>
                     <span className="font-medium">
-                      {categoryReports.length > 0 ? categoryReports[0].lastGenerated : "N/A"}
+                      {categoryReports.length > 0
+                        ? categoryReports[0].lastGenerated
+                        : "N/A"}
                     </span>
                   </div>
                 </div>
@@ -428,12 +491,17 @@ export default function ReportsGenerator() {
       <Card>
         <CardHeader>
           <CardTitle>Recently Generated Reports</CardTitle>
-          <CardDescription>Latest reports available for download</CardDescription>
+          <CardDescription>
+            Latest reports available for download
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {generatedReports.slice(0, 5).map((report) => (
-              <div key={report.id} className="flex items-center justify-between p-4 border rounded-lg">
+              <div
+                key={report.id}
+                className="flex items-center justify-between p-4 border rounded-lg"
+              >
                 <div className="flex items-center gap-4">
                   {getFormatIcon(report.format)}
                   <div>
@@ -480,7 +548,9 @@ export default function ReportsGenerator() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold">Report Configuration</h3>
-          <p className="text-gray-600">Configure and manage automated report generation</p>
+          <p className="text-gray-600">
+            Configure and manage automated report generation
+          </p>
         </div>
         <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
           <DialogTrigger asChild>
@@ -492,7 +562,9 @@ export default function ReportsGenerator() {
           <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle>Create New Report</DialogTitle>
-              <DialogDescription>Set up a new automated report</DialogDescription>
+              <DialogDescription>
+                Set up a new automated report
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
@@ -522,7 +594,7 @@ export default function ReportsGenerator() {
                     <SelectValue placeholder="Select template" />
                   </SelectTrigger>
                   <SelectContent>
-                    {templates.map(template => (
+                    {templates.map((template) => (
                       <SelectItem key={template.id} value={template.id}>
                         {template.name}
                       </SelectItem>
@@ -569,7 +641,10 @@ export default function ReportsGenerator() {
               </div>
               <div className="flex gap-2 pt-4">
                 <Button className="flex-1">Create Report</Button>
-                <Button variant="outline" onClick={() => setShowReportDialog(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowReportDialog(false)}
+                >
                   Cancel
                 </Button>
               </div>
@@ -599,7 +674,9 @@ export default function ReportsGenerator() {
                   <TableCell>
                     <div>
                       <div className="font-medium">{report.title}</div>
-                      <div className="text-sm text-gray-600">{report.description}</div>
+                      <div className="text-sm text-gray-600">
+                        {report.description}
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -608,7 +685,9 @@ export default function ReportsGenerator() {
                       <span className="capitalize">{report.type}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="capitalize">{report.frequency}</TableCell>
+                  <TableCell className="capitalize">
+                    {report.frequency}
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       {getFormatIcon(report.format)}
@@ -656,8 +735,13 @@ export default function ReportsGenerator() {
               <FileText className="h-8 w-8 text-blue-600" />
               <div>
                 <h3 className="font-semibold">Project Progress Report</h3>
-                <p className="text-sm text-gray-600">Weekly status across all projects</p>
-                <Button size="sm" className="mt-2 bg-blue-600 hover:bg-blue-700">
+                <p className="text-sm text-gray-600">
+                  Weekly status across all projects
+                </p>
+                <Button
+                  size="sm"
+                  className="mt-2 bg-blue-600 hover:bg-blue-700"
+                >
                   Generate Report
                 </Button>
               </div>
@@ -668,8 +752,13 @@ export default function ReportsGenerator() {
               <DollarSign className="h-8 w-8 text-green-600" />
               <div>
                 <h3 className="font-semibold">Financial Summary</h3>
-                <p className="text-sm text-gray-600">Budget utilization and expenditure</p>
-                <Button size="sm" className="mt-2 bg-green-600 hover:bg-green-700">
+                <p className="text-sm text-gray-600">
+                  Budget utilization and expenditure
+                </p>
+                <Button
+                  size="sm"
+                  className="mt-2 bg-green-600 hover:bg-green-700"
+                >
                   Generate Report
                 </Button>
               </div>
@@ -680,8 +769,13 @@ export default function ReportsGenerator() {
               <Shield className="h-8 w-8 text-orange-600" />
               <div>
                 <h3 className="font-semibold">HSE Compliance</h3>
-                <p className="text-sm text-gray-600">Safety and environmental metrics</p>
-                <Button size="sm" className="mt-2 bg-orange-600 hover:bg-orange-700">
+                <p className="text-sm text-gray-600">
+                  Safety and environmental metrics
+                </p>
+                <Button
+                  size="sm"
+                  className="mt-2 bg-orange-600 hover:bg-orange-700"
+                >
                   Generate Report
                 </Button>
               </div>
@@ -699,11 +793,20 @@ export default function ReportsGenerator() {
       case "reports":
         return renderReports();
       case "templates":
-        return renderPlaceholder("Report Templates", "Manage report templates, customize layouts, and create new formats");
+        return renderPlaceholder(
+          "Report Templates",
+          "Manage report templates, customize layouts, and create new formats",
+        );
       case "generated":
-        return renderPlaceholder("Generated Reports", "Browse, download, and manage previously generated reports");
+        return renderPlaceholder(
+          "Generated Reports",
+          "Browse, download, and manage previously generated reports",
+        );
       case "schedule":
-        return renderPlaceholder("Report Scheduling", "Configure automated report generation schedules and notifications");
+        return renderPlaceholder(
+          "Report Scheduling",
+          "Configure automated report generation schedules and notifications",
+        );
       default:
         return renderOverview();
     }
@@ -713,8 +816,12 @@ export default function ReportsGenerator() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Reports Generator</h2>
-          <p className="text-gray-600">Generate comprehensive reports for project monitoring and analysis</p>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Reports Generator
+          </h2>
+          <p className="text-gray-600">
+            Generate comprehensive reports for project monitoring and analysis
+          </p>
         </div>
       </div>
 

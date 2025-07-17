@@ -1,31 +1,43 @@
-'use client';
+"use client";
 
-import type React from 'react';
-import { useState, useEffect, useRef } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-  Plus,
-  Trash2,
-  Edit,
-  Save,
-  Upload,
-  Download,
-  MapPin,
-  Calendar,
-  Filter,
-  RefreshCw,
-  Map,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   AlertCircle,
+  Calendar,
   CheckCircle,
   Clock,
-  X
-} from 'lucide-react';
-import GPSLocationCapture from './GPSLocationCapture';
+  Download,
+  Edit,
+  Filter,
+  Map,
+  MapPin,
+  Plus,
+  RefreshCw,
+  Save,
+  Trash2,
+  Upload,
+  X,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import GPSLocationCapture from "./GPSLocationCapture";
 
 interface GPSDataEntry {
   id?: string;
@@ -52,78 +64,80 @@ interface GPSDataEntrySpreadsheetProps {
 }
 
 const CONSTRUCTION_PHASES = [
-  'Preliminary/Survey',
-  'Earthworks',
-  'Subbase & Base Construction',
-  'Pavement & Sealing',
-  'Ancillary Works',
-  'Quality Assurance'
+  "Preliminary/Survey",
+  "Earthworks",
+  "Subbase & Base Construction",
+  "Pavement & Sealing",
+  "Ancillary Works",
+  "Quality Assurance",
 ];
 
 const PHASE_TASKS = {
-  'Preliminary/Survey': [
-    'Survey & Pegging',
-    'Soil and Materials Investigation',
-    'Environmental Assessment',
-    'Site Clearance & Demarcation'
+  "Preliminary/Survey": [
+    "Survey & Pegging",
+    "Soil and Materials Investigation",
+    "Environmental Assessment",
+    "Site Clearance & Demarcation",
   ],
-  'Earthworks': [
-    'Clearing & Grubbing',
-    'Topsoil Stripping',
-    'Embankment & Subgrade Preparation'
+  Earthworks: [
+    "Clearing & Grubbing",
+    "Topsoil Stripping",
+    "Embankment & Subgrade Preparation",
   ],
-  'Subbase & Base Construction': [
-    'Subbase Laying',
-    'Basecourse Placement'
+  "Subbase & Base Construction": ["Subbase Laying", "Basecourse Placement"],
+  "Pavement & Sealing": [
+    "Bitumen/Asphalt Laying",
+    "Surface Sealing",
+    "Drainage Construction",
+    "Culvert & Gabion Installation",
   ],
-  'Pavement & Sealing': [
-    'Bitumen/Asphalt Laying',
-    'Surface Sealing',
-    'Drainage Construction',
-    'Culvert & Gabion Installation'
+  "Ancillary Works": [
+    "Road Furniture Installation",
+    "Road Markings",
+    "Landscaping",
   ],
-  'Ancillary Works': [
-    'Road Furniture Installation',
-    'Road Markings',
-    'Landscaping'
+  "Quality Assurance": [
+    "Inspection & Testing",
+    "Rectification of Defects",
+    "Final Approval & Handover",
   ],
-  'Quality Assurance': [
-    'Inspection & Testing',
-    'Rectification of Defects',
-    'Final Approval & Handover'
-  ]
 };
 
 const STATUS_OPTIONS = [
-  'Completed',
-  'In Progress',
-  'Inspection Required',
-  'Approved',
-  'Rejected'
+  "Completed",
+  "In Progress",
+  "Inspection Required",
+  "Approved",
+  "Rejected",
 ];
 
 export default function GPSDataEntrySpreadsheet({
   projectId,
   projectName,
-  userRole = 'SITE_ENGINEER'
+  userRole = "SITE_ENGINEER",
 }: GPSDataEntrySpreadsheetProps) {
   const [entries, setEntries] = useState<GPSDataEntry[]>([]);
   const [filteredEntries, setFilteredEntries] = useState<GPSDataEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showMap, setShowMap] = useState(false);
-  const [mapCenter, setMapCenter] = useState({ lat: -6.314993, lng: 143.95555 }); // Mount Hagen default
+  const [mapCenter, setMapCenter] = useState({
+    lat: -6.314993,
+    lng: 143.95555,
+  }); // Mount Hagen default
   const [filters, setFilters] = useState({
-    phase: 'all',
-    status: 'all',
-    dateFrom: '',
-    dateTo: '',
+    phase: "all",
+    status: "all",
+    dateFrom: "",
+    dateTo: "",
   });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showGPSCapture, setShowGPSCapture] = useState(false);
-  const [currentEditingEntry, setCurrentEditingEntry] = useState<string | null>(null);
+  const [currentEditingEntry, setCurrentEditingEntry] = useState<string | null>(
+    null,
+  );
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -138,16 +152,18 @@ export default function GPSDataEntrySpreadsheet({
   const fetchGPSEntries = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/v1/gps-data-entries?projectId=${projectId}`);
+      const response = await fetch(
+        `/api/v1/gps-data-entries?projectId=${projectId}`,
+      );
       if (response.ok) {
         const data = await response.json();
         setEntries(data.data || []);
       } else {
-        throw new Error('Failed to fetch GPS data entries');
+        throw new Error("Failed to fetch GPS data entries");
       }
     } catch (error) {
-      console.error('Error fetching GPS entries:', error);
-      setError('Failed to load GPS data entries');
+      console.error("Error fetching GPS entries:", error);
+      setError("Failed to load GPS data entries");
     } finally {
       setLoading(false);
     }
@@ -156,20 +172,20 @@ export default function GPSDataEntrySpreadsheet({
   const applyFilters = () => {
     let filtered = [...entries];
 
-    if (filters.phase !== 'all') {
-      filtered = filtered.filter(entry => entry.phase === filters.phase);
+    if (filters.phase !== "all") {
+      filtered = filtered.filter((entry) => entry.phase === filters.phase);
     }
 
-    if (filters.status !== 'all') {
-      filtered = filtered.filter(entry => entry.status === filters.status);
+    if (filters.status !== "all") {
+      filtered = filtered.filter((entry) => entry.status === filters.status);
     }
 
     if (filters.dateFrom) {
-      filtered = filtered.filter(entry => entry.date >= filters.dateFrom);
+      filtered = filtered.filter((entry) => entry.date >= filters.dateFrom);
     }
 
     if (filters.dateTo) {
-      filtered = filtered.filter(entry => entry.date <= filters.dateTo);
+      filtered = filtered.filter((entry) => entry.date <= filters.dateTo);
     }
 
     setFilteredEntries(filtered);
@@ -178,17 +194,17 @@ export default function GPSDataEntrySpreadsheet({
   const addNewRow = () => {
     const newEntry: GPSDataEntry = {
       id: `new-${Date.now()}`,
-      date: new Date().toISOString().split('T')[0],
+      date: new Date().toISOString().split("T")[0],
       project: projectName,
-      province: '',
-      district: '',
-      phase: '',
-      task: '',
+      province: "",
+      district: "",
+      phase: "",
+      task: "",
       chainage: 0,
       latitude: 0,
       longitude: 0,
-      status: 'In Progress',
-      comments: '',
+      status: "In Progress",
+      comments: "",
       isEditing: true,
       isNew: true,
     };
@@ -203,17 +219,21 @@ export default function GPSDataEntrySpreadsheet({
 
       // Validate required fields
       if (!entry.latitude || !entry.longitude || !entry.phase || !entry.task) {
-        setError('Please fill in all required fields (GPS coordinates, phase, and task)');
+        setError(
+          "Please fill in all required fields (GPS coordinates, phase, and task)",
+        );
         return;
       }
 
-      const url = entry.isNew ? '/api/v1/gps-data-entries' : `/api/v1/gps-data-entries/${entry.id}`;
-      const method = entry.isNew ? 'POST' : 'PUT';
+      const url = entry.isNew
+        ? "/api/v1/gps-data-entries"
+        : `/api/v1/gps-data-entries/${entry.id}`;
+      const method = entry.isNew ? "POST" : "PUT";
 
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           projectId,
@@ -234,86 +254,100 @@ export default function GPSDataEntrySpreadsheet({
 
         if (entry.isNew) {
           // Replace the temporary entry with the saved one
-          setEntries(prev => prev.map(e =>
-            e.id === entry.id ? { ...savedEntry.data, isEditing: false, isNew: false } : e
-          ));
+          setEntries((prev) =>
+            prev.map((e) =>
+              e.id === entry.id
+                ? { ...savedEntry.data, isEditing: false, isNew: false }
+                : e,
+            ),
+          );
         } else {
           // Update existing entry
-          setEntries(prev => prev.map(e =>
-            e.id === entry.id ? { ...entry, isEditing: false } : e
-          ));
+          setEntries((prev) =>
+            prev.map((e) =>
+              e.id === entry.id ? { ...entry, isEditing: false } : e,
+            ),
+          );
         }
 
         setEditingId(null);
-        setSuccess('GPS entry saved successfully');
+        setSuccess("GPS entry saved successfully");
         setError(null);
       } else {
-        throw new Error('Failed to save GPS entry');
+        throw new Error("Failed to save GPS entry");
       }
     } catch (error) {
-      console.error('Error saving entry:', error);
-      setError('Failed to save GPS entry. Please try again.');
+      console.error("Error saving entry:", error);
+      setError("Failed to save GPS entry. Please try again.");
     } finally {
       setSaving(false);
     }
   };
 
   const deleteEntry = async (entryId: string) => {
-    if (!confirm('Are you sure you want to delete this GPS entry?')) {
+    if (!confirm("Are you sure you want to delete this GPS entry?")) {
       return;
     }
 
     try {
-      const entry = entries.find(e => e.id === entryId);
+      const entry = entries.find((e) => e.id === entryId);
 
       if (entry?.isNew) {
         // Just remove from local state if it's a new unsaved entry
-        setEntries(prev => prev.filter(e => e.id !== entryId));
+        setEntries((prev) => prev.filter((e) => e.id !== entryId));
         setEditingId(null);
         return;
       }
 
       const response = await fetch(`/api/v1/gps-data-entries/${entryId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (response.ok) {
-        setEntries(prev => prev.filter(e => e.id !== entryId));
-        setSuccess('GPS entry deleted successfully');
+        setEntries((prev) => prev.filter((e) => e.id !== entryId));
+        setSuccess("GPS entry deleted successfully");
         setError(null);
       } else {
-        throw new Error('Failed to delete GPS entry');
+        throw new Error("Failed to delete GPS entry");
       }
     } catch (error) {
-      console.error('Error deleting entry:', error);
-      setError('Failed to delete GPS entry. Please try again.');
+      console.error("Error deleting entry:", error);
+      setError("Failed to delete GPS entry. Please try again.");
     }
   };
 
-  const updateEntry = (entryId: string, field: keyof GPSDataEntry, value: any) => {
-    setEntries(prev => prev.map(entry =>
-      entry.id === entryId ? { ...entry, [field]: value } : entry
-    ));
+  const updateEntry = (
+    entryId: string,
+    field: keyof GPSDataEntry,
+    value: any,
+  ) => {
+    setEntries((prev) =>
+      prev.map((entry) =>
+        entry.id === entryId ? { ...entry, [field]: value } : entry,
+      ),
+    );
   };
 
   const startEditing = (entryId: string) => {
     setEditingId(entryId);
-    setEntries(prev => prev.map(entry =>
-      entry.id === entryId ? { ...entry, isEditing: true } : entry
-    ));
+    setEntries((prev) =>
+      prev.map((entry) =>
+        entry.id === entryId ? { ...entry, isEditing: true } : entry,
+      ),
+    );
   };
 
   const cancelEditing = (entryId: string) => {
-    const entry = entries.find(e => e.id === entryId);
+    const entry = entries.find((e) => e.id === entryId);
 
     if (entry?.isNew) {
       // Remove new unsaved entries
-      setEntries(prev => prev.filter(e => e.id !== entryId));
+      setEntries((prev) => prev.filter((e) => e.id !== entryId));
     } else {
       // Revert changes for existing entries
-      setEntries(prev => prev.map(e =>
-        e.id === entryId ? { ...e, isEditing: false } : e
-      ));
+      setEntries((prev) =>
+        prev.map((e) => (e.id === entryId ? { ...e, isEditing: false } : e)),
+      );
     }
 
     setEditingId(null);
@@ -321,32 +355,43 @@ export default function GPSDataEntrySpreadsheet({
 
   const exportToCSV = () => {
     const headers = [
-      'Date', 'Project', 'Province', 'District', 'Phase', 'Task',
-      'Chainage (km)', 'Latitude', 'Longitude', 'Status', 'Comments'
+      "Date",
+      "Project",
+      "Province",
+      "District",
+      "Phase",
+      "Task",
+      "Chainage (km)",
+      "Latitude",
+      "Longitude",
+      "Status",
+      "Comments",
     ];
 
     const csvContent = [
-      headers.join(','),
-      ...filteredEntries.map(entry => [
-        entry.date,
-        `"${entry.project}"`,
-        `"${entry.province}"`,
-        `"${entry.district}"`,
-        `"${entry.phase}"`,
-        `"${entry.task}"`,
-        entry.chainage,
-        entry.latitude,
-        entry.longitude,
-        `"${entry.status}"`,
-        `"${entry.comments}"`
-      ].join(','))
-    ].join('\n');
+      headers.join(","),
+      ...filteredEntries.map((entry) =>
+        [
+          entry.date,
+          `"${entry.project}"`,
+          `"${entry.province}"`,
+          `"${entry.district}"`,
+          `"${entry.phase}"`,
+          `"${entry.task}"`,
+          entry.chainage,
+          entry.latitude,
+          entry.longitude,
+          `"${entry.status}"`,
+          `"${entry.comments}"`,
+        ].join(","),
+      ),
+    ].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `${projectName}-gps-data-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `${projectName}-gps-data-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -359,60 +404,67 @@ export default function GPSDataEntrySpreadsheet({
     reader.onload = (e) => {
       try {
         const csv = e.target?.result as string;
-        const lines = csv.split('\n');
-        const headers = lines[0].split(',');
+        const lines = csv.split("\n");
+        const headers = lines[0].split(",");
 
         // Basic CSV parsing - would need more robust parsing in production
-        const newEntries: GPSDataEntry[] = lines.slice(1)
-          .filter(line => line.trim())
+        const newEntries: GPSDataEntry[] = lines
+          .slice(1)
+          .filter((line) => line.trim())
           .map((line, index) => {
-            const values = line.split(',');
+            const values = line.split(",");
             return {
               id: `upload-${Date.now()}-${index}`,
-              date: values[0] || new Date().toISOString().split('T')[0],
+              date: values[0] || new Date().toISOString().split("T")[0],
               project: projectName,
-              province: values[2]?.replace(/"/g, '') || '',
-              district: values[3]?.replace(/"/g, '') || '',
-              phase: values[4]?.replace(/"/g, '') || '',
-              task: values[5]?.replace(/"/g, '') || '',
+              province: values[2]?.replace(/"/g, "") || "",
+              district: values[3]?.replace(/"/g, "") || "",
+              phase: values[4]?.replace(/"/g, "") || "",
+              task: values[5]?.replace(/"/g, "") || "",
               chainage: Number.parseFloat(values[6]) || 0,
               latitude: Number.parseFloat(values[7]) || 0,
               longitude: Number.parseFloat(values[8]) || 0,
-              status: values[9]?.replace(/"/g, '') || 'In Progress',
-              comments: values[10]?.replace(/"/g, '') || '',
+              status: values[9]?.replace(/"/g, "") || "In Progress",
+              comments: values[10]?.replace(/"/g, "") || "",
               isNew: true,
             };
           });
 
-        setEntries(prev => [...newEntries, ...prev]);
+        setEntries((prev) => [...newEntries, ...prev]);
         setSuccess(`Uploaded ${newEntries.length} GPS entries from CSV`);
       } catch (error) {
-        setError('Failed to parse CSV file. Please check the format.');
+        setError("Failed to parse CSV file. Please check the format.");
       }
     };
 
     reader.readAsText(file);
-    event.target.value = ''; // Reset file input
+    event.target.value = ""; // Reset file input
   };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'in progress': return 'bg-blue-100 text-blue-800';
-      case 'inspection required': return 'bg-yellow-100 text-yellow-800';
-      case 'approved': return 'bg-purple-100 text-purple-800';
-      case 'rejected': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "in progress":
+        return "bg-blue-100 text-blue-800";
+      case "inspection required":
+        return "bg-yellow-100 text-yellow-800";
+      case "approved":
+        return "bg-purple-100 text-purple-800";
+      case "rejected":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-
-
   const handleGPSLocationUpdate = (location: any) => {
     if (currentEditingEntry) {
-      updateEntry(currentEditingEntry, 'latitude', location.latitude);
-      updateEntry(currentEditingEntry, 'longitude', location.longitude);
-      setSuccess(`GPS coordinates updated: ±${location.accuracy.toFixed(1)}m accuracy`);
+      updateEntry(currentEditingEntry, "latitude", location.latitude);
+      updateEntry(currentEditingEntry, "longitude", location.longitude);
+      setSuccess(
+        `GPS coordinates updated: ±${location.accuracy.toFixed(1)}m accuracy`,
+      );
       setShowGPSCapture(false);
       setCurrentEditingEntry(null);
     }
@@ -451,7 +503,7 @@ export default function GPSDataEntrySpreadsheet({
             onClick={() => setShowGPSCapture(!showGPSCapture)}
           >
             <MapPin className="h-4 w-4 mr-2" />
-            {showGPSCapture ? 'Hide GPS' : 'GPS Capture'}
+            {showGPSCapture ? "Hide GPS" : "GPS Capture"}
           </Button>
           <Button
             variant="outline"
@@ -459,13 +511,9 @@ export default function GPSDataEntrySpreadsheet({
             onClick={() => setShowMap(!showMap)}
           >
             <Map className="h-4 w-4 mr-2" />
-            {showMap ? 'Hide Map' : 'Show Map'}
+            {showMap ? "Hide Map" : "Show Map"}
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={exportToCSV}
-          >
+          <Button variant="outline" size="sm" onClick={exportToCSV}>
             <Download className="h-4 w-4 mr-2" />
             Export CSV
           </Button>
@@ -489,7 +537,7 @@ export default function GPSDataEntrySpreadsheet({
         ref={fileInputRef}
         type="file"
         accept=".csv"
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         onChange={handleFileUpload}
       />
 
@@ -512,7 +560,9 @@ export default function GPSDataEntrySpreadsheet({
       {success && (
         <Alert className="border-green-200 bg-green-50">
           <CheckCircle className="h-4 w-4 text-green-600" />
-          <AlertDescription className="text-green-800">{success}</AlertDescription>
+          <AlertDescription className="text-green-800">
+            {success}
+          </AlertDescription>
           <Button
             variant="ghost"
             size="sm"
@@ -535,49 +585,75 @@ export default function GPSDataEntrySpreadsheet({
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="text-xs font-medium text-gray-700 mb-1 block">Phase</label>
-              <Select value={filters.phase} onValueChange={(value) => setFilters(prev => ({ ...prev, phase: value }))}>
+              <label className="text-xs font-medium text-gray-700 mb-1 block">
+                Phase
+              </label>
+              <Select
+                value={filters.phase}
+                onValueChange={(value) =>
+                  setFilters((prev) => ({ ...prev, phase: value }))
+                }
+              >
                 <SelectTrigger className="h-8">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Phases</SelectItem>
-                  {CONSTRUCTION_PHASES.map(phase => (
-                    <SelectItem key={phase} value={phase}>{phase}</SelectItem>
+                  {CONSTRUCTION_PHASES.map((phase) => (
+                    <SelectItem key={phase} value={phase}>
+                      {phase}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-700 mb-1 block">Status</label>
-              <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
+              <label className="text-xs font-medium text-gray-700 mb-1 block">
+                Status
+              </label>
+              <Select
+                value={filters.status}
+                onValueChange={(value) =>
+                  setFilters((prev) => ({ ...prev, status: value }))
+                }
+              >
                 <SelectTrigger className="h-8">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Statuses</SelectItem>
-                  {STATUS_OPTIONS.map(status => (
-                    <SelectItem key={status} value={status}>{status}</SelectItem>
+                  {STATUS_OPTIONS.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {status}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-700 mb-1 block">From Date</label>
+              <label className="text-xs font-medium text-gray-700 mb-1 block">
+                From Date
+              </label>
               <Input
                 type="date"
                 className="h-8"
                 value={filters.dateFrom}
-                onChange={(e) => setFilters(prev => ({ ...prev, dateFrom: e.target.value }))}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, dateFrom: e.target.value }))
+                }
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-700 mb-1 block">To Date</label>
+              <label className="text-xs font-medium text-gray-700 mb-1 block">
+                To Date
+              </label>
               <Input
                 type="date"
                 className="h-8"
                 value={filters.dateTo}
-                onChange={(e) => setFilters(prev => ({ ...prev, dateTo: e.target.value }))}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, dateTo: e.target.value }))
+                }
               />
             </div>
           </div>
@@ -606,12 +682,18 @@ export default function GPSDataEntrySpreadsheet({
             <div className="h-96 flex items-center justify-center bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg">
               <div className="text-center">
                 <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-600 mb-2">Map View</h3>
+                <h3 className="text-lg font-semibold text-gray-600 mb-2">
+                  Map View
+                </h3>
                 <p className="text-gray-500">
                   Interactive map showing GPS points and road progress
                 </p>
                 <p className="text-xs text-gray-400 mt-2">
-                  {filteredEntries.filter(e => e.latitude && e.longitude).length} GPS points recorded
+                  {
+                    filteredEntries.filter((e) => e.latitude && e.longitude)
+                      .length
+                  }{" "}
+                  GPS points recorded
                 </p>
               </div>
             </div>
@@ -626,11 +708,7 @@ export default function GPSDataEntrySpreadsheet({
             <CardTitle className="text-sm font-medium">
               GPS Data Entries ({filteredEntries.length} records)
             </CardTitle>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={fetchGPSEntries}
-            >
+            <Button variant="outline" size="sm" onClick={fetchGPSEntries}>
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
             </Button>
@@ -641,29 +719,56 @@ export default function GPSDataEntrySpreadsheet({
             <table className="w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Date</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Province</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">District</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Phase</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Task</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Chainage (km)</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Latitude</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Longitude</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Comments</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Actions</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Province
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    District
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Phase
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Task
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Chainage (km)
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Latitude
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Longitude
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Comments
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredEntries.map((entry) => (
-                  <tr key={entry.id} className={entry.isNew ? 'bg-blue-50' : ''}>
+                  <tr
+                    key={entry.id}
+                    className={entry.isNew ? "bg-blue-50" : ""}
+                  >
                     {/* Date */}
                     <td className="px-3 py-2 whitespace-nowrap text-sm">
                       {entry.isEditing ? (
                         <Input
                           type="date"
                           value={entry.date}
-                          onChange={(e) => updateEntry(entry.id!, 'date', e.target.value)}
+                          onChange={(e) =>
+                            updateEntry(entry.id!, "date", e.target.value)
+                          }
                           className="h-7 text-xs"
                         />
                       ) : (
@@ -676,12 +781,14 @@ export default function GPSDataEntrySpreadsheet({
                       {entry.isEditing ? (
                         <Input
                           value={entry.province}
-                          onChange={(e) => updateEntry(entry.id!, 'province', e.target.value)}
+                          onChange={(e) =>
+                            updateEntry(entry.id!, "province", e.target.value)
+                          }
                           className="h-7 text-xs"
                           placeholder="Province"
                         />
                       ) : (
-                        entry.province || '-'
+                        entry.province || "-"
                       )}
                     </td>
 
@@ -690,12 +797,14 @@ export default function GPSDataEntrySpreadsheet({
                       {entry.isEditing ? (
                         <Input
                           value={entry.district}
-                          onChange={(e) => updateEntry(entry.id!, 'district', e.target.value)}
+                          onChange={(e) =>
+                            updateEntry(entry.id!, "district", e.target.value)
+                          }
                           className="h-7 text-xs"
                           placeholder="District"
                         />
                       ) : (
-                        entry.district || '-'
+                        entry.district || "-"
                       )}
                     </td>
 
@@ -705,21 +814,23 @@ export default function GPSDataEntrySpreadsheet({
                         <Select
                           value={entry.phase}
                           onValueChange={(value) => {
-                            updateEntry(entry.id!, 'phase', value);
-                            updateEntry(entry.id!, 'task', ''); // Reset task when phase changes
+                            updateEntry(entry.id!, "phase", value);
+                            updateEntry(entry.id!, "task", ""); // Reset task when phase changes
                           }}
                         >
                           <SelectTrigger className="h-7 text-xs">
                             <SelectValue placeholder="Select phase" />
                           </SelectTrigger>
                           <SelectContent>
-                            {CONSTRUCTION_PHASES.map(phase => (
-                              <SelectItem key={phase} value={phase}>{phase}</SelectItem>
+                            {CONSTRUCTION_PHASES.map((phase) => (
+                              <SelectItem key={phase} value={phase}>
+                                {phase}
+                              </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       ) : (
-                        entry.phase || '-'
+                        entry.phase || "-"
                       )}
                     </td>
 
@@ -728,20 +839,27 @@ export default function GPSDataEntrySpreadsheet({
                       {entry.isEditing ? (
                         <Select
                           value={entry.task}
-                          onValueChange={(value) => updateEntry(entry.id!, 'task', value)}
+                          onValueChange={(value) =>
+                            updateEntry(entry.id!, "task", value)
+                          }
                           disabled={!entry.phase}
                         >
                           <SelectTrigger className="h-7 text-xs">
                             <SelectValue placeholder="Select task" />
                           </SelectTrigger>
                           <SelectContent>
-                            {entry.phase && PHASE_TASKS[entry.phase as keyof typeof PHASE_TASKS]?.map(task => (
-                              <SelectItem key={task} value={task}>{task}</SelectItem>
-                            ))}
+                            {entry.phase &&
+                              PHASE_TASKS[
+                                entry.phase as keyof typeof PHASE_TASKS
+                              ]?.map((task) => (
+                                <SelectItem key={task} value={task}>
+                                  {task}
+                                </SelectItem>
+                              ))}
                           </SelectContent>
                         </Select>
                       ) : (
-                        entry.task || '-'
+                        entry.task || "-"
                       )}
                     </td>
 
@@ -752,7 +870,13 @@ export default function GPSDataEntrySpreadsheet({
                           type="number"
                           step="0.01"
                           value={entry.chainage}
-                          onChange={(e) => updateEntry(entry.id!, 'chainage', Number.parseFloat(e.target.value) || 0)}
+                          onChange={(e) =>
+                            updateEntry(
+                              entry.id!,
+                              "chainage",
+                              Number.parseFloat(e.target.value) || 0,
+                            )
+                          }
                           className="h-7 text-xs"
                           placeholder="0.00"
                         />
@@ -769,7 +893,13 @@ export default function GPSDataEntrySpreadsheet({
                             type="number"
                             step="0.000001"
                             value={entry.latitude}
-                            onChange={(e) => updateEntry(entry.id!, 'latitude', Number.parseFloat(e.target.value) || 0)}
+                            onChange={(e) =>
+                              updateEntry(
+                                entry.id!,
+                                "latitude",
+                                Number.parseFloat(e.target.value) || 0,
+                              )
+                            }
                             className="h-7 text-xs"
                             placeholder="-6.314993"
                           />
@@ -795,7 +925,13 @@ export default function GPSDataEntrySpreadsheet({
                           type="number"
                           step="0.000001"
                           value={entry.longitude}
-                          onChange={(e) => updateEntry(entry.id!, 'longitude', Number.parseFloat(e.target.value) || 0)}
+                          onChange={(e) =>
+                            updateEntry(
+                              entry.id!,
+                              "longitude",
+                              Number.parseFloat(e.target.value) || 0,
+                            )
+                          }
                           className="h-7 text-xs"
                           placeholder="143.95555"
                         />
@@ -809,19 +945,25 @@ export default function GPSDataEntrySpreadsheet({
                       {entry.isEditing ? (
                         <Select
                           value={entry.status}
-                          onValueChange={(value) => updateEntry(entry.id!, 'status', value)}
+                          onValueChange={(value) =>
+                            updateEntry(entry.id!, "status", value)
+                          }
                         >
                           <SelectTrigger className="h-7 text-xs">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {STATUS_OPTIONS.map(status => (
-                              <SelectItem key={status} value={status}>{status}</SelectItem>
+                            {STATUS_OPTIONS.map((status) => (
+                              <SelectItem key={status} value={status}>
+                                {status}
+                              </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       ) : (
-                        <Badge className={`text-xs ${getStatusColor(entry.status)}`}>
+                        <Badge
+                          className={`text-xs ${getStatusColor(entry.status)}`}
+                        >
                           {entry.status}
                         </Badge>
                       )}
@@ -832,13 +974,18 @@ export default function GPSDataEntrySpreadsheet({
                       {entry.isEditing ? (
                         <Input
                           value={entry.comments}
-                          onChange={(e) => updateEntry(entry.id!, 'comments', e.target.value)}
+                          onChange={(e) =>
+                            updateEntry(entry.id!, "comments", e.target.value)
+                          }
                           className="h-7 text-xs"
                           placeholder="Add comments..."
                         />
                       ) : (
-                        <div className="max-w-32 truncate" title={entry.comments}>
-                          {entry.comments || '-'}
+                        <div
+                          className="max-w-32 truncate"
+                          title={entry.comments}
+                        >
+                          {entry.comments || "-"}
                         </div>
                       )}
                     </td>
@@ -855,7 +1002,11 @@ export default function GPSDataEntrySpreadsheet({
                               disabled={saving}
                               className="h-6 w-6 p-0"
                             >
-                              {saving ? <Clock className="h-3 w-3" /> : <Save className="h-3 w-3" />}
+                              {saving ? (
+                                <Clock className="h-3 w-3" />
+                              ) : (
+                                <Save className="h-3 w-3" />
+                              )}
                             </Button>
                             <Button
                               size="sm"
@@ -897,7 +1048,9 @@ export default function GPSDataEntrySpreadsheet({
               <div className="text-center py-8 text-gray-500">
                 <MapPin className="h-8 w-8 mx-auto mb-2 text-gray-400" />
                 <p>No GPS data entries found</p>
-                <p className="text-sm">Click "Add Row" to create your first entry</p>
+                <p className="text-sm">
+                  Click "Add Row" to create your first entry
+                </p>
               </div>
             )}
           </div>

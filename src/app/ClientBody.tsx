@@ -1,8 +1,8 @@
 "use client";
 
-import { useAuth } from "@/contexts/AuthContext";
-import LoginForm from "@/components/LoginForm";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import LoginForm from "@/components/LoginForm";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function ClientBody({
   children,

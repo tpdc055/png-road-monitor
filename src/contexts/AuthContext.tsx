@@ -1,12 +1,23 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import {
+  type ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'ADMIN' | 'PROJECT_MANAGER' | 'SITE_ENGINEER' | 'FINANCIAL_OFFICER' | 'VIEWER';
+  role:
+    | "ADMIN"
+    | "PROJECT_MANAGER"
+    | "SITE_ENGINEER"
+    | "FINANCIAL_OFFICER"
+    | "VIEWER";
 }
 
 interface AuthContextType {
@@ -26,18 +37,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       // BYPASS LOGIN - Auto-login as demo admin user
       const demoUser: User = {
-        id: 'demo-admin-001',
-        name: 'Demo Administrator',
-        email: 'admin@png.gov.pg',
-        role: 'ADMIN'
+        id: "demo-admin-001",
+        name: "Demo Administrator",
+        email: "admin@png.gov.pg",
+        role: "ADMIN",
       };
 
-      console.log('🚀 BYPASS MODE: Auto-logging in as demo admin');
+      console.log("🚀 BYPASS MODE: Auto-logging in as demo admin");
       setUser(demoUser);
 
       // Also save to localStorage for consistency
       localStorage.setItem("png_road_monitor_user", JSON.stringify(demoUser));
-
     } catch (error) {
       console.error("Auto-login error:", error);
     } finally {
@@ -55,33 +65,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // BYPASS - Just set demo user based on email
       const demoUsers: Record<string, User> = {
-        'admin@png.gov.pg': {
-          id: 'demo-admin-001',
-          name: 'Demo Administrator',
-          email: 'admin@png.gov.pg',
-          role: 'ADMIN'
+        "admin@png.gov.pg": {
+          id: "demo-admin-001",
+          name: "Demo Administrator",
+          email: "admin@png.gov.pg",
+          role: "ADMIN",
         },
-        'manager@png.gov.pg': {
-          id: 'demo-manager-001',
-          name: 'Demo Project Manager',
-          email: 'manager@png.gov.pg',
-          role: 'PROJECT_MANAGER'
+        "manager@png.gov.pg": {
+          id: "demo-manager-001",
+          name: "Demo Project Manager",
+          email: "manager@png.gov.pg",
+          role: "PROJECT_MANAGER",
         },
-        'engineer@png.gov.pg': {
-          id: 'demo-engineer-001',
-          name: 'Demo Site Engineer',
-          email: 'engineer@png.gov.pg',
-          role: 'SITE_ENGINEER'
+        "engineer@png.gov.pg": {
+          id: "demo-engineer-001",
+          name: "Demo Site Engineer",
+          email: "engineer@png.gov.pg",
+          role: "SITE_ENGINEER",
         },
-        'finance@png.gov.pg': {
-          id: 'demo-finance-001',
-          name: 'Demo Financial Officer',
-          email: 'finance@png.gov.pg',
-          role: 'FINANCIAL_OFFICER'
-        }
+        "finance@png.gov.pg": {
+          id: "demo-finance-001",
+          name: "Demo Financial Officer",
+          email: "finance@png.gov.pg",
+          role: "FINANCIAL_OFFICER",
+        },
       };
 
-      const userData = demoUsers[email] || demoUsers['admin@png.gov.pg'];
+      const userData = demoUsers[email] || demoUsers["admin@png.gov.pg"];
 
       // Save user to localStorage for persistence
       localStorage.setItem("png_road_monitor_user", JSON.stringify(userData));
@@ -125,14 +135,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     login,
     logout,
-    isLoading
+    isLoading,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

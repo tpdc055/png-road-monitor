@@ -1,25 +1,31 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { Badge } from "@/components/ui/badge";
 import {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  MapPin,
-  Calendar,
-  Clock,
-  AlertTriangle,
-  CheckCircle,
-  BarChart3,
-  Users,
-  Truck,
-  Target,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import {
   Activity,
-  FileText
-} from 'lucide-react';
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  FileText,
+  MapPin,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Truck,
+  Users,
+} from "lucide-react";
+import React, { useState, useEffect } from "react";
 
 interface Project {
   id: string;
@@ -63,11 +69,14 @@ interface ProjectMetrics {
   recentGPSEntries: number;
   budgetVariance: number;
   scheduleVariance: number;
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: "low" | "medium" | "high";
   weatherImpact: number;
 }
 
-export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }: ProjectDashboardProps) {
+export default function ProjectDashboard({
+  project,
+  userRole = "SITE_ENGINEER",
+}: ProjectDashboardProps) {
   const [metrics, setMetrics] = useState<ProjectMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [alerts, setAlerts] = useState<any[]>([]);
@@ -97,15 +106,21 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
         totalMilestones: 12,
         averageGPSAccuracy: 3.5 + Math.random() * 2,
         recentGPSEntries: Math.floor(Math.random() * 20) + 10,
-        budgetVariance: ((project.spent / project.budget) - (project.progress / 100)) * 100,
+        budgetVariance:
+          (project.spent / project.budget - project.progress / 100) * 100,
         scheduleVariance: project.progress - calculateScheduleProgress(),
-        riskLevel: getBudgetVariance() > 10 ? 'high' : getBudgetVariance() > 5 ? 'medium' : 'low',
+        riskLevel:
+          getBudgetVariance() > 10
+            ? "high"
+            : getBudgetVariance() > 5
+              ? "medium"
+              : "low",
         weatherImpact: Math.random() * 20,
       };
 
       setMetrics(mockMetrics);
     } catch (error) {
-      console.error('Error fetching project metrics:', error);
+      console.error("Error fetching project metrics:", error);
     } finally {
       setLoading(false);
     }
@@ -116,28 +131,29 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
     const mockAlerts = [
       {
         id: 1,
-        type: 'BUDGET_EXCEEDED',
-        severity: 'high',
-        title: 'Budget Variance Alert',
-        message: 'Project spending is 8% above planned budget for current progress',
+        type: "BUDGET_EXCEEDED",
+        severity: "high",
+        title: "Budget Variance Alert",
+        message:
+          "Project spending is 8% above planned budget for current progress",
         createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
         isRead: false,
       },
       {
         id: 2,
-        type: 'SCHEDULE_DELAY',
-        severity: 'medium',
-        title: 'Schedule Variance',
-        message: 'Earthworks phase is 3 days behind schedule due to weather',
+        type: "SCHEDULE_DELAY",
+        severity: "medium",
+        title: "Schedule Variance",
+        message: "Earthworks phase is 3 days behind schedule due to weather",
         createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000),
         isRead: false,
       },
       {
         id: 3,
-        type: 'MILESTONE_APPROACHING',
-        severity: 'low',
-        title: 'Upcoming Milestone',
-        message: 'Subbase completion milestone due in 5 days',
+        type: "MILESTONE_APPROACHING",
+        severity: "low",
+        title: "Upcoming Milestone",
+        message: "Subbase completion milestone due in 5 days",
         createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
         isRead: true,
       },
@@ -151,30 +167,30 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
     const mockActivities = [
       {
         id: 1,
-        type: 'gps_entry',
-        description: 'GPS data entry recorded at chainage 25.5km',
-        user: 'James Peter',
+        type: "gps_entry",
+        description: "GPS data entry recorded at chainage 25.5km",
+        user: "James Peter",
         timestamp: new Date(Date.now() - 30 * 60 * 1000),
       },
       {
         id: 2,
-        type: 'phase_update',
-        description: 'Earthworks phase progress updated to 75%',
-        user: 'Michael Kila',
+        type: "phase_update",
+        description: "Earthworks phase progress updated to 75%",
+        user: "Michael Kila",
         timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
       },
       {
         id: 3,
-        type: 'financial_entry',
-        description: 'Equipment rental expense recorded - PGK 45,000',
-        user: 'Mary Thomas',
+        type: "financial_entry",
+        description: "Equipment rental expense recorded - PGK 45,000",
+        user: "Mary Thomas",
         timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000),
       },
       {
         id: 4,
-        type: 'milestone_completed',
-        description: 'Site clearance milestone completed',
-        user: 'System',
+        type: "milestone_completed",
+        description: "Site clearance milestone completed",
+        user: "System",
         timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000),
       },
     ];
@@ -196,38 +212,46 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
   };
 
   const getBudgetVariance = () => {
-    return ((project.spent / project.budget) - (project.progress / 100)) * 100;
+    return (project.spent / project.budget - project.progress / 100) * 100;
   };
 
   const getProgressColor = (progress: number) => {
-    if (progress >= 90) return 'text-green-600';
-    if (progress >= 70) return 'text-blue-600';
-    if (progress >= 50) return 'text-yellow-600';
-    return 'text-red-600';
+    if (progress >= 90) return "text-green-600";
+    if (progress >= 70) return "text-blue-600";
+    if (progress >= 50) return "text-yellow-600";
+    return "text-red-600";
   };
 
   const getRiskColor = (level: string) => {
     switch (level) {
-      case 'low': return 'bg-green-100 text-green-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'high': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "low":
+        return "bg-green-100 text-green-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "high":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getAlertIcon = (severity: string) => {
     switch (severity) {
-      case 'high': return <AlertTriangle className="h-4 w-4 text-red-500" />;
-      case 'medium': return <Clock className="h-4 w-4 text-yellow-500" />;
-      case 'low': return <CheckCircle className="h-4 w-4 text-blue-500" />;
-      default: return <Activity className="h-4 w-4 text-gray-500" />;
+      case "high":
+        return <AlertTriangle className="h-4 w-4 text-red-500" />;
+      case "medium":
+        return <Clock className="h-4 w-4 text-yellow-500" />;
+      case "low":
+        return <CheckCircle className="h-4 w-4 text-blue-500" />;
+      default:
+        return <Activity className="h-4 w-4 text-gray-500" />;
     }
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-PG', {
-      style: 'currency',
-      currency: 'PGK',
+    return new Intl.NumberFormat("en-PG", {
+      style: "currency",
+      currency: "PGK",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
@@ -238,11 +262,11 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
   };
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-PG', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Intl.DateTimeFormat("en-PG", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     }).format(date);
   };
 
@@ -266,12 +290,17 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Physical Progress</p>
-                <p className={`text-2xl font-bold ${getProgressColor(project.progress)}`}>
+                <p className="text-sm font-medium text-gray-600">
+                  Physical Progress
+                </p>
+                <p
+                  className={`text-2xl font-bold ${getProgressColor(project.progress)}`}
+                >
                   {project.progress.toFixed(1)}%
                 </p>
                 <p className="text-xs text-gray-500">
-                  {formatDistance(project.completedDistance || 0)} of {formatDistance(project.totalDistance || 0)}
+                  {formatDistance(project.completedDistance || 0)} of{" "}
+                  {formatDistance(project.totalDistance || 0)}
                 </p>
               </div>
               <TrendingUp className="h-8 w-8 text-blue-500" />
@@ -285,17 +314,25 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Financial Progress</p>
-                <p className={`text-2xl font-bold ${getProgressColor(metrics?.financialProgress || 0)}`}>
+                <p className="text-sm font-medium text-gray-600">
+                  Financial Progress
+                </p>
+                <p
+                  className={`text-2xl font-bold ${getProgressColor(metrics?.financialProgress || 0)}`}
+                >
                   {((project.spent / project.budget) * 100).toFixed(1)}%
                 </p>
                 <p className="text-xs text-gray-500">
-                  {formatCurrency(project.spent)} of {formatCurrency(project.budget)}
+                  {formatCurrency(project.spent)} of{" "}
+                  {formatCurrency(project.budget)}
                 </p>
               </div>
               <DollarSign className="h-8 w-8 text-green-500" />
             </div>
-            <Progress value={(project.spent / project.budget) * 100} className="mt-2" />
+            <Progress
+              value={(project.spent / project.budget) * 100}
+              className="mt-2"
+            />
           </CardContent>
         </Card>
 
@@ -304,15 +341,18 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Schedule Progress</p>
-                <p className={`text-2xl font-bold ${getProgressColor(metrics?.scheduleProgress || 0)}`}>
+                <p className="text-sm font-medium text-gray-600">
+                  Schedule Progress
+                </p>
+                <p
+                  className={`text-2xl font-bold ${getProgressColor(metrics?.scheduleProgress || 0)}`}
+                >
                   {(metrics?.scheduleProgress || 0).toFixed(1)}%
                 </p>
                 <p className="text-xs text-gray-500">
-                  {project.endDate ?
-                    `Due ${new Date(project.endDate).toLocaleDateString()}` :
-                    'No end date set'
-                  }
+                  {project.endDate
+                    ? `Due ${new Date(project.endDate).toLocaleDateString()}`
+                    : "No end date set"}
                 </p>
               </div>
               <Calendar className="h-8 w-8 text-purple-500" />
@@ -326,13 +366,15 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Quality Score</p>
-                <p className={`text-2xl font-bold ${getProgressColor(metrics?.qualityScore || 0)}`}>
+                <p className="text-sm font-medium text-gray-600">
+                  Quality Score
+                </p>
+                <p
+                  className={`text-2xl font-bold ${getProgressColor(metrics?.qualityScore || 0)}`}
+                >
                   {(metrics?.qualityScore || 0).toFixed(0)}%
                 </p>
-                <p className="text-xs text-gray-500">
-                  Based on inspections
-                </p>
+                <p className="text-xs text-gray-500">Based on inspections</p>
               </div>
               <Target className="h-8 w-8 text-orange-500" />
             </div>
@@ -360,7 +402,13 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
                     {metrics?.completedTasks} / {metrics?.totalTasks}
                   </span>
                 </div>
-                <Progress value={((metrics?.completedTasks || 0) / (metrics?.totalTasks || 1)) * 100} />
+                <Progress
+                  value={
+                    ((metrics?.completedTasks || 0) /
+                      (metrics?.totalTasks || 1)) *
+                    100
+                  }
+                />
               </div>
 
               <div className="space-y-2">
@@ -370,20 +418,30 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
                     {metrics?.milestonesCompleted} / {metrics?.totalMilestones}
                   </span>
                 </div>
-                <Progress value={((metrics?.milestonesCompleted || 0) / (metrics?.totalMilestones || 1)) * 100} />
+                <Progress
+                  value={
+                    ((metrics?.milestonesCompleted || 0) /
+                      (metrics?.totalMilestones || 1)) *
+                    100
+                  }
+                />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4 pt-4 border-t">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">{metrics?.activeWorkers}</div>
+                <div className="text-2xl font-bold text-blue-600">
+                  {metrics?.activeWorkers}
+                </div>
                 <div className="text-sm text-gray-600 flex items-center justify-center gap-1">
                   <Users className="h-4 w-4" />
                   Active Workers
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">{metrics?.equipmentCount}</div>
+                <div className="text-2xl font-bold text-green-600">
+                  {metrics?.equipmentCount}
+                </div>
                 <div className="text-sm text-gray-600 flex items-center justify-center gap-1">
                   <Truck className="h-4 w-4" />
                   Equipment Units
@@ -427,7 +485,13 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
                   {formatDistance(project.completedDistance || 0)} mapped
                 </span>
               </div>
-              <Progress value={(project.completedDistance || 0) / (project.totalDistance || 1) * 100} />
+              <Progress
+                value={
+                  ((project.completedDistance || 0) /
+                    (project.totalDistance || 1)) *
+                  100
+                }
+              />
             </div>
           </CardContent>
         </Card>
@@ -443,7 +507,7 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
                 <AlertTriangle className="h-5 w-5" />
                 Project Alerts
               </CardTitle>
-              <Badge className={getRiskColor(metrics?.riskLevel || 'low')}>
+              <Badge className={getRiskColor(metrics?.riskLevel || "low")}>
                 {metrics?.riskLevel.toUpperCase()} RISK
               </Badge>
             </div>
@@ -454,13 +518,15 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
                 alerts.map((alert) => (
                   <div
                     key={alert.id}
-                    className={`p-3 rounded-lg border ${alert.isRead ? 'bg-gray-50' : 'bg-white border-l-4 border-l-orange-500'}`}
+                    className={`p-3 rounded-lg border ${alert.isRead ? "bg-gray-50" : "bg-white border-l-4 border-l-orange-500"}`}
                   >
                     <div className="flex items-start gap-2">
                       {getAlertIcon(alert.severity)}
                       <div className="flex-1">
                         <h4 className="text-sm font-medium">{alert.title}</h4>
-                        <p className="text-xs text-gray-600 mt-1">{alert.message}</p>
+                        <p className="text-xs text-gray-600 mt-1">
+                          {alert.message}
+                        </p>
                         <p className="text-xs text-gray-500 mt-2">
                           {formatDate(alert.createdAt)}
                         </p>
@@ -493,9 +559,13 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
                 <div key={activity.id} className="flex items-start gap-3 p-2">
                   <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium">{activity.description}</p>
+                    <p className="text-sm font-medium">
+                      {activity.description}
+                    </p>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-gray-500">by {activity.user}</span>
+                      <span className="text-xs text-gray-500">
+                        by {activity.user}
+                      </span>
                       <span className="text-xs text-gray-400">•</span>
                       <span className="text-xs text-gray-500">
                         {formatDate(activity.timestamp)}
@@ -520,22 +590,30 @@ export default function ProjectDashboard({ project, userRole = 'SITE_ENGINEER' }
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center p-4 bg-red-50 rounded-lg">
-              <div className={`text-2xl font-bold ${getBudgetVariance() > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                {getBudgetVariance() > 0 ? '+' : ''}{getBudgetVariance().toFixed(1)}%
+              <div
+                className={`text-2xl font-bold ${getBudgetVariance() > 0 ? "text-red-600" : "text-green-600"}`}
+              >
+                {getBudgetVariance() > 0 ? "+" : ""}
+                {getBudgetVariance().toFixed(1)}%
               </div>
               <div className="text-sm text-gray-600">Budget Variance</div>
               <div className="text-xs text-gray-500 mt-1">
-                {getBudgetVariance() > 0 ? 'Over budget' : 'Under budget'}
+                {getBudgetVariance() > 0 ? "Over budget" : "Under budget"}
               </div>
             </div>
 
             <div className="text-center p-4 bg-yellow-50 rounded-lg">
-              <div className={`text-2xl font-bold ${(metrics?.scheduleVariance || 0) > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {(metrics?.scheduleVariance || 0) > 0 ? '+' : ''}{(metrics?.scheduleVariance || 0).toFixed(1)}%
+              <div
+                className={`text-2xl font-bold ${(metrics?.scheduleVariance || 0) > 0 ? "text-green-600" : "text-red-600"}`}
+              >
+                {(metrics?.scheduleVariance || 0) > 0 ? "+" : ""}
+                {(metrics?.scheduleVariance || 0).toFixed(1)}%
               </div>
               <div className="text-sm text-gray-600">Schedule Variance</div>
               <div className="text-xs text-gray-500 mt-1">
-                {(metrics?.scheduleVariance || 0) > 0 ? 'Ahead of schedule' : 'Behind schedule'}
+                {(metrics?.scheduleVariance || 0) > 0
+                  ? "Ahead of schedule"
+                  : "Behind schedule"}
               </div>
             </div>
 

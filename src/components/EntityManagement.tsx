@@ -1,49 +1,68 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import type {
+  Address,
+  ContactInfo,
+  Entity,
+  EntityCategory,
+  EntityType,
+  User,
+} from "@/types/connectpng";
+import {
+  Activity,
+  AlertTriangle,
+  Bell,
+  Briefcase,
+  Building,
   Building2,
-  Users,
-  Globe,
-  MapPin,
-  Phone,
-  Mail,
+  Calendar,
+  CheckCircle,
+  ChevronDown,
+  Database,
+  DollarSign,
+  Download,
   Edit,
+  Eye,
+  FileText,
+  Filter,
+  Flag,
+  Globe,
+  Lock,
+  Mail,
+  MapPin,
+  Network,
+  Phone,
   Plus,
   Search,
-  Filter,
-  ChevronDown,
-  Building,
-  Flag,
-  UserCheck,
   Settings,
   Shield,
-  CheckCircle,
-  AlertTriangle,
-  Eye,
-  Download,
-  Upload,
-  FileText,
-  DollarSign,
-  Calendar,
-  Activity,
-  Bell,
-  Lock,
-  Unlock,
   Star,
-  Database,
-  Network,
-  Briefcase
-} from 'lucide-react';
-import type { Entity, EntityType, EntityCategory, User, ContactInfo, Address } from '@/types/connectpng';
+  Unlock,
+  Upload,
+  UserCheck,
+  Users,
+} from "lucide-react";
+import React, { useState, useEffect } from "react";
 
 interface EntityManagementProps {
   userRole?: string;
@@ -52,295 +71,439 @@ interface EntityManagementProps {
 
 // Enhanced Entity Categories for Connect PNG Program - Organized with dropdown structure
 const CONNECT_PNG_ENTITIES = {
-  'CENTRAL_GOVERNMENT': {
-    label: 'Central Government Agencies',
+  CENTRAL_GOVERNMENT: {
+    label: "Central Government Agencies",
     icon: Building2,
-    color: 'bg-blue-100 text-blue-800',
-    description: 'Core government departments managing Connect PNG program',
+    color: "bg-blue-100 text-blue-800",
+    description: "Core government departments managing Connect PNG program",
     entities: [
-      'Department of Works & Highways',
-      'Department of National Planning & Monitoring',
-      'National Road Authority',
-      'Department of Transport',
-      'Department of Finance & Treasury',
-      'Prime Minister\'s Office',
-      'Department of Provincial & Local Government Affairs',
-      'National Planning & Monitoring Department',
-      'Treasury Department',
-      'Public Service Commission',
-      'Auditor General\'s Office',
-      'Ombudsman Commission'
-    ]
+      "Department of Works & Highways",
+      "Department of National Planning & Monitoring",
+      "National Road Authority",
+      "Department of Transport",
+      "Department of Finance & Treasury",
+      "Prime Minister's Office",
+      "Department of Provincial & Local Government Affairs",
+      "National Planning & Monitoring Department",
+      "Treasury Department",
+      "Public Service Commission",
+      "Auditor General's Office",
+      "Ombudsman Commission",
+    ],
   },
-  'PROVINCIAL_DISTRICT': {
-    label: 'Provincial & District Offices',
+  PROVINCIAL_DISTRICT: {
+    label: "Provincial & District Offices",
     icon: MapPin,
-    color: 'bg-green-100 text-green-800',
-    description: 'Provincial and district level implementing agencies',
+    color: "bg-green-100 text-green-800",
+    description: "Provincial and district level implementing agencies",
     entities: [
-      'Western Highlands Provincial Works',
-      'National Capital District Works',
-      'Eastern Highlands Provincial Works',
-      'Morobe Provincial Works',
-      'Southern Highlands Provincial Works',
-      'Central Provincial Works',
-      'Milne Bay Provincial Works',
-      'Northern Provincial Works',
-      'Gulf Provincial Works',
-      'Hela Provincial Works',
-      'Jiwaka Provincial Works',
-      'Chimbu Provincial Works',
-      'Madang Provincial Works',
-      'East Sepik Provincial Works',
-      'West Sepik Provincial Works',
-      'Manus Provincial Works',
-      'New Ireland Provincial Works',
-      'East New Britain Provincial Works',
-      'West New Britain Provincial Works',
-      'Bougainville Provincial Works',
-      'Enga Provincial Works',
-      'All District Works Offices'
-    ]
+      "Western Highlands Provincial Works",
+      "National Capital District Works",
+      "Eastern Highlands Provincial Works",
+      "Morobe Provincial Works",
+      "Southern Highlands Provincial Works",
+      "Central Provincial Works",
+      "Milne Bay Provincial Works",
+      "Northern Provincial Works",
+      "Gulf Provincial Works",
+      "Hela Provincial Works",
+      "Jiwaka Provincial Works",
+      "Chimbu Provincial Works",
+      "Madang Provincial Works",
+      "East Sepik Provincial Works",
+      "West Sepik Provincial Works",
+      "Manus Provincial Works",
+      "New Ireland Provincial Works",
+      "East New Britain Provincial Works",
+      "West New Britain Provincial Works",
+      "Bougainville Provincial Works",
+      "Enga Provincial Works",
+      "All District Works Offices",
+    ],
   },
-  'INTERNATIONAL_DONORS': {
-    label: 'International Development Partners',
+  INTERNATIONAL_DONORS: {
+    label: "International Development Partners",
     icon: Globe,
-    color: 'bg-purple-100 text-purple-800',
-    description: 'Multilateral development finance institutions',
+    color: "bg-purple-100 text-purple-800",
+    description: "Multilateral development finance institutions",
     entities: [
-      'Asian Development Bank (ADB)',
-      'World Bank Group',
-      'International Monetary Fund (IMF)',
-      'United Nations Development Programme (UNDP)',
-      'European Union Delegation',
-      'International Finance Corporation (IFC)',
-      'European Investment Bank',
-      'Islamic Development Bank',
-      'Pacific Islands Development Forum',
-      'ASEAN+3 Infrastructure Fund'
-    ]
+      "Asian Development Bank (ADB)",
+      "World Bank Group",
+      "International Monetary Fund (IMF)",
+      "United Nations Development Programme (UNDP)",
+      "European Union Delegation",
+      "International Finance Corporation (IFC)",
+      "European Investment Bank",
+      "Islamic Development Bank",
+      "Pacific Islands Development Forum",
+      "ASEAN+3 Infrastructure Fund",
+    ],
   },
-  'BILATERAL_PARTNERS': {
-    label: 'Bilateral Development Partners',
+  BILATERAL_PARTNERS: {
+    label: "Bilateral Development Partners",
     icon: Flag,
-    color: 'bg-orange-100 text-orange-800',
-    description: 'Country-to-country development cooperation agencies',
+    color: "bg-orange-100 text-orange-800",
+    description: "Country-to-country development cooperation agencies",
     entities: [
-      'Australian Department of Foreign Affairs & Trade (DFAT)',
-      'Japan International Cooperation Agency (JICA)',
-      'New Zealand Ministry of Foreign Affairs & Trade',
-      'United States Agency for International Development (USAID)',
-      'Chinese Embassy Development Cooperation',
-      'Korean International Cooperation Agency (KOICA)',
-      'German Development Cooperation (GIZ)',
-      'French Development Agency (AFD)',
-      'Indonesian Technical Cooperation',
-      'Malaysian Technical Cooperation Programme'
-    ]
+      "Australian Department of Foreign Affairs & Trade (DFAT)",
+      "Japan International Cooperation Agency (JICA)",
+      "New Zealand Ministry of Foreign Affairs & Trade",
+      "United States Agency for International Development (USAID)",
+      "Chinese Embassy Development Cooperation",
+      "Korean International Cooperation Agency (KOICA)",
+      "German Development Cooperation (GIZ)",
+      "French Development Agency (AFD)",
+      "Indonesian Technical Cooperation",
+      "Malaysian Technical Cooperation Programme",
+    ],
   },
-  'CONTRACTORS_CONSULTANTS': {
-    label: 'Contractors & Consultants',
+  CONTRACTORS_CONSULTANTS: {
+    label: "Contractors & Consultants",
     icon: Building,
-    color: 'bg-yellow-100 text-yellow-800',
-    description: 'Construction companies and technical consultants',
+    color: "bg-yellow-100 text-yellow-800",
+    description: "Construction companies and technical consultants",
     entities: [
-      'PNG Local Construction Companies',
-      'International Construction Contractors',
-      'Engineering Consulting Firms',
-      'Project Management Consultants',
-      'Equipment Suppliers & Operators',
-      'Material Suppliers',
-      'Transport & Logistics Companies',
-      'Technical Advisory Services',
-      'Quality Assurance Consultants',
-      'Environmental Consultants',
-      'Social Development Consultants',
-      'Financial Advisory Services'
-    ]
+      "PNG Local Construction Companies",
+      "International Construction Contractors",
+      "Engineering Consulting Firms",
+      "Project Management Consultants",
+      "Equipment Suppliers & Operators",
+      "Material Suppliers",
+      "Transport & Logistics Companies",
+      "Technical Advisory Services",
+      "Quality Assurance Consultants",
+      "Environmental Consultants",
+      "Social Development Consultants",
+      "Financial Advisory Services",
+    ],
   },
-  'FINANCIAL_INSTITUTIONS': {
-    label: 'Financial Institutions & Services',
+  FINANCIAL_INSTITUTIONS: {
+    label: "Financial Institutions & Services",
     icon: DollarSign,
-    color: 'bg-indigo-100 text-indigo-800',
-    description: 'Banking and financial service providers',
+    color: "bg-indigo-100 text-indigo-800",
+    description: "Banking and financial service providers",
     entities: [
-      'Bank of Papua New Guinea',
-      'PNG Commercial Banks',
-      'Development Finance Institutions',
-      'Microfinance Institutions',
-      'Insurance Companies',
-      'Financial Advisory Services',
-      'Accounting & Audit Firms',
-      'Payment System Providers',
-      'Foreign Exchange Services',
-      'Investment Management Companies'
-    ]
+      "Bank of Papua New Guinea",
+      "PNG Commercial Banks",
+      "Development Finance Institutions",
+      "Microfinance Institutions",
+      "Insurance Companies",
+      "Financial Advisory Services",
+      "Accounting & Audit Firms",
+      "Payment System Providers",
+      "Foreign Exchange Services",
+      "Investment Management Companies",
+    ],
   },
-  'COMMUNITY_STAKEHOLDERS': {
-    label: 'Community & Civil Society',
+  COMMUNITY_STAKEHOLDERS: {
+    label: "Community & Civil Society",
     icon: Users,
-    color: 'bg-pink-100 text-pink-800',
-    description: 'Community groups and civil society organizations',
+    color: "bg-pink-100 text-pink-800",
+    description: "Community groups and civil society organizations",
     entities: [
-      'Local Community Groups',
-      'Landowner Associations',
-      'Women\'s Groups & Cooperatives',
-      'Youth Organizations',
-      'Church Groups & Religious Organizations',
-      'Traditional Authorities & Chiefs',
-      'Civil Society Organizations',
-      'Non-Governmental Organizations (NGOs)',
-      'Community-Based Organizations (CBOs)',
-      'Professional Associations',
-      'Trade Unions',
-      'Cultural Groups'
-    ]
+      "Local Community Groups",
+      "Landowner Associations",
+      "Women's Groups & Cooperatives",
+      "Youth Organizations",
+      "Church Groups & Religious Organizations",
+      "Traditional Authorities & Chiefs",
+      "Civil Society Organizations",
+      "Non-Governmental Organizations (NGOs)",
+      "Community-Based Organizations (CBOs)",
+      "Professional Associations",
+      "Trade Unions",
+      "Cultural Groups",
+    ],
   },
-  'REGULATORY_OVERSIGHT': {
-    label: 'Regulatory & Oversight Bodies',
+  REGULATORY_OVERSIGHT: {
+    label: "Regulatory & Oversight Bodies",
     icon: Shield,
-    color: 'bg-teal-100 text-teal-800',
-    description: 'Regulatory agencies and oversight institutions',
+    color: "bg-teal-100 text-teal-800",
+    description: "Regulatory agencies and oversight institutions",
     entities: [
-      'National Procurement Commission',
-      'Independent Consumer & Competition Commission',
-      'Environment & Conservation Authority',
-      'Mineral Resources Authority',
-      'National Fisheries Authority',
-      'Civil Aviation Safety Authority',
-      'PNG Harbours Board',
-      'Technical Standards Authority',
-      'Transparency International PNG',
-      'PNG Institute of Engineers'
-    ]
+      "National Procurement Commission",
+      "Independent Consumer & Competition Commission",
+      "Environment & Conservation Authority",
+      "Mineral Resources Authority",
+      "National Fisheries Authority",
+      "Civil Aviation Safety Authority",
+      "PNG Harbours Board",
+      "Technical Standards Authority",
+      "Transparency International PNG",
+      "PNG Institute of Engineers",
+    ],
   },
-  'ACADEMIC_RESEARCH': {
-    label: 'Academic & Research Institutions',
+  ACADEMIC_RESEARCH: {
+    label: "Academic & Research Institutions",
     icon: UserCheck,
-    color: 'bg-cyan-100 text-cyan-800',
-    description: 'Universities, research institutes, and training organizations',
+    color: "bg-cyan-100 text-cyan-800",
+    description:
+      "Universities, research institutes, and training organizations",
     entities: [
-      'University of Papua New Guinea',
-      'Papua New Guinea University of Technology',
-      'Divine Word University',
-      'Pacific Adventist University',
-      'PNG Institute of Public Administration',
-      'Construction Industry Training Authority',
-      'National Research Institute',
-      'PNG Forest Research Institute',
-      'International Training Institutes',
-      'Technical & Vocational Education Training Centers'
-    ]
+      "University of Papua New Guinea",
+      "Papua New Guinea University of Technology",
+      "Divine Word University",
+      "Pacific Adventist University",
+      "PNG Institute of Public Administration",
+      "Construction Industry Training Authority",
+      "National Research Institute",
+      "PNG Forest Research Institute",
+      "International Training Institutes",
+      "Technical & Vocational Education Training Centers",
+    ],
   },
-  'MEDIA_COMMUNICATIONS': {
-    label: 'Media & Communications',
+  MEDIA_COMMUNICATIONS: {
+    label: "Media & Communications",
     icon: Network,
-    color: 'bg-rose-100 text-rose-800',
-    description: 'Media organizations and communication platforms',
+    color: "bg-rose-100 text-rose-800",
+    description: "Media organizations and communication platforms",
     entities: [
-      'National Broadcasting Corporation',
-      'The National Newspaper',
-      'Post-Courier',
-      'FM Radio Stations',
-      'Television Broadcasters',
-      'Online Media Platforms',
-      'Community Radio Stations',
-      'Social Media Platforms',
-      'Government Information Services',
-      'Provincial Media Outlets'
-    ]
-  }
+      "National Broadcasting Corporation",
+      "The National Newspaper",
+      "Post-Courier",
+      "FM Radio Stations",
+      "Television Broadcasters",
+      "Online Media Platforms",
+      "Community Radio Stations",
+      "Social Media Platforms",
+      "Government Information Services",
+      "Provincial Media Outlets",
+    ],
+  },
 };
 
 // Stakeholder-specific role mappings
 const STAKEHOLDER_ROLES = {
-  'CENTRAL_GOVERNMENT': ['GOVERNMENT_ADMIN', 'PROJECT_MANAGER', 'FINANCIAL_OFFICER', 'COMPLIANCE_OFFICER'],
-  'PROVINCIAL_DISTRICT': ['PROVINCIAL_ADMIN', 'DISTRICT_ADMIN', 'SITE_ENGINEER', 'LOCAL_COORDINATOR'],
-  'INTERNATIONAL_DONORS': ['DONOR_ADMIN', 'PROGRAM_MANAGER', 'FINANCIAL_ANALYST', 'COMPLIANCE_MONITOR'],
-  'BILATERAL_PARTNERS': ['BILATERAL_ADMIN', 'PROGRAM_OFFICER', 'TECHNICAL_ADVISOR', 'LIAISON_OFFICER'],
-  'CONTRACTORS_CONSULTANTS': ['CONTRACTOR_ADMIN', 'PROJECT_COORDINATOR', 'SITE_SUPERVISOR', 'QUALITY_MANAGER'],
-  'FINANCIAL_INSTITUTIONS': ['FINANCE_ADMIN', 'LOAN_OFFICER', 'RISK_MANAGER', 'AUDIT_SPECIALIST'],
-  'COMMUNITY_STAKEHOLDERS': ['COMMUNITY_LIAISON', 'BENEFICIARY_REP', 'FEEDBACK_COORDINATOR', 'ADVOCACY_OFFICER'],
-  'REGULATORY_OVERSIGHT': ['REGULATORY_OFFICER', 'COMPLIANCE_AUDITOR', 'STANDARDS_INSPECTOR', 'OVERSIGHT_MANAGER'],
-  'ACADEMIC_RESEARCH': ['RESEARCH_COORDINATOR', 'ACADEMIC_ADVISOR', 'TRAINING_MANAGER', 'KNOWLEDGE_OFFICER'],
-  'MEDIA_COMMUNICATIONS': ['MEDIA_LIAISON', 'COMMUNICATIONS_OFFICER', 'PUBLIC_RELATIONS', 'CONTENT_MANAGER']
+  CENTRAL_GOVERNMENT: [
+    "GOVERNMENT_ADMIN",
+    "PROJECT_MANAGER",
+    "FINANCIAL_OFFICER",
+    "COMPLIANCE_OFFICER",
+  ],
+  PROVINCIAL_DISTRICT: [
+    "PROVINCIAL_ADMIN",
+    "DISTRICT_ADMIN",
+    "SITE_ENGINEER",
+    "LOCAL_COORDINATOR",
+  ],
+  INTERNATIONAL_DONORS: [
+    "DONOR_ADMIN",
+    "PROGRAM_MANAGER",
+    "FINANCIAL_ANALYST",
+    "COMPLIANCE_MONITOR",
+  ],
+  BILATERAL_PARTNERS: [
+    "BILATERAL_ADMIN",
+    "PROGRAM_OFFICER",
+    "TECHNICAL_ADVISOR",
+    "LIAISON_OFFICER",
+  ],
+  CONTRACTORS_CONSULTANTS: [
+    "CONTRACTOR_ADMIN",
+    "PROJECT_COORDINATOR",
+    "SITE_SUPERVISOR",
+    "QUALITY_MANAGER",
+  ],
+  FINANCIAL_INSTITUTIONS: [
+    "FINANCE_ADMIN",
+    "LOAN_OFFICER",
+    "RISK_MANAGER",
+    "AUDIT_SPECIALIST",
+  ],
+  COMMUNITY_STAKEHOLDERS: [
+    "COMMUNITY_LIAISON",
+    "BENEFICIARY_REP",
+    "FEEDBACK_COORDINATOR",
+    "ADVOCACY_OFFICER",
+  ],
+  REGULATORY_OVERSIGHT: [
+    "REGULATORY_OFFICER",
+    "COMPLIANCE_AUDITOR",
+    "STANDARDS_INSPECTOR",
+    "OVERSIGHT_MANAGER",
+  ],
+  ACADEMIC_RESEARCH: [
+    "RESEARCH_COORDINATOR",
+    "ACADEMIC_ADVISOR",
+    "TRAINING_MANAGER",
+    "KNOWLEDGE_OFFICER",
+  ],
+  MEDIA_COMMUNICATIONS: [
+    "MEDIA_LIAISON",
+    "COMMUNICATIONS_OFFICER",
+    "PUBLIC_RELATIONS",
+    "CONTENT_MANAGER",
+  ],
 };
 
 // Enhanced dashboard configurations for each entity type
 const ENTITY_DASHBOARDS = {
-  'CENTRAL_GOVERNMENT': {
-    primaryMetrics: ['Total Program Budget', 'Projects Active', 'Provinces Covered', 'Completion Rate'],
-    keyViews: ['Program Overview', 'Financial Summary', 'Provincial Status', 'Donor Relations'],
-    reports: ['Executive Summary', 'Parliamentary Brief', 'Cabinet Report', 'Donor Updates']
+  CENTRAL_GOVERNMENT: {
+    primaryMetrics: [
+      "Total Program Budget",
+      "Projects Active",
+      "Provinces Covered",
+      "Completion Rate",
+    ],
+    keyViews: [
+      "Program Overview",
+      "Financial Summary",
+      "Provincial Status",
+      "Donor Relations",
+    ],
+    reports: [
+      "Executive Summary",
+      "Parliamentary Brief",
+      "Cabinet Report",
+      "Donor Updates",
+    ],
   },
-  'PROVINCIAL_DISTRICT': {
-    primaryMetrics: ['Local Projects', 'Budget Allocated', 'Completion Status', 'Community Feedback'],
-    keyViews: ['Project Progress', 'Local Contractors', 'Community Engagement', 'Maintenance Needs'],
-    reports: ['Provincial Summary', 'District Reports', 'Community Updates', 'Maintenance Schedule']
+  PROVINCIAL_DISTRICT: {
+    primaryMetrics: [
+      "Local Projects",
+      "Budget Allocated",
+      "Completion Status",
+      "Community Feedback",
+    ],
+    keyViews: [
+      "Project Progress",
+      "Local Contractors",
+      "Community Engagement",
+      "Maintenance Needs",
+    ],
+    reports: [
+      "Provincial Summary",
+      "District Reports",
+      "Community Updates",
+      "Maintenance Schedule",
+    ],
   },
-  'INTERNATIONAL_DONORS': {
-    primaryMetrics: ['Funding Committed', 'Disbursement Rate', 'Project Performance', 'Impact Indicators'],
-    keyViews: ['Portfolio Overview', 'Disbursement Tracking', 'Results Framework', 'Risk Management'],
-    reports: ['Donor Report', 'Results Measurement', 'Fiduciary Report', 'Social Safeguards']
+  INTERNATIONAL_DONORS: {
+    primaryMetrics: [
+      "Funding Committed",
+      "Disbursement Rate",
+      "Project Performance",
+      "Impact Indicators",
+    ],
+    keyViews: [
+      "Portfolio Overview",
+      "Disbursement Tracking",
+      "Results Framework",
+      "Risk Management",
+    ],
+    reports: [
+      "Donor Report",
+      "Results Measurement",
+      "Fiduciary Report",
+      "Social Safeguards",
+    ],
   },
-  'BILATERAL_PARTNERS': {
-    primaryMetrics: ['Bilateral Funding', 'Technical Assistance', 'Capacity Building', 'Partnership Impact'],
-    keyViews: ['Partnership Programs', 'Technical Support', 'Knowledge Transfer', 'Diplomatic Relations'],
-    reports: ['Partnership Report', 'Technical Progress', 'Diplomatic Brief', 'Cooperation Summary']
+  BILATERAL_PARTNERS: {
+    primaryMetrics: [
+      "Bilateral Funding",
+      "Technical Assistance",
+      "Capacity Building",
+      "Partnership Impact",
+    ],
+    keyViews: [
+      "Partnership Programs",
+      "Technical Support",
+      "Knowledge Transfer",
+      "Diplomatic Relations",
+    ],
+    reports: [
+      "Partnership Report",
+      "Technical Progress",
+      "Diplomatic Brief",
+      "Cooperation Summary",
+    ],
   },
-  'CONTRACTORS_CONSULTANTS': {
-    primaryMetrics: ['Active Contracts', 'Work Progress', 'Payment Status', 'Quality Scores'],
-    keyViews: ['Contract Management', 'Site Progress', 'Resource Planning', 'Quality Control'],
-    reports: ['Progress Report', 'Financial Claims', 'Quality Report', 'Completion Certificate']
-  }
+  CONTRACTORS_CONSULTANTS: {
+    primaryMetrics: [
+      "Active Contracts",
+      "Work Progress",
+      "Payment Status",
+      "Quality Scores",
+    ],
+    keyViews: [
+      "Contract Management",
+      "Site Progress",
+      "Resource Planning",
+      "Quality Control",
+    ],
+    reports: [
+      "Progress Report",
+      "Financial Claims",
+      "Quality Report",
+      "Completion Certificate",
+    ],
+  },
 };
 
 const PROVINCES = [
-  'National Capital District', 'Central Province', 'Milne Bay Province',
-  'Northern Province', 'Southern Highlands Province', 'Western Highlands Province',
-  'Enga Province', 'Western Province', 'Gulf Province', 'Hela Province',
-  'Jiwaka Province', 'Chimbu Province', 'Eastern Highlands Province',
-  'Morobe Province', 'Madang Province', 'East Sepik Province',
-  'West Sepik Province', 'Manus Province', 'New Ireland Province',
-  'East New Britain Province', 'West New Britain Province', 'Bougainville Province'
+  "National Capital District",
+  "Central Province",
+  "Milne Bay Province",
+  "Northern Province",
+  "Southern Highlands Province",
+  "Western Highlands Province",
+  "Enga Province",
+  "Western Province",
+  "Gulf Province",
+  "Hela Province",
+  "Jiwaka Province",
+  "Chimbu Province",
+  "Eastern Highlands Province",
+  "Morobe Province",
+  "Madang Province",
+  "East Sepik Province",
+  "West Sepik Province",
+  "Manus Province",
+  "New Ireland Province",
+  "East New Britain Province",
+  "West New Britain Province",
+  "Bougainville Province",
 ];
 
-export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityManagementProps) {
+export default function EntityManagement({
+  userRole = "ADMIN",
+  userId,
+}: EntityManagementProps) {
   const [entities, setEntities] = useState<Entity[]>([]);
   const [users, setUsers] = useState<User[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>("ALL");
+  const [searchTerm, setSearchTerm] = useState("");
   const [showAddEntity, setShowAddEntity] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState<Entity | null>(null);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(true);
   const [showEntityDetails, setShowEntityDetails] = useState(false);
 
   // Enhanced form states
   const [entityForm, setEntityForm] = useState({
-    name: '',
-    type: '' as EntityType,
-    category: '' as EntityCategory,
-    description: '',
+    name: "",
+    type: "" as EntityType,
+    category: "" as EntityCategory,
+    description: "",
     contactInfo: {
-      primaryPhone: '',
-      secondaryPhone: '',
-      email: '',
-      alternateEmail: '',
-      website: ''
+      primaryPhone: "",
+      secondaryPhone: "",
+      email: "",
+      alternateEmail: "",
+      website: "",
     } as ContactInfo,
     address: {
-      street: '',
-      city: '',
-      province: '',
-      district: '',
-      postalCode: '',
-      country: 'Papua New Guinea'
+      street: "",
+      city: "",
+      province: "",
+      district: "",
+      postalCode: "",
+      country: "Papua New Guinea",
     } as Address,
-    stakeholderRole: '',
-    fundingCapacity: '',
+    stakeholderRole: "",
+    fundingCapacity: "",
     technicalExpertise: [] as string[],
-    partnerships: [] as string[]
+    partnerships: [] as string[],
   });
 
   useEffect(() => {
@@ -354,121 +517,126 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
       // Enhanced mock data representing Connect PNG stakeholders
       const mockEntities: Entity[] = [
         {
-          id: 'entity-001',
-          name: 'Department of Works & Highways',
-          type: 'GOVERNMENT_DEPARTMENT',
-          category: 'CENTRAL_GOVERNMENT',
-          description: 'Lead central government agency responsible for road infrastructure development, maintenance, and oversight of the Connect PNG program',
+          id: "entity-001",
+          name: "Department of Works & Highways",
+          type: "GOVERNMENT_DEPARTMENT",
+          category: "CENTRAL_GOVERNMENT",
+          description:
+            "Lead central government agency responsible for road infrastructure development, maintenance, and oversight of the Connect PNG program",
           contactInfo: {
-            primaryPhone: '+675 321 4567',
-            secondaryPhone: '+675 321 4568',
-            email: 'secretary@works.gov.pg',
-            alternateEmail: 'info@works.gov.pg',
-            website: 'https://works.gov.pg'
+            primaryPhone: "+675 321 4567",
+            secondaryPhone: "+675 321 4568",
+            email: "secretary@works.gov.pg",
+            alternateEmail: "info@works.gov.pg",
+            website: "https://works.gov.pg",
           },
           address: {
-            street: 'Morauta Haus, Champion Parade',
-            city: 'Port Moresby',
-            province: 'National Capital District',
-            country: 'Papua New Guinea',
-            coordinates: { latitude: -9.4438, longitude: 147.1803 }
+            street: "Morauta Haus, Champion Parade",
+            city: "Port Moresby",
+            province: "National Capital District",
+            country: "Papua New Guinea",
+            coordinates: { latitude: -9.4438, longitude: 147.1803 },
           },
           isActive: true,
-          createdAt: new Date('2024-01-15'),
-          updatedAt: new Date('2024-12-15')
+          createdAt: new Date("2024-01-15"),
+          updatedAt: new Date("2024-12-15"),
         },
         {
-          id: 'entity-002',
-          name: 'Asian Development Bank (ADB)',
-          type: 'DONOR_AGENCY',
-          category: 'INTERNATIONAL_DONORS',
-          description: 'Major multilateral development finance institution providing funding and technical assistance for Connect PNG program',
+          id: "entity-002",
+          name: "Asian Development Bank (ADB)",
+          type: "DONOR_AGENCY",
+          category: "INTERNATIONAL_DONORS",
+          description:
+            "Major multilateral development finance institution providing funding and technical assistance for Connect PNG program",
           contactInfo: {
-            primaryPhone: '+675 321 1234',
-            email: 'png@adb.org',
-            website: 'https://adb.org/countries/papua-new-guinea'
+            primaryPhone: "+675 321 1234",
+            email: "png@adb.org",
+            website: "https://adb.org/countries/papua-new-guinea",
           },
           address: {
-            street: 'Level 3, Deloitte Tower, Douglas Street',
-            city: 'Port Moresby',
-            province: 'National Capital District',
-            country: 'Papua New Guinea',
-            coordinates: { latitude: -9.4456, longitude: 147.1832 }
+            street: "Level 3, Deloitte Tower, Douglas Street",
+            city: "Port Moresby",
+            province: "National Capital District",
+            country: "Papua New Guinea",
+            coordinates: { latitude: -9.4456, longitude: 147.1832 },
           },
           isActive: true,
-          createdAt: new Date('2024-01-10'),
-          updatedAt: new Date('2024-12-10')
+          createdAt: new Date("2024-01-10"),
+          updatedAt: new Date("2024-12-10"),
         },
         {
-          id: 'entity-003',
-          name: 'Australian Department of Foreign Affairs & Trade (DFAT)',
-          type: 'DONOR_AGENCY',
-          category: 'BILATERAL_PARTNERS',
-          description: 'Key bilateral development partner providing funding and technical cooperation for PNG infrastructure development',
+          id: "entity-003",
+          name: "Australian Department of Foreign Affairs & Trade (DFAT)",
+          type: "DONOR_AGENCY",
+          category: "BILATERAL_PARTNERS",
+          description:
+            "Key bilateral development partner providing funding and technical cooperation for PNG infrastructure development",
           contactInfo: {
-            primaryPhone: '+675 325 9333',
-            email: 'ausaid.png@dfat.gov.au',
-            website: 'https://png.embassy.gov.au'
+            primaryPhone: "+675 325 9333",
+            email: "ausaid.png@dfat.gov.au",
+            website: "https://png.embassy.gov.au",
           },
           address: {
-            street: 'Godwit Street, Red Hill',
-            city: 'Port Moresby',
-            province: 'National Capital District',
-            country: 'Papua New Guinea',
-            coordinates: { latitude: -9.4215, longitude: 147.1803 }
+            street: "Godwit Street, Red Hill",
+            city: "Port Moresby",
+            province: "National Capital District",
+            country: "Papua New Guinea",
+            coordinates: { latitude: -9.4215, longitude: 147.1803 },
           },
           isActive: true,
-          createdAt: new Date('2024-01-08'),
-          updatedAt: new Date('2024-12-08')
+          createdAt: new Date("2024-01-08"),
+          updatedAt: new Date("2024-12-08"),
         },
         {
-          id: 'entity-004',
-          name: 'Western Highlands Provincial Works',
-          type: 'PROVINCIAL_OFFICE',
-          category: 'PROVINCIAL_DISTRICT',
-          description: 'Provincial government office responsible for implementing Connect PNG projects in Western Highlands Province',
+          id: "entity-004",
+          name: "Western Highlands Provincial Works",
+          type: "PROVINCIAL_OFFICE",
+          category: "PROVINCIAL_DISTRICT",
+          description:
+            "Provincial government office responsible for implementing Connect PNG projects in Western Highlands Province",
           contactInfo: {
-            primaryPhone: '+675 542 1234',
-            email: 'works@whp.gov.pg',
-            website: 'https://whp.gov.pg/works'
+            primaryPhone: "+675 542 1234",
+            email: "works@whp.gov.pg",
+            website: "https://whp.gov.pg/works",
           },
           address: {
-            street: 'Provincial Government Building, Highlands Highway',
-            city: 'Mount Hagen',
-            province: 'Western Highlands Province',
-            country: 'Papua New Guinea',
-            coordinates: { latitude: -5.8536, longitude: 144.2302 }
+            street: "Provincial Government Building, Highlands Highway",
+            city: "Mount Hagen",
+            province: "Western Highlands Province",
+            country: "Papua New Guinea",
+            coordinates: { latitude: -5.8536, longitude: 144.2302 },
           },
           isActive: true,
-          createdAt: new Date('2024-02-01'),
-          updatedAt: new Date('2024-12-01')
+          createdAt: new Date("2024-02-01"),
+          updatedAt: new Date("2024-12-01"),
         },
         {
-          id: 'entity-005',
-          name: 'Japan International Cooperation Agency (JICA)',
-          type: 'DONOR_AGENCY',
-          category: 'BILATERAL_PARTNERS',
-          description: 'Japanese bilateral development agency supporting PNG infrastructure and capacity building programs',
+          id: "entity-005",
+          name: "Japan International Cooperation Agency (JICA)",
+          type: "DONOR_AGENCY",
+          category: "BILATERAL_PARTNERS",
+          description:
+            "Japanese bilateral development agency supporting PNG infrastructure and capacity building programs",
           contactInfo: {
-            primaryPhone: '+675 325 6420',
-            email: 'png_office@jica.go.jp',
-            website: 'https://www.jica.go.jp/png'
+            primaryPhone: "+675 325 6420",
+            email: "png_office@jica.go.jp",
+            website: "https://www.jica.go.jp/png",
           },
           address: {
-            street: 'Level 1, Vulupindi Haus, Poreporena Freeway',
-            city: 'Port Moresby',
-            province: 'National Capital District',
-            country: 'Papua New Guinea',
-            coordinates: { latitude: -9.4647, longitude: 147.1925 }
+            street: "Level 1, Vulupindi Haus, Poreporena Freeway",
+            city: "Port Moresby",
+            province: "National Capital District",
+            country: "Papua New Guinea",
+            coordinates: { latitude: -9.4647, longitude: 147.1925 },
           },
           isActive: true,
-          createdAt: new Date('2024-01-12'),
-          updatedAt: new Date('2024-12-12')
-        }
+          createdAt: new Date("2024-01-12"),
+          updatedAt: new Date("2024-12-12"),
+        },
       ];
       setEntities(mockEntities);
     } catch (error) {
-      console.error('Error loading entities:', error);
+      console.error("Error loading entities:", error);
     } finally {
       setLoading(false);
     }
@@ -479,57 +647,57 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
       // Enhanced mock user data with stakeholder-specific roles
       const mockUsers: User[] = [
         {
-          id: 'user-001',
-          name: 'David Wereh',
-          email: 'd.wereh@works.gov.pg',
-          role: 'GOVERNMENT_ADMIN',
-          entity: 'GOVERNMENT_DEPARTMENT',
-          entityId: 'entity-001',
+          id: "user-001",
+          name: "David Wereh",
+          email: "d.wereh@works.gov.pg",
+          role: "GOVERNMENT_ADMIN",
+          entity: "GOVERNMENT_DEPARTMENT",
+          entityId: "entity-001",
           permissions: [],
           isActive: true,
           contactInfo: {
-            primaryPhone: '+675 321 4567',
-            email: 'd.wereh@works.gov.pg'
+            primaryPhone: "+675 321 4567",
+            email: "d.wereh@works.gov.pg",
           },
-          createdAt: new Date('2024-01-15'),
-          updatedAt: new Date('2024-12-15')
+          createdAt: new Date("2024-01-15"),
+          updatedAt: new Date("2024-12-15"),
         },
         {
-          id: 'user-002',
-          name: 'Sarah Wilson',
-          email: 's.wilson@adb.org',
-          role: 'DONOR_ADMIN',
-          entity: 'DONOR_AGENCY',
-          entityId: 'entity-002',
+          id: "user-002",
+          name: "Sarah Wilson",
+          email: "s.wilson@adb.org",
+          role: "DONOR_ADMIN",
+          entity: "DONOR_AGENCY",
+          entityId: "entity-002",
           permissions: [],
           isActive: true,
           contactInfo: {
-            primaryPhone: '+675 321 1234',
-            email: 's.wilson@adb.org'
+            primaryPhone: "+675 321 1234",
+            email: "s.wilson@adb.org",
           },
-          createdAt: new Date('2024-01-10'),
-          updatedAt: new Date('2024-12-10')
+          createdAt: new Date("2024-01-10"),
+          updatedAt: new Date("2024-12-10"),
         },
         {
-          id: 'user-003',
-          name: 'Michael Thompson',
-          email: 'm.thompson@dfat.gov.au',
-          role: 'BILATERAL_ADMIN',
-          entity: 'DONOR_AGENCY',
-          entityId: 'entity-003',
+          id: "user-003",
+          name: "Michael Thompson",
+          email: "m.thompson@dfat.gov.au",
+          role: "BILATERAL_ADMIN",
+          entity: "DONOR_AGENCY",
+          entityId: "entity-003",
           permissions: [],
           isActive: true,
           contactInfo: {
-            primaryPhone: '+675 325 9333',
-            email: 'm.thompson@dfat.gov.au'
+            primaryPhone: "+675 325 9333",
+            email: "m.thompson@dfat.gov.au",
           },
-          createdAt: new Date('2024-01-08'),
-          updatedAt: new Date('2024-12-08')
-        }
+          createdAt: new Date("2024-01-08"),
+          updatedAt: new Date("2024-12-08"),
+        },
       ];
       setUsers(mockUsers);
     } catch (error) {
-      console.error('Error loading users:', error);
+      console.error("Error loading users:", error);
     }
   };
 
@@ -540,67 +708,77 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
         ...entityForm,
         isActive: true,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
-      setEntities(prev => [...prev, newEntity]);
+      setEntities((prev) => [...prev, newEntity]);
       setShowAddEntity(false);
       resetForm();
     } catch (error) {
-      console.error('Error adding entity:', error);
+      console.error("Error adding entity:", error);
     }
   };
 
   const resetForm = () => {
     setEntityForm({
-      name: '',
-      type: '' as EntityType,
-      category: '' as EntityCategory,
-      description: '',
+      name: "",
+      type: "" as EntityType,
+      category: "" as EntityCategory,
+      description: "",
       contactInfo: {
-        primaryPhone: '',
-        secondaryPhone: '',
-        email: '',
-        alternateEmail: '',
-        website: ''
+        primaryPhone: "",
+        secondaryPhone: "",
+        email: "",
+        alternateEmail: "",
+        website: "",
       } as ContactInfo,
       address: {
-        street: '',
-        city: '',
-        province: '',
-        district: '',
-        postalCode: '',
-        country: 'Papua New Guinea'
+        street: "",
+        city: "",
+        province: "",
+        district: "",
+        postalCode: "",
+        country: "Papua New Guinea",
       } as Address,
-      stakeholderRole: '',
-      fundingCapacity: '',
+      stakeholderRole: "",
+      fundingCapacity: "",
       technicalExpertise: [],
-      partnerships: []
+      partnerships: [],
     });
   };
 
-  const filteredEntities = entities.filter(entity => {
-    const matchesSearch = entity.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         entity.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'ALL' || entity.category === selectedCategory;
+  const filteredEntities = entities.filter((entity) => {
+    const matchesSearch =
+      entity.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      entity.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "ALL" || entity.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   const getEntityStats = () => {
     const stats = {
       total: entities.length,
-      active: entities.filter(e => e.isActive).length,
+      active: entities.filter((e) => e.isActive).length,
       byCategory: {} as Record<string, number>,
       byType: {
-        government: entities.filter(e => e.category?.includes('GOVERNMENT')).length,
-        donors: entities.filter(e => e.category?.includes('DONOR') || e.category?.includes('BILATERAL')).length,
-        contractors: entities.filter(e => e.category?.includes('CONTRACTOR')).length,
-        community: entities.filter(e => e.category?.includes('COMMUNITY')).length
-      }
+        government: entities.filter((e) => e.category?.includes("GOVERNMENT"))
+          .length,
+        donors: entities.filter(
+          (e) =>
+            e.category?.includes("DONOR") || e.category?.includes("BILATERAL"),
+        ).length,
+        contractors: entities.filter((e) => e.category?.includes("CONTRACTOR"))
+          .length,
+        community: entities.filter((e) => e.category?.includes("COMMUNITY"))
+          .length,
+      },
     };
 
-    Object.keys(CONNECT_PNG_ENTITIES).forEach(category => {
-      stats.byCategory[category] = entities.filter(e => e.category === category).length;
+    Object.keys(CONNECT_PNG_ENTITIES).forEach((category) => {
+      stats.byCategory[category] = entities.filter(
+        (e) => e.category === category,
+      ).length;
     });
 
     return stats;
@@ -627,7 +805,9 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-3xl font-bold">{stats.byType.government}</div>
+                <div className="text-3xl font-bold">
+                  {stats.byType.government}
+                </div>
                 <div className="text-green-100">Government Entities</div>
               </div>
               <Flag className="h-10 w-10 text-green-200" />
@@ -666,7 +846,8 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
             Connect PNG Stakeholder Ecosystem
           </CardTitle>
           <CardDescription>
-            Comprehensive stakeholder mapping for the Connect PNG road infrastructure program
+            Comprehensive stakeholder mapping for the Connect PNG road
+            infrastructure program
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -676,32 +857,44 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
               const count = stats.byCategory[key] || 0;
 
               return (
-                <Card key={key} className="hover:shadow-lg transition-shadow cursor-pointer">
+                <Card
+                  key={key}
+                  className="hover:shadow-lg transition-shadow cursor-pointer"
+                >
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-3">
                       <div className={`p-3 rounded-lg ${category.color}`}>
                         <IconComponent className="h-6 w-6" />
                       </div>
                       <div className="flex-1">
-                        <CardTitle className="text-base leading-tight">{category.label}</CardTitle>
+                        <CardTitle className="text-base leading-tight">
+                          {category.label}
+                        </CardTitle>
                         <div className="text-sm text-gray-600 mt-1">
-                          {count} registered • {category.entities.length} total types
+                          {count} registered • {category.entities.length} total
+                          types
                         </div>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <p className="text-sm text-gray-600 mb-3">{category.description}</p>
+                    <p className="text-sm text-gray-600 mb-3">
+                      {category.description}
+                    </p>
                     <div className="space-y-1">
                       {category.entities.slice(0, 3).map((entity, index) => (
-                        <div key={index} className="text-xs text-gray-500 flex items-center gap-1">
+                        <div
+                          key={index}
+                          className="text-xs text-gray-500 flex items-center gap-1"
+                        >
                           <div className="w-1 h-1 bg-gray-400 rounded-full" />
                           {entity}
                         </div>
                       ))}
                       {category.entities.length > 3 && (
                         <div className="text-xs text-gray-400 italic">
-                          ... and {category.entities.length - 3} more entity types
+                          ... and {category.entities.length - 3} more entity
+                          types
                         </div>
                       )}
                     </div>
@@ -725,7 +918,9 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
       <Card>
         <CardHeader>
           <CardTitle>Recent Stakeholder Activity</CardTitle>
-          <CardDescription>Latest updates from Connect PNG stakeholders</CardDescription>
+          <CardDescription>
+            Latest updates from Connect PNG stakeholders
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -734,8 +929,12 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                 <Building2 className="h-5 w-5 text-blue-600" />
               </div>
               <div className="flex-1">
-                <div className="font-medium">Department of Works & Highways</div>
-                <div className="text-sm text-gray-600">Updated project status for Mt. Hagen-Kagamuga Road</div>
+                <div className="font-medium">
+                  Department of Works & Highways
+                </div>
+                <div className="text-sm text-gray-600">
+                  Updated project status for Mt. Hagen-Kagamuga Road
+                </div>
                 <div className="text-xs text-gray-500">2 hours ago</div>
               </div>
             </div>
@@ -745,7 +944,9 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
               </div>
               <div className="flex-1">
                 <div className="font-medium">Asian Development Bank</div>
-                <div className="text-sm text-gray-600">Submitted quarterly disbursement report</div>
+                <div className="text-sm text-gray-600">
+                  Submitted quarterly disbursement report
+                </div>
                 <div className="text-xs text-gray-500">5 hours ago</div>
               </div>
             </div>
@@ -755,7 +956,9 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
               </div>
               <div className="flex-1">
                 <div className="font-medium">DFAT Australia</div>
-                <div className="text-sm text-gray-600">Approved technical assistance package</div>
+                <div className="text-sm text-gray-600">
+                  Approved technical assistance package
+                </div>
                 <div className="text-xs text-gray-500">1 day ago</div>
               </div>
             </div>
@@ -770,9 +973,12 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
       {/* Enhanced Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Connect PNG Stakeholder Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Connect PNG Stakeholder Management
+          </h1>
           <p className="text-gray-600 mt-1">
-            Comprehensive stakeholder ecosystem management for the Connect PNG road infrastructure program
+            Comprehensive stakeholder ecosystem management for the Connect PNG
+            road infrastructure program
           </p>
         </div>
         <div className="flex gap-2">
@@ -818,9 +1024,7 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview">
-          {renderEntityOverview()}
-        </TabsContent>
+        <TabsContent value="overview">{renderEntityOverview()}</TabsContent>
 
         <TabsContent value="entities" className="space-y-4">
           {/* Search and Filter */}
@@ -836,7 +1040,10 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                 />
               </div>
             </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}
+            >
               <SelectTrigger className="w-full md:w-80">
                 <Filter className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Filter by stakeholder category" />
@@ -859,11 +1066,16 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
               const IconComponent = categoryInfo?.icon || Building2;
 
               return (
-                <Card key={entity.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+                <Card
+                  key={entity.id}
+                  className="hover:shadow-lg transition-shadow cursor-pointer"
+                >
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className={`p-2 rounded-lg ${categoryInfo?.color || 'bg-gray-100 text-gray-800'}`}>
+                        <div
+                          className={`p-2 rounded-lg ${categoryInfo?.color || "bg-gray-100 text-gray-800"}`}
+                        >
                           <IconComponent className="h-5 w-5" />
                         </div>
                         <div className="flex-1 min-w-0">
@@ -891,11 +1103,15 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                     <div className="space-y-2 text-sm text-gray-600">
                       <div className="flex items-center gap-2">
                         <MapPin className="h-3 w-3 flex-shrink-0" />
-                        <span className="line-clamp-1">{entity.address.city}, {entity.address.province}</span>
+                        <span className="line-clamp-1">
+                          {entity.address.city}, {entity.address.province}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Mail className="h-3 w-3 flex-shrink-0" />
-                        <span className="line-clamp-1">{entity.contactInfo.email}</span>
+                        <span className="line-clamp-1">
+                          {entity.contactInfo.email}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Phone className="h-3 w-3 flex-shrink-0" />
@@ -912,11 +1128,7 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                         <Eye className="h-3 w-3 mr-1" />
                         View
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1"
-                      >
+                      <Button variant="outline" size="sm" className="flex-1">
                         <Edit className="h-3 w-3 mr-1" />
                         Edit
                       </Button>
@@ -933,29 +1145,47 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
             <CardHeader>
               <CardTitle>Stakeholder User Management</CardTitle>
               <CardDescription>
-                Manage user accounts and access permissions across all Connect PNG stakeholders
+                Manage user accounts and access permissions across all Connect
+                PNG stakeholders
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {users.map((user) => (
-                  <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={user.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                         <span className="text-white font-semibold">
-                          {user.name.split(' ').map(n => n[0]).join('')}
+                          {user.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
                         </span>
                       </div>
                       <div>
                         <div className="font-medium">{user.name}</div>
-                        <div className="text-sm text-gray-600">{user.email}</div>
+                        <div className="text-sm text-gray-600">
+                          {user.email}
+                        </div>
                         <div className="flex items-center gap-2 mt-1">
-                          <Badge variant="outline">{user.role.replace('_', ' ')}</Badge>
-                          <Badge className={user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
-                            {user.isActive ? 'Active' : 'Inactive'}
+                          <Badge variant="outline">
+                            {user.role.replace("_", " ")}
+                          </Badge>
+                          <Badge
+                            className={
+                              user.isActive
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }
+                          >
+                            {user.isActive ? "Active" : "Inactive"}
                           </Badge>
                           <Badge variant="secondary" className="text-xs">
-                            {entities.find(e => e.id === user.entityId)?.name || 'Unknown Entity'}
+                            {entities.find((e) => e.id === user.entityId)
+                              ?.name || "Unknown Entity"}
                           </Badge>
                         </div>
                       </div>
@@ -982,27 +1212,51 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
           <Card>
             <CardContent className="p-12 text-center">
               <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Stakeholder Reports & Analytics</h3>
-              <p className="text-gray-600 mb-4">Generate comprehensive reports on stakeholder engagement and performance</p>
+              <h3 className="text-lg font-semibold mb-2">
+                Stakeholder Reports & Analytics
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Generate comprehensive reports on stakeholder engagement and
+                performance
+              </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card className="p-4">
-                  <div className="text-2xl font-bold text-blue-600">{stats.total}</div>
-                  <div className="text-sm text-gray-600">Total Stakeholders</div>
-                  <Button size="sm" className="mt-2 w-full bg-blue-600 hover:bg-blue-700">
+                  <div className="text-2xl font-bold text-blue-600">
+                    {stats.total}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    Total Stakeholders
+                  </div>
+                  <Button
+                    size="sm"
+                    className="mt-2 w-full bg-blue-600 hover:bg-blue-700"
+                  >
                     Directory Report
                   </Button>
                 </Card>
                 <Card className="p-4">
-                  <div className="text-2xl font-bold text-green-600">{stats.active}</div>
+                  <div className="text-2xl font-bold text-green-600">
+                    {stats.active}
+                  </div>
                   <div className="text-sm text-gray-600">Active Entities</div>
-                  <Button size="sm" className="mt-2 w-full bg-green-600 hover:bg-green-700">
+                  <Button
+                    size="sm"
+                    className="mt-2 w-full bg-green-600 hover:bg-green-700"
+                  >
                     Engagement Report
                   </Button>
                 </Card>
                 <Card className="p-4">
-                  <div className="text-2xl font-bold text-purple-600">{Object.keys(CONNECT_PNG_ENTITIES).length}</div>
-                  <div className="text-sm text-gray-600">Stakeholder Categories</div>
-                  <Button size="sm" className="mt-2 w-full bg-purple-600 hover:bg-purple-700">
+                  <div className="text-2xl font-bold text-purple-600">
+                    {Object.keys(CONNECT_PNG_ENTITIES).length}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    Stakeholder Categories
+                  </div>
+                  <Button
+                    size="sm"
+                    className="mt-2 w-full bg-purple-600 hover:bg-purple-700"
+                  >
                     Mapping Report
                   </Button>
                 </Card>
@@ -1015,8 +1269,12 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
           <Card>
             <CardContent className="p-12 text-center">
               <Settings className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">System Configuration</h3>
-              <p className="text-gray-600 mb-4">Configure stakeholder management settings and access controls</p>
+              <h3 className="text-lg font-semibold mb-2">
+                System Configuration
+              </h3>
+              <p className="text-gray-600 mb-4">
+                Configure stakeholder management settings and access controls
+              </p>
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Card className="p-4">
@@ -1024,15 +1282,21 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>Role-based Access</span>
-                        <Badge className="bg-green-100 text-green-800">Enabled</Badge>
+                        <Badge className="bg-green-100 text-green-800">
+                          Enabled
+                        </Badge>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>Multi-entity Support</span>
-                        <Badge className="bg-green-100 text-green-800">Active</Badge>
+                        <Badge className="bg-green-100 text-green-800">
+                          Active
+                        </Badge>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>Audit Logging</span>
-                        <Badge className="bg-green-100 text-green-800">Active</Badge>
+                        <Badge className="bg-green-100 text-green-800">
+                          Active
+                        </Badge>
                       </div>
                     </div>
                   </Card>
@@ -1041,15 +1305,21 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span>Financial Systems</span>
-                        <Badge className="bg-blue-100 text-blue-800">Connected</Badge>
+                        <Badge className="bg-blue-100 text-blue-800">
+                          Connected
+                        </Badge>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>Document Management</span>
-                        <Badge className="bg-blue-100 text-blue-800">Connected</Badge>
+                        <Badge className="bg-blue-100 text-blue-800">
+                          Connected
+                        </Badge>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>Reporting Engine</span>
-                        <Badge className="bg-blue-100 text-blue-800">Connected</Badge>
+                        <Badge className="bg-blue-100 text-blue-800">
+                          Connected
+                        </Badge>
                       </div>
                     </div>
                   </Card>
@@ -1066,7 +1336,9 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
           <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">Register New Connect PNG Stakeholder</h2>
+                <h2 className="text-2xl font-bold">
+                  Register New Connect PNG Stakeholder
+                </h2>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -1087,7 +1359,12 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                       <Input
                         id="name"
                         value={entityForm.name}
-                        onChange={(e) => setEntityForm(prev => ({ ...prev, name: e.target.value }))}
+                        onChange={(e) =>
+                          setEntityForm((prev) => ({
+                            ...prev,
+                            name: e.target.value,
+                          }))
+                        }
                         placeholder="Enter full entity name"
                       />
                     </div>
@@ -1095,17 +1372,24 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                       <Label htmlFor="category">Stakeholder Category *</Label>
                       <Select
                         value={entityForm.category}
-                        onValueChange={(value) => setEntityForm(prev => ({ ...prev, category: value as EntityCategory }))}
+                        onValueChange={(value) =>
+                          setEntityForm((prev) => ({
+                            ...prev,
+                            category: value as EntityCategory,
+                          }))
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select stakeholder category" />
                         </SelectTrigger>
                         <SelectContent>
-                          {Object.entries(CONNECT_PNG_ENTITIES).map(([key, category]) => (
-                            <SelectItem key={key} value={key}>
-                              {category.label}
-                            </SelectItem>
-                          ))}
+                          {Object.entries(CONNECT_PNG_ENTITIES).map(
+                            ([key, category]) => (
+                              <SelectItem key={key} value={key}>
+                                {category.label}
+                              </SelectItem>
+                            ),
+                          )}
                         </SelectContent>
                       </Select>
                     </div>
@@ -1116,7 +1400,12 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                     <Textarea
                       id="description"
                       value={entityForm.description}
-                      onChange={(e) => setEntityForm(prev => ({ ...prev, description: e.target.value }))}
+                      onChange={(e) =>
+                        setEntityForm((prev) => ({
+                          ...prev,
+                          description: e.target.value,
+                        }))
+                      }
                       placeholder="Describe the entity's role in Connect PNG program"
                       rows={3}
                     />
@@ -1133,10 +1422,15 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                         id="email"
                         type="email"
                         value={entityForm.contactInfo.email}
-                        onChange={(e) => setEntityForm(prev => ({
-                          ...prev,
-                          contactInfo: { ...prev.contactInfo, email: e.target.value }
-                        }))}
+                        onChange={(e) =>
+                          setEntityForm((prev) => ({
+                            ...prev,
+                            contactInfo: {
+                              ...prev.contactInfo,
+                              email: e.target.value,
+                            },
+                          }))
+                        }
                         placeholder="primary@entity.com"
                       />
                     </div>
@@ -1145,10 +1439,15 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                       <Input
                         id="phone"
                         value={entityForm.contactInfo.primaryPhone}
-                        onChange={(e) => setEntityForm(prev => ({
-                          ...prev,
-                          contactInfo: { ...prev.contactInfo, primaryPhone: e.target.value }
-                        }))}
+                        onChange={(e) =>
+                          setEntityForm((prev) => ({
+                            ...prev,
+                            contactInfo: {
+                              ...prev.contactInfo,
+                              primaryPhone: e.target.value,
+                            },
+                          }))
+                        }
                         placeholder="+675 XXX XXXX"
                       />
                     </div>
@@ -1158,10 +1457,15 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                         id="alt-email"
                         type="email"
                         value={entityForm.contactInfo.alternateEmail}
-                        onChange={(e) => setEntityForm(prev => ({
-                          ...prev,
-                          contactInfo: { ...prev.contactInfo, alternateEmail: e.target.value }
-                        }))}
+                        onChange={(e) =>
+                          setEntityForm((prev) => ({
+                            ...prev,
+                            contactInfo: {
+                              ...prev.contactInfo,
+                              alternateEmail: e.target.value,
+                            },
+                          }))
+                        }
                         placeholder="alternate@entity.com"
                       />
                     </div>
@@ -1170,10 +1474,15 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                       <Input
                         id="website"
                         value={entityForm.contactInfo.website}
-                        onChange={(e) => setEntityForm(prev => ({
-                          ...prev,
-                          contactInfo: { ...prev.contactInfo, website: e.target.value }
-                        }))}
+                        onChange={(e) =>
+                          setEntityForm((prev) => ({
+                            ...prev,
+                            contactInfo: {
+                              ...prev.contactInfo,
+                              website: e.target.value,
+                            },
+                          }))
+                        }
                         placeholder="https://www.entity.com"
                       />
                     </div>
@@ -1189,10 +1498,12 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                       <Input
                         id="city"
                         value={entityForm.address.city}
-                        onChange={(e) => setEntityForm(prev => ({
-                          ...prev,
-                          address: { ...prev.address, city: e.target.value }
-                        }))}
+                        onChange={(e) =>
+                          setEntityForm((prev) => ({
+                            ...prev,
+                            address: { ...prev.address, city: e.target.value },
+                          }))
+                        }
                         placeholder="Port Moresby"
                       />
                     </div>
@@ -1200,10 +1511,12 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                       <Label htmlFor="province">Province *</Label>
                       <Select
                         value={entityForm.address.province}
-                        onValueChange={(value) => setEntityForm(prev => ({
-                          ...prev,
-                          address: { ...prev.address, province: value }
-                        }))}
+                        onValueChange={(value) =>
+                          setEntityForm((prev) => ({
+                            ...prev,
+                            address: { ...prev.address, province: value },
+                          }))
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select province" />
@@ -1222,10 +1535,15 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                       <Input
                         id="street"
                         value={entityForm.address.street}
-                        onChange={(e) => setEntityForm(prev => ({
-                          ...prev,
-                          address: { ...prev.address, street: e.target.value }
-                        }))}
+                        onChange={(e) =>
+                          setEntityForm((prev) => ({
+                            ...prev,
+                            address: {
+                              ...prev.address,
+                              street: e.target.value,
+                            },
+                          }))
+                        }
                         placeholder="Street address and building details"
                       />
                     </div>
@@ -1236,7 +1554,11 @@ export default function EntityManagement({ userRole = 'ADMIN', userId }: EntityM
                   <Button
                     onClick={handleAddEntity}
                     className="flex-1 bg-blue-600 hover:bg-blue-700"
-                    disabled={!entityForm.name || !entityForm.category || !entityForm.contactInfo.email}
+                    disabled={
+                      !entityForm.name ||
+                      !entityForm.category ||
+                      !entityForm.contactInfo.email
+                    }
                   >
                     Register Stakeholder
                   </Button>

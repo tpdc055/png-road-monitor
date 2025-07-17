@@ -1,52 +1,76 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  DollarSign,
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Disbursement,
+  type DonorAgency,
+  FundingCondition,
+  FundingProgram,
+  type FundingSource,
+  PNG_COMMON_DONORS,
+  PNG_FUNDING_PROGRAMS,
+  ReportingRequirement,
+} from "@/types/financial";
+import {
+  AlertCircle,
+  Building,
   Calendar,
   CheckCircle,
   Clock,
-  AlertCircle,
-  Building,
+  DollarSign,
+  Edit,
+  Eye,
   FileText,
-  Users,
+  Plus,
   Target,
-  TrendingUp
+  Trash2,
+  TrendingUp,
+  Users,
 } from "lucide-react";
-import {
-  type FundingSource,
-  type DonorAgency,
-  FundingProgram,
-  Disbursement,
-  FundingCondition,
-  ReportingRequirement,
-  PNG_COMMON_DONORS,
-  PNG_FUNDING_PROGRAMS
-} from "@/types/financial";
+import { useEffect, useState } from "react";
 
 interface FundingSourcesManagerProps {
   projectId: string;
   projectName: string;
 }
 
-export default function FundingSourcesManager({ projectId, projectName }: FundingSourcesManagerProps) {
+export default function FundingSourcesManager({
+  projectId,
+  projectName,
+}: FundingSourcesManagerProps) {
   const [fundingSources, setFundingSources] = useState<FundingSource[]>([]);
   const [donorAgencies, setDonorAgencies] = useState<DonorAgency[]>([]);
   const [activeTab, setActiveTab] = useState("sources");
-  const [editingSource, setEditingSource] = useState<FundingSource | null>(null);
+  const [editingSource, setEditingSource] = useState<FundingSource | null>(
+    null,
+  );
   const [editingDonor, setEditingDonor] = useState<DonorAgency | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -75,7 +99,7 @@ export default function FundingSourcesManager({ projectId, projectName }: Fundin
         repaymentTerms: "20 years with 5-year grace period",
         conditions: [],
         disbursements: [],
-        reportingRequirements: []
+        reportingRequirements: [],
       },
       {
         id: "fs2",
@@ -92,7 +116,7 @@ export default function FundingSourcesManager({ projectId, projectName }: Fundin
         agreementDate: new Date("2023-08-20"),
         conditions: [],
         disbursements: [],
-        reportingRequirements: []
+        reportingRequirements: [],
       },
       {
         id: "fs3",
@@ -107,8 +131,8 @@ export default function FundingSourcesManager({ projectId, projectName }: Fundin
         status: "committed",
         conditions: [],
         disbursements: [],
-        reportingRequirements: []
-      }
+        reportingRequirements: [],
+      },
     ];
 
     // Mock donor agencies
@@ -126,8 +150,8 @@ export default function FundingSourcesManager({ projectId, projectName }: Fundin
           address: "Level 3, Pacific Place, Kumul Highway, Port Moresby",
           contactPerson: "PNG Resident Mission",
           phone: "+675 321 0400",
-          email: "adbpng@adb.org"
-        }
+          email: "adbpng@adb.org",
+        },
       },
       {
         id: "wb1",
@@ -137,13 +161,17 @@ export default function FundingSourcesManager({ projectId, projectName }: Fundin
         email: "jmitchell@worldbank.org",
         phone: "+675 321 1500",
         address: "Level 8, Pacific Place, Port Moresby",
-        specializations: ["Infrastructure", "Governance", "Economic Development"],
+        specializations: [
+          "Infrastructure",
+          "Governance",
+          "Economic Development",
+        ],
         pngOffice: {
           address: "Level 8, Pacific Place, Kumul Highway, Port Moresby",
           contactPerson: "PNG Country Office",
           phone: "+675 321 1500",
-          email: "png@worldbank.org"
-        }
+          email: "png@worldbank.org",
+        },
       },
       {
         id: "gov1",
@@ -154,8 +182,8 @@ export default function FundingSourcesManager({ projectId, projectName }: Fundin
         email: "pkila@treasury.gov.pg",
         phone: "+675 313 4444",
         address: "Central Government Offices, Waigani",
-        specializations: ["Government Budget", "Public Finance"]
-      }
+        specializations: ["Government Budget", "Public Finance"],
+      },
     ];
 
     setFundingSources(mockSources);
@@ -170,34 +198,48 @@ export default function FundingSourcesManager({ projectId, projectName }: Fundin
   };
 
   const getDonorName = (donorId: string) => {
-    const donor = donorAgencies.find(d => d.id === donorId);
+    const donor = donorAgencies.find((d) => d.id === donorId);
     return donor?.name || "Unknown Donor";
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "disbursed": return "bg-green-100 text-green-800";
-      case "committed": return "bg-blue-100 text-blue-800";
-      case "pending": return "bg-yellow-100 text-yellow-800";
-      case "cancelled": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "disbursed":
+        return "bg-green-100 text-green-800";
+      case "committed":
+        return "bg-blue-100 text-blue-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "cancelled":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case "grant": return "bg-green-100 text-green-800";
-      case "loan": return "bg-blue-100 text-blue-800";
-      case "concessional-loan": return "bg-purple-100 text-purple-800";
-      case "commercial-loan": return "bg-orange-100 text-orange-800";
-      case "government-budget": return "bg-indigo-100 text-indigo-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "grant":
+        return "bg-green-100 text-green-800";
+      case "loan":
+        return "bg-blue-100 text-blue-800";
+      case "concessional-loan":
+        return "bg-purple-100 text-purple-800";
+      case "commercial-loan":
+        return "bg-orange-100 text-orange-800";
+      case "government-budget":
+        return "bg-indigo-100 text-indigo-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-  const totalFunding = fundingSources.reduce((sum, source) => sum + source.amountKina, 0);
+  const totalFunding = fundingSources.reduce(
+    (sum, source) => sum + source.amountKina,
+    0,
+  );
   const disbursedFunding = fundingSources
-    .filter(source => source.status === "disbursed")
+    .filter((source) => source.status === "disbursed")
     .reduce((sum, source) => sum + source.amountKina, 0);
 
   return (
@@ -205,10 +247,17 @@ export default function FundingSourcesManager({ projectId, projectName }: Fundin
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold text-gray-900">Funding Sources Management</h3>
-          <p className="text-gray-600">{projectName} - Donor and Funding Administration</p>
+          <h3 className="text-xl font-bold text-gray-900">
+            Funding Sources Management
+          </h3>
+          <p className="text-gray-600">
+            {projectName} - Donor and Funding Administration
+          </p>
         </div>
-        <Button onClick={() => setShowAddForm(true)} className="bg-blue-600 hover:bg-blue-700">
+        <Button
+          onClick={() => setShowAddForm(true)}
+          className="bg-blue-600 hover:bg-blue-700"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add Funding Source
         </Button>
@@ -313,7 +362,7 @@ export default function FundingSourcesManager({ projectId, projectName }: Fundin
                       <TableCell>{getDonorName(source.donorId)}</TableCell>
                       <TableCell>
                         <Badge className={getTypeColor(source.sourceType)}>
-                          {source.sourceType.replace('-', ' ')}
+                          {source.sourceType.replace("-", " ")}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -335,10 +384,18 @@ export default function FundingSourcesManager({ projectId, projectName }: Fundin
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-1">
-                          <Button size="sm" variant="outline" className="h-8 w-8 p-0">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 w-8 p-0"
+                          >
                             <Eye className="h-3 w-3" />
                           </Button>
-                          <Button size="sm" variant="outline" className="h-8 w-8 p-0">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 w-8 p-0"
+                          >
                             <Edit className="h-3 w-3" />
                           </Button>
                         </div>
@@ -376,27 +433,37 @@ export default function FundingSourcesManager({ projectId, projectName }: Fundin
                       <TableCell className="font-medium">
                         {donor.name}
                         {donor.country && (
-                          <div className="text-xs text-gray-500">{donor.country}</div>
+                          <div className="text-xs text-gray-500">
+                            {donor.country}
+                          </div>
                         )}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">
-                          {donor.type}
-                        </Badge>
+                        <Badge variant="outline">{donor.type}</Badge>
                       </TableCell>
                       <TableCell>
                         <div>
-                          <div className="font-medium">{donor.contactPerson}</div>
-                          <div className="text-xs text-gray-500">{donor.email}</div>
+                          <div className="font-medium">
+                            {donor.contactPerson}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {donor.email}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
-                          {donor.specializations.slice(0, 2).map((spec, index) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
-                              {spec}
-                            </Badge>
-                          ))}
+                          {donor.specializations
+                            .slice(0, 2)
+                            .map((spec, index) => (
+                              <Badge
+                                key={index}
+                                variant="secondary"
+                                className="text-xs"
+                              >
+                                {spec}
+                              </Badge>
+                            ))}
                           {donor.specializations.length > 2 && (
                             <Badge variant="secondary" className="text-xs">
                               +{donor.specializations.length - 2}
@@ -406,10 +473,18 @@ export default function FundingSourcesManager({ projectId, projectName }: Fundin
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-1">
-                          <Button size="sm" variant="outline" className="h-8 w-8 p-0">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 w-8 p-0"
+                          >
                             <Eye className="h-3 w-3" />
                           </Button>
-                          <Button size="sm" variant="outline" className="h-8 w-8 p-0">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 w-8 p-0"
+                          >
                             <Edit className="h-3 w-3" />
                           </Button>
                         </div>
@@ -433,9 +508,12 @@ export default function FundingSourcesManager({ projectId, projectName }: Fundin
             <CardContent>
               <div className="text-center py-12">
                 <Calendar className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Disbursement Tracking</h3>
+                <h3 className="text-lg font-semibold mb-2">
+                  Disbursement Tracking
+                </h3>
                 <p className="text-gray-600 mb-4">
-                  Detailed disbursement schedules and tracking will be displayed here
+                  Detailed disbursement schedules and tracking will be displayed
+                  here
                 </p>
                 <Button variant="outline">
                   <Plus className="h-4 w-4 mr-2" />

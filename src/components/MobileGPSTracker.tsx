@@ -1,30 +1,42 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Battery,
+  Camera,
+  Clock,
   MapPin,
   Navigation,
-  Camera,
+  Pause,
+  Play,
+  RefreshCw,
   Save,
+  Signal,
+  Square,
+  Target,
   Upload,
   Wifi,
   WifiOff,
-  Battery,
-  Signal,
-  Clock,
-  Target,
-  Play,
-  Pause,
-  Square,
-  RefreshCw
 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 interface GPSLocation {
   latitude: number;
@@ -49,13 +61,21 @@ interface GPSTrackingEntry {
 }
 
 export default function MobileGPSTracker() {
-  const [currentLocation, setCurrentLocation] = useState<GPSLocation | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<GPSLocation | null>(
+    null,
+  );
   const [isTracking, setIsTracking] = useState(false);
-  const [trackingEntries, setTrackingEntries] = useState<GPSTrackingEntry[]>([]);
+  const [trackingEntries, setTrackingEntries] = useState<GPSTrackingEntry[]>(
+    [],
+  );
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
-  const [locationAccuracy, setLocationAccuracy] = useState<'high' | 'medium' | 'low'>('medium');
-  const [trackingMode, setTrackingMode] = useState<'manual' | 'automatic' | 'continuous'>('manual');
+  const [locationAccuracy, setLocationAccuracy] = useState<
+    "high" | "medium" | "low"
+  >("medium");
+  const [trackingMode, setTrackingMode] = useState<
+    "manual" | "automatic" | "continuous"
+  >("manual");
   const [unsyncedEntries, setUnsyncedEntries] = useState(0);
 
   // Form state
@@ -78,14 +98,14 @@ export default function MobileGPSTracker() {
     // Setup online/offline listeners
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     // Get battery status if available
-    if ('getBattery' in navigator) {
+    if ("getBattery" in navigator) {
       (navigator as any).getBattery().then((battery: any) => {
         setBatteryLevel(Math.round(battery.level * 100));
-        battery.addEventListener('levelchange', () => {
+        battery.addEventListener("levelchange", () => {
           setBatteryLevel(Math.round(battery.level * 100));
         });
       });
@@ -95,43 +115,43 @@ export default function MobileGPSTracker() {
     loadOfflineEntries();
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
       stopTracking();
     };
   }, []);
 
   const loadOfflineEntries = () => {
     try {
-      const stored = localStorage.getItem('gps-tracking-entries');
+      const stored = localStorage.getItem("gps-tracking-entries");
       if (stored) {
         const entries: GPSTrackingEntry[] = JSON.parse(stored);
-        const unsynced = entries.filter(e => !e.isSubmitted).length;
+        const unsynced = entries.filter((e) => !e.isSubmitted).length;
         setUnsyncedEntries(unsynced);
       }
     } catch (error) {
-      console.error('Error loading offline entries:', error);
+      console.error("Error loading offline entries:", error);
     }
   };
 
   const saveOfflineEntry = (entry: GPSTrackingEntry) => {
     try {
-      const stored = localStorage.getItem('gps-tracking-entries') || '[]';
+      const stored = localStorage.getItem("gps-tracking-entries") || "[]";
       const entries: GPSTrackingEntry[] = JSON.parse(stored);
       entries.push(entry);
-      localStorage.setItem('gps-tracking-entries', JSON.stringify(entries));
-      setUnsyncedEntries(prev => prev + 1);
+      localStorage.setItem("gps-tracking-entries", JSON.stringify(entries));
+      setUnsyncedEntries((prev) => prev + 1);
     } catch (error) {
-      console.error('Error saving offline entry:', error);
+      console.error("Error saving offline entry:", error);
     }
   };
 
   const getCurrentLocation = (): Promise<GPSLocation> => {
     return new Promise((resolve, reject) => {
       const options: PositionOptions = {
-        enableHighAccuracy: locationAccuracy === 'high',
-        timeout: locationAccuracy === 'high' ? 30000 : 10000,
-        maximumAge: locationAccuracy === 'high' ? 0 : 30000
+        enableHighAccuracy: locationAccuracy === "high",
+        timeout: locationAccuracy === "high" ? 30000 : 10000,
+        maximumAge: locationAccuracy === "high" ? 0 : 30000,
       };
 
       navigator.geolocation.getCurrentPosition(
@@ -143,16 +163,16 @@ export default function MobileGPSTracker() {
             altitude: position.coords.altitude || undefined,
             speed: position.coords.speed || undefined,
             heading: position.coords.heading || undefined,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           };
           setCurrentLocation(location);
           resolve(location);
         },
         (error) => {
-          console.error('GPS Error:', error);
+          console.error("GPS Error:", error);
           reject(error);
         },
-        options
+        options,
       );
     });
   };
@@ -165,9 +185,9 @@ export default function MobileGPSTracker() {
       setIsTracking(true);
 
       const options: PositionOptions = {
-        enableHighAccuracy: locationAccuracy === 'high',
+        enableHighAccuracy: locationAccuracy === "high",
         timeout: 10000,
-        maximumAge: 5000
+        maximumAge: 5000,
       };
 
       watchIdRef.current = navigator.geolocation.watchPosition(
@@ -179,12 +199,12 @@ export default function MobileGPSTracker() {
             altitude: position.coords.altitude || undefined,
             speed: position.coords.speed || undefined,
             heading: position.coords.heading || undefined,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           };
           setCurrentLocation(location);
 
           // Auto-save location in continuous mode
-          if (trackingMode === 'continuous') {
+          if (trackingMode === "continuous") {
             const entry: GPSTrackingEntry = {
               id: `auto-${Date.now()}`,
               location,
@@ -194,24 +214,23 @@ export default function MobileGPSTracker() {
               photos: [],
               isSubmitted: false,
               offlineEntry: !isOnline,
-              timestamp: Date.now()
+              timestamp: Date.now(),
             };
 
             if (isOnline) {
               // TODO: Submit to server
-              console.log('Submitting GPS entry:', entry);
+              console.log("Submitting GPS entry:", entry);
             } else {
               saveOfflineEntry(entry);
             }
           }
         },
-        (error) => console.error('GPS tracking error:', error),
-        options
+        (error) => console.error("GPS tracking error:", error),
+        options,
       );
-
     } catch (error) {
-      console.error('Failed to start tracking:', error);
-      alert('Failed to get GPS location. Please check your GPS settings.');
+      console.error("Failed to start tracking:", error);
+      alert("Failed to get GPS location. Please check your GPS settings.");
     }
   };
 
@@ -229,7 +248,9 @@ export default function MobileGPSTracker() {
 
   const handleSubmitEntry = async () => {
     if (!currentLocation || !taskName || !workType) {
-      alert('Please fill in all required fields and ensure GPS location is available');
+      alert(
+        "Please fill in all required fields and ensure GPS location is available",
+      );
       return;
     }
 
@@ -242,24 +263,24 @@ export default function MobileGPSTracker() {
       photos,
       isSubmitted: false,
       offlineEntry: !isOnline,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     if (isOnline) {
       // TODO: Submit to server
       try {
-        console.log('Submitting GPS entry to server:', entry);
+        console.log("Submitting GPS entry to server:", entry);
         // Simulate API call
         entry.isSubmitted = true;
-        alert('Entry submitted successfully!');
+        alert("Entry submitted successfully!");
       } catch (error) {
-        console.error('Failed to submit entry:', error);
+        console.error("Failed to submit entry:", error);
         saveOfflineEntry(entry);
-        alert('Saved offline - will sync when connection is restored');
+        alert("Saved offline - will sync when connection is restored");
       }
     } else {
       saveOfflineEntry(entry);
-      alert('Saved offline - will sync when connection is restored');
+      alert("Saved offline - will sync when connection is restored");
     }
 
     // Reset form
@@ -270,71 +291,72 @@ export default function MobileGPSTracker() {
   };
 
   const capturePhoto = async () => {
-    if (!('camera' in navigator.mediaDevices)) {
-      alert('Camera not available on this device');
+    if (!("camera" in navigator.mediaDevices)) {
+      alert("Camera not available on this device");
       return;
     }
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' }
+        video: { facingMode: "environment" },
       });
 
       // Create video element for preview
-      const video = document.createElement('video');
+      const video = document.createElement("video");
       video.srcObject = stream;
       video.play();
 
       // TODO: Implement photo capture UI
-      alert('Photo capture UI - Implementation needed');
+      alert("Photo capture UI - Implementation needed");
 
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach((track) => track.stop());
     } catch (error) {
-      console.error('Camera access error:', error);
-      alert('Could not access camera');
+      console.error("Camera access error:", error);
+      alert("Could not access camera");
     }
   };
 
   const syncOfflineData = async () => {
     if (!isOnline) {
-      alert('No internet connection available');
+      alert("No internet connection available");
       return;
     }
 
     try {
-      const stored = localStorage.getItem('gps-tracking-entries');
+      const stored = localStorage.getItem("gps-tracking-entries");
       if (!stored) return;
 
       const entries: GPSTrackingEntry[] = JSON.parse(stored);
-      const unsyncedEntries = entries.filter(e => !e.isSubmitted);
+      const unsyncedEntries = entries.filter((e) => !e.isSubmitted);
 
       for (const entry of unsyncedEntries) {
         // TODO: Submit to server
-        console.log('Syncing entry:', entry);
+        console.log("Syncing entry:", entry);
         entry.isSubmitted = true;
       }
 
-      localStorage.setItem('gps-tracking-entries', JSON.stringify(entries));
+      localStorage.setItem("gps-tracking-entries", JSON.stringify(entries));
       setUnsyncedEntries(0);
       alert(`Synced ${unsyncedEntries.length} entries successfully!`);
     } catch (error) {
-      console.error('Sync error:', error);
-      alert('Failed to sync offline data');
+      console.error("Sync error:", error);
+      alert("Failed to sync offline data");
     }
   };
 
   const getAccuracyColor = (accuracy: number) => {
-    if (accuracy <= 5) return 'text-green-600';
-    if (accuracy <= 10) return 'text-yellow-600';
-    return 'text-red-600';
+    if (accuracy <= 5) return "text-green-600";
+    if (accuracy <= 10) return "text-yellow-600";
+    return "text-red-600";
   };
 
-  const formatCoordinate = (value: number, type: 'lat' | 'lng') => {
+  const formatCoordinate = (value: number, type: "lat" | "lng") => {
     const abs = Math.abs(value);
     const degrees = Math.floor(abs);
     const minutes = Math.floor((abs - degrees) * 60);
     const seconds = ((abs - degrees) * 60 - minutes) * 60;
-    const direction = type === 'lat' ? (value >= 0 ? 'N' : 'S') : (value >= 0 ? 'E' : 'W');
+    const direction =
+      type === "lat" ? (value >= 0 ? "N" : "S") : value >= 0 ? "E" : "W";
     return `${degrees}°${minutes}'${seconds.toFixed(2)}"${direction}`;
   };
 
@@ -343,9 +365,13 @@ export default function MobileGPSTracker() {
       {/* Status Bar */}
       <div className="flex items-center justify-between p-3 bg-gradient-to-r from-emerald-600 to-teal-700 text-white rounded-lg">
         <div className="flex items-center gap-2">
-          {isOnline ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
+          {isOnline ? (
+            <Wifi className="h-4 w-4" />
+          ) : (
+            <WifiOff className="h-4 w-4" />
+          )}
           <span className="text-sm font-medium">
-            {isOnline ? 'Online' : 'Offline'}
+            {isOnline ? "Online" : "Offline"}
           </span>
         </div>
 
@@ -380,13 +406,13 @@ export default function MobileGPSTracker() {
                 <div>
                   <Label className="text-xs text-gray-600">Latitude</Label>
                   <div className="font-mono text-sm">
-                    {formatCoordinate(currentLocation.latitude, 'lat')}
+                    {formatCoordinate(currentLocation.latitude, "lat")}
                   </div>
                 </div>
                 <div>
                   <Label className="text-xs text-gray-600">Longitude</Label>
                   <div className="font-mono text-sm">
-                    {formatCoordinate(currentLocation.longitude, 'lng')}
+                    {formatCoordinate(currentLocation.longitude, "lng")}
                   </div>
                 </div>
               </div>
@@ -408,7 +434,8 @@ export default function MobileGPSTracker() {
               </div>
 
               <div className="text-xs text-gray-500">
-                Last updated: {new Date(currentLocation.timestamp).toLocaleTimeString()}
+                Last updated:{" "}
+                {new Date(currentLocation.timestamp).toLocaleTimeString()}
               </div>
             </div>
           ) : (
@@ -428,24 +455,24 @@ export default function MobileGPSTracker() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-3 gap-2">
             <Button
-              onClick={() => setLocationAccuracy('high')}
-              variant={locationAccuracy === 'high' ? 'default' : 'outline'}
+              onClick={() => setLocationAccuracy("high")}
+              variant={locationAccuracy === "high" ? "default" : "outline"}
               size="sm"
               className="text-xs"
             >
               High Accuracy
             </Button>
             <Button
-              onClick={() => setLocationAccuracy('medium')}
-              variant={locationAccuracy === 'medium' ? 'default' : 'outline'}
+              onClick={() => setLocationAccuracy("medium")}
+              variant={locationAccuracy === "medium" ? "default" : "outline"}
               size="sm"
               className="text-xs"
             >
               Medium
             </Button>
             <Button
-              onClick={() => setLocationAccuracy('low')}
-              variant={locationAccuracy === 'low' ? 'default' : 'outline'}
+              onClick={() => setLocationAccuracy("low")}
+              variant={locationAccuracy === "low" ? "default" : "outline"}
               size="sm"
               className="text-xs"
             >
@@ -507,7 +534,9 @@ export default function MobileGPSTracker() {
                 <SelectItem value="construction">Construction</SelectItem>
                 <SelectItem value="maintenance">Maintenance</SelectItem>
                 <SelectItem value="quality-check">Quality Check</SelectItem>
-                <SelectItem value="safety-assessment">Safety Assessment</SelectItem>
+                <SelectItem value="safety-assessment">
+                  Safety Assessment
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -524,11 +553,7 @@ export default function MobileGPSTracker() {
           </div>
 
           <div className="flex gap-2">
-            <Button
-              onClick={capturePhoto}
-              variant="outline"
-              className="flex-1"
-            >
+            <Button onClick={capturePhoto} variant="outline" className="flex-1">
               <Camera className="h-4 w-4 mr-2" />
               Add Photo
             </Button>
@@ -562,11 +587,7 @@ export default function MobileGPSTracker() {
                   {unsyncedEntries} entries waiting to sync
                 </div>
               </div>
-              <Button
-                onClick={syncOfflineData}
-                disabled={!isOnline}
-                size="sm"
-              >
+              <Button onClick={syncOfflineData} disabled={!isOnline} size="sm">
                 <Upload className="h-4 w-4 mr-2" />
                 Sync Now
               </Button>

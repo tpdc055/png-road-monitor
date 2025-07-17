@@ -1,48 +1,60 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
-  Building2,
-  Users,
-  Globe,
-  MapPin,
-  DollarSign,
-  Calendar,
-  FileText,
-  TrendingUp,
-  BarChart3,
-  PieChart,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
   Activity,
+  AlertTriangle,
+  BarChart3,
   Bell,
+  Briefcase,
+  Building,
+  Building2,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Database,
+  DollarSign,
   Download,
-  Upload,
-  Send,
-  Eye,
   Edit,
+  Eye,
+  FileText,
+  Filter,
+  Flag,
+  Globe,
+  Mail,
+  MapPin,
+  Network,
+  Phone,
+  PieChart,
   Plus,
   Search,
-  Filter,
-  Shield,
-  CheckCircle,
-  AlertTriangle,
-  Clock,
-  Target,
-  Network,
-  Flag,
-  Briefcase,
+  Send,
   Settings,
-  Database,
-  Mail,
-  Phone,
-  Building
-} from 'lucide-react';
+  Shield,
+  Target,
+  TrendingUp,
+  Upload,
+  Users,
+} from "lucide-react";
+import React, { useState, useEffect } from "react";
 
 interface StakeholderDashboardProps {
   userRole: string;
@@ -53,213 +65,481 @@ interface StakeholderDashboardProps {
 
 // Dashboard configurations for different stakeholder types
 const STAKEHOLDER_DASHBOARDS = {
-  'CENTRAL_GOVERNMENT': {
-    title: 'Central Government Dashboard',
-    subtitle: 'Connect PNG Program Overview and Management',
-    primaryColor: 'bg-blue-600',
+  CENTRAL_GOVERNMENT: {
+    title: "Central Government Dashboard",
+    subtitle: "Connect PNG Program Overview and Management",
+    primaryColor: "bg-blue-600",
     metrics: [
-      { label: 'Total Program Budget', value: 'K 1.85B', change: '+12%', icon: DollarSign },
-      { label: 'Active Projects', value: '47', change: '+8%', icon: Building2 },
-      { label: 'Provinces Covered', value: '22/22', change: '100%', icon: MapPin },
-      { label: 'Overall Progress', value: '68%', change: '+5%', icon: TrendingUp }
+      {
+        label: "Total Program Budget",
+        value: "K 1.85B",
+        change: "+12%",
+        icon: DollarSign,
+      },
+      { label: "Active Projects", value: "47", change: "+8%", icon: Building2 },
+      {
+        label: "Provinces Covered",
+        value: "22/22",
+        change: "100%",
+        icon: MapPin,
+      },
+      {
+        label: "Overall Progress",
+        value: "68%",
+        change: "+5%",
+        icon: TrendingUp,
+      },
     ],
     quickActions: [
-      { label: 'View Program Summary', action: 'program-summary', icon: BarChart3 },
-      { label: 'Generate Executive Report', action: 'executive-report', icon: FileText },
-      { label: 'Review Budget Status', action: 'budget-status', icon: DollarSign },
-      { label: 'Provincial Updates', action: 'provincial-updates', icon: MapPin }
+      {
+        label: "View Program Summary",
+        action: "program-summary",
+        icon: BarChart3,
+      },
+      {
+        label: "Generate Executive Report",
+        action: "executive-report",
+        icon: FileText,
+      },
+      {
+        label: "Review Budget Status",
+        action: "budget-status",
+        icon: DollarSign,
+      },
+      {
+        label: "Provincial Updates",
+        action: "provincial-updates",
+        icon: MapPin,
+      },
     ],
     views: [
-      'Program Overview',
-      'Financial Summary',
-      'Provincial Status',
-      'Donor Relations',
-      'Parliamentary Reports',
-      'Cabinet Submissions'
-    ]
+      "Program Overview",
+      "Financial Summary",
+      "Provincial Status",
+      "Donor Relations",
+      "Parliamentary Reports",
+      "Cabinet Submissions",
+    ],
   },
-  'PROVINCIAL_DISTRICT': {
-    title: 'Provincial/District Dashboard',
-    subtitle: 'Local Infrastructure Development and Community Engagement',
-    primaryColor: 'bg-green-600',
+  PROVINCIAL_DISTRICT: {
+    title: "Provincial/District Dashboard",
+    subtitle: "Local Infrastructure Development and Community Engagement",
+    primaryColor: "bg-green-600",
     metrics: [
-      { label: 'Local Projects', value: '8', change: '+2%', icon: Building2 },
-      { label: 'Budget Allocated', value: 'K 125M', change: '+15%', icon: DollarSign },
-      { label: 'Completion Rate', value: '72%', change: '+8%', icon: Target },
-      { label: 'Community Feedback', value: '156', change: '+12%', icon: Users }
+      { label: "Local Projects", value: "8", change: "+2%", icon: Building2 },
+      {
+        label: "Budget Allocated",
+        value: "K 125M",
+        change: "+15%",
+        icon: DollarSign,
+      },
+      { label: "Completion Rate", value: "72%", change: "+8%", icon: Target },
+      {
+        label: "Community Feedback",
+        value: "156",
+        change: "+12%",
+        icon: Users,
+      },
     ],
     quickActions: [
-      { label: 'Project Progress Update', action: 'progress-update', icon: TrendingUp },
-      { label: 'Community Feedback', action: 'community-feedback', icon: Users },
-      { label: 'Contractor Coordination', action: 'contractor-coord', icon: Building },
-      { label: 'Maintenance Planning', action: 'maintenance-plan', icon: Settings }
+      {
+        label: "Project Progress Update",
+        action: "progress-update",
+        icon: TrendingUp,
+      },
+      {
+        label: "Community Feedback",
+        action: "community-feedback",
+        icon: Users,
+      },
+      {
+        label: "Contractor Coordination",
+        action: "contractor-coord",
+        icon: Building,
+      },
+      {
+        label: "Maintenance Planning",
+        action: "maintenance-plan",
+        icon: Settings,
+      },
     ],
     views: [
-      'Project Progress',
-      'Local Contractors',
-      'Community Engagement',
-      'Maintenance Needs',
-      'District Reports',
-      'Local Workforce'
-    ]
+      "Project Progress",
+      "Local Contractors",
+      "Community Engagement",
+      "Maintenance Needs",
+      "District Reports",
+      "Local Workforce",
+    ],
   },
-  'INTERNATIONAL_DONORS': {
-    title: 'Development Partner Dashboard',
-    subtitle: 'Portfolio Monitoring and Results Framework',
-    primaryColor: 'bg-purple-600',
+  INTERNATIONAL_DONORS: {
+    title: "Development Partner Dashboard",
+    subtitle: "Portfolio Monitoring and Results Framework",
+    primaryColor: "bg-purple-600",
     metrics: [
-      { label: 'Portfolio Value', value: 'K 890M', change: '+18%', icon: DollarSign },
-      { label: 'Disbursement Rate', value: '76%', change: '+12%', icon: TrendingUp },
-      { label: 'Active Investments', value: '23', change: '+5%', icon: Building2 },
-      { label: 'Impact Score', value: '4.2/5', change: '+0.3', icon: Target }
+      {
+        label: "Portfolio Value",
+        value: "K 890M",
+        change: "+18%",
+        icon: DollarSign,
+      },
+      {
+        label: "Disbursement Rate",
+        value: "76%",
+        change: "+12%",
+        icon: TrendingUp,
+      },
+      {
+        label: "Active Investments",
+        value: "23",
+        change: "+5%",
+        icon: Building2,
+      },
+      { label: "Impact Score", value: "4.2/5", change: "+0.3", icon: Target },
     ],
     quickActions: [
-      { label: 'Portfolio Review', action: 'portfolio-review', icon: BarChart3 },
-      { label: 'Disbursement Request', action: 'disbursement-request', icon: DollarSign },
-      { label: 'Results Measurement', action: 'results-measurement', icon: Target },
-      { label: 'Safeguards Monitoring', action: 'safeguards-monitor', icon: Shield }
+      {
+        label: "Portfolio Review",
+        action: "portfolio-review",
+        icon: BarChart3,
+      },
+      {
+        label: "Disbursement Request",
+        action: "disbursement-request",
+        icon: DollarSign,
+      },
+      {
+        label: "Results Measurement",
+        action: "results-measurement",
+        icon: Target,
+      },
+      {
+        label: "Safeguards Monitoring",
+        action: "safeguards-monitor",
+        icon: Shield,
+      },
     ],
     views: [
-      'Portfolio Overview',
-      'Disbursement Tracking',
-      'Results Framework',
-      'Risk Management',
-      'Safeguards Compliance',
-      'Impact Assessment'
-    ]
+      "Portfolio Overview",
+      "Disbursement Tracking",
+      "Results Framework",
+      "Risk Management",
+      "Safeguards Compliance",
+      "Impact Assessment",
+    ],
   },
-  'BILATERAL_PARTNERS': {
-    title: 'Bilateral Partnership Dashboard',
-    subtitle: 'Technical Cooperation and Development Programs',
-    primaryColor: 'bg-orange-600',
+  BILATERAL_PARTNERS: {
+    title: "Bilateral Partnership Dashboard",
+    subtitle: "Technical Cooperation and Development Programs",
+    primaryColor: "bg-orange-600",
     metrics: [
-      { label: 'Partnership Programs', value: '12', change: '+3%', icon: Flag },
-      { label: 'Technical Assistance', value: 'K 45M', change: '+22%', icon: Users },
-      { label: 'Capacity Building', value: '89%', change: '+15%', icon: TrendingUp },
-      { label: 'Knowledge Transfer', value: '156', change: '+28%', icon: Network }
+      { label: "Partnership Programs", value: "12", change: "+3%", icon: Flag },
+      {
+        label: "Technical Assistance",
+        value: "K 45M",
+        change: "+22%",
+        icon: Users,
+      },
+      {
+        label: "Capacity Building",
+        value: "89%",
+        change: "+15%",
+        icon: TrendingUp,
+      },
+      {
+        label: "Knowledge Transfer",
+        value: "156",
+        change: "+28%",
+        icon: Network,
+      },
     ],
     quickActions: [
-      { label: 'Program Coordination', action: 'program-coord', icon: Network },
-      { label: 'Technical Support', action: 'tech-support', icon: Users },
-      { label: 'Partnership Review', action: 'partnership-review', icon: Flag },
-      { label: 'Diplomatic Brief', action: 'diplomatic-brief', icon: FileText }
+      { label: "Program Coordination", action: "program-coord", icon: Network },
+      { label: "Technical Support", action: "tech-support", icon: Users },
+      { label: "Partnership Review", action: "partnership-review", icon: Flag },
+      { label: "Diplomatic Brief", action: "diplomatic-brief", icon: FileText },
     ],
     views: [
-      'Partnership Programs',
-      'Technical Support',
-      'Knowledge Transfer',
-      'Diplomatic Relations',
-      'Cooperation Reports',
-      'Joint Initiatives'
-    ]
+      "Partnership Programs",
+      "Technical Support",
+      "Knowledge Transfer",
+      "Diplomatic Relations",
+      "Cooperation Reports",
+      "Joint Initiatives",
+    ],
   },
-  'CONTRACTORS_CONSULTANTS': {
-    title: 'Contractor Dashboard',
-    subtitle: 'Project Execution and Quality Management',
-    primaryColor: 'bg-yellow-600',
+  CONTRACTORS_CONSULTANTS: {
+    title: "Contractor Dashboard",
+    subtitle: "Project Execution and Quality Management",
+    primaryColor: "bg-yellow-600",
     metrics: [
-      { label: 'Active Contracts', value: '5', change: '+1%', icon: Building2 },
-      { label: 'Progress Score', value: '84%', change: '+6%', icon: TrendingUp },
-      { label: 'Payment Status', value: 'Current', change: 'On-time', icon: DollarSign },
-      { label: 'Quality Rating', value: '4.6/5', change: '+0.2', icon: CheckCircle }
+      { label: "Active Contracts", value: "5", change: "+1%", icon: Building2 },
+      {
+        label: "Progress Score",
+        value: "84%",
+        change: "+6%",
+        icon: TrendingUp,
+      },
+      {
+        label: "Payment Status",
+        value: "Current",
+        change: "On-time",
+        icon: DollarSign,
+      },
+      {
+        label: "Quality Rating",
+        value: "4.6/5",
+        change: "+0.2",
+        icon: CheckCircle,
+      },
     ],
     quickActions: [
-      { label: 'Submit Progress Report', action: 'progress-report', icon: FileText },
-      { label: 'Upload Work Photos', action: 'upload-photos', icon: Upload },
-      { label: 'Request Payment', action: 'payment-request', icon: DollarSign },
-      { label: 'Quality Documentation', action: 'quality-docs', icon: CheckCircle }
+      {
+        label: "Submit Progress Report",
+        action: "progress-report",
+        icon: FileText,
+      },
+      { label: "Upload Work Photos", action: "upload-photos", icon: Upload },
+      { label: "Request Payment", action: "payment-request", icon: DollarSign },
+      {
+        label: "Quality Documentation",
+        action: "quality-docs",
+        icon: CheckCircle,
+      },
     ],
     views: [
-      'Contract Management',
-      'Site Progress',
-      'Resource Planning',
-      'Quality Control',
-      'Financial Claims',
-      'Equipment Management'
-    ]
+      "Contract Management",
+      "Site Progress",
+      "Resource Planning",
+      "Quality Control",
+      "Financial Claims",
+      "Equipment Management",
+    ],
   },
-  'COMMUNITY_STAKEHOLDERS': {
-    title: 'Community Engagement Dashboard',
-    subtitle: 'Local Participation and Feedback Management',
-    primaryColor: 'bg-pink-600',
+  COMMUNITY_STAKEHOLDERS: {
+    title: "Community Engagement Dashboard",
+    subtitle: "Local Participation and Feedback Management",
+    primaryColor: "bg-pink-600",
     metrics: [
-      { label: 'Community Projects', value: '24', change: '+6%', icon: Users },
-      { label: 'Feedback Submitted', value: '342', change: '+18%', icon: Bell },
-      { label: 'Grievances Resolved', value: '97%', change: '+8%', icon: CheckCircle },
-      { label: 'Local Employment', value: '1,247', change: '+25%', icon: Briefcase }
+      { label: "Community Projects", value: "24", change: "+6%", icon: Users },
+      { label: "Feedback Submitted", value: "342", change: "+18%", icon: Bell },
+      {
+        label: "Grievances Resolved",
+        value: "97%",
+        change: "+8%",
+        icon: CheckCircle,
+      },
+      {
+        label: "Local Employment",
+        value: "1,247",
+        change: "+25%",
+        icon: Briefcase,
+      },
     ],
     quickActions: [
-      { label: 'Submit Feedback', action: 'submit-feedback', icon: Send },
-      { label: 'Report Issue', action: 'report-issue', icon: AlertTriangle },
-      { label: 'View Benefits', action: 'view-benefits', icon: Eye },
-      { label: 'Community Meeting', action: 'community-meeting', icon: Users }
+      { label: "Submit Feedback", action: "submit-feedback", icon: Send },
+      { label: "Report Issue", action: "report-issue", icon: AlertTriangle },
+      { label: "View Benefits", action: "view-benefits", icon: Eye },
+      { label: "Community Meeting", action: "community-meeting", icon: Users },
     ],
     views: [
-      'Community Benefits',
-      'Feedback System',
-      'Grievance Mechanism',
-      'Local Employment',
-      'Social Impact',
-      'Cultural Preservation'
-    ]
-  }
+      "Community Benefits",
+      "Feedback System",
+      "Grievance Mechanism",
+      "Local Employment",
+      "Social Impact",
+      "Cultural Preservation",
+    ],
+  },
 };
 
 // Stakeholder-specific report templates
 const STAKEHOLDER_REPORTS = {
-  'CENTRAL_GOVERNMENT': [
-    { name: 'Executive Summary Report', description: 'High-level program overview for executive leadership', format: 'PDF' },
-    { name: 'Parliamentary Brief', description: 'Detailed briefing for parliamentary sessions', format: 'Word' },
-    { name: 'Cabinet Submission', description: 'Policy recommendations and program updates', format: 'PDF' },
-    { name: 'Donor Coordination Report', description: 'Multi-donor program coordination summary', format: 'Excel' },
-    { name: 'Provincial Performance Report', description: 'Provincial-level implementation analysis', format: 'PDF' }
+  CENTRAL_GOVERNMENT: [
+    {
+      name: "Executive Summary Report",
+      description: "High-level program overview for executive leadership",
+      format: "PDF",
+    },
+    {
+      name: "Parliamentary Brief",
+      description: "Detailed briefing for parliamentary sessions",
+      format: "Word",
+    },
+    {
+      name: "Cabinet Submission",
+      description: "Policy recommendations and program updates",
+      format: "PDF",
+    },
+    {
+      name: "Donor Coordination Report",
+      description: "Multi-donor program coordination summary",
+      format: "Excel",
+    },
+    {
+      name: "Provincial Performance Report",
+      description: "Provincial-level implementation analysis",
+      format: "PDF",
+    },
   ],
-  'PROVINCIAL_DISTRICT': [
-    { name: 'Provincial Summary Report', description: 'Comprehensive provincial infrastructure status', format: 'PDF' },
-    { name: 'District Implementation Report', description: 'District-level project progress and challenges', format: 'Word' },
-    { name: 'Community Engagement Report', description: 'Local community participation and feedback', format: 'PDF' },
-    { name: 'Maintenance Schedule Report', description: 'Infrastructure maintenance planning and status', format: 'Excel' },
-    { name: 'Local Contractor Performance', description: 'Assessment of local contractor capabilities', format: 'PDF' }
+  PROVINCIAL_DISTRICT: [
+    {
+      name: "Provincial Summary Report",
+      description: "Comprehensive provincial infrastructure status",
+      format: "PDF",
+    },
+    {
+      name: "District Implementation Report",
+      description: "District-level project progress and challenges",
+      format: "Word",
+    },
+    {
+      name: "Community Engagement Report",
+      description: "Local community participation and feedback",
+      format: "PDF",
+    },
+    {
+      name: "Maintenance Schedule Report",
+      description: "Infrastructure maintenance planning and status",
+      format: "Excel",
+    },
+    {
+      name: "Local Contractor Performance",
+      description: "Assessment of local contractor capabilities",
+      format: "PDF",
+    },
   ],
-  'INTERNATIONAL_DONORS': [
-    { name: 'Donor Portfolio Report', description: 'Comprehensive investment portfolio performance', format: 'PDF' },
-    { name: 'Results Measurement Report', description: 'Outcome and impact assessment', format: 'Excel' },
-    { name: 'Fiduciary Compliance Report', description: 'Financial management and compliance status', format: 'PDF' },
-    { name: 'Safeguards Monitoring Report', description: 'Environmental and social safeguards compliance', format: 'PDF' },
-    { name: 'Disbursement Tracking Report', description: 'Fund utilization and disbursement analysis', format: 'Excel' }
+  INTERNATIONAL_DONORS: [
+    {
+      name: "Donor Portfolio Report",
+      description: "Comprehensive investment portfolio performance",
+      format: "PDF",
+    },
+    {
+      name: "Results Measurement Report",
+      description: "Outcome and impact assessment",
+      format: "Excel",
+    },
+    {
+      name: "Fiduciary Compliance Report",
+      description: "Financial management and compliance status",
+      format: "PDF",
+    },
+    {
+      name: "Safeguards Monitoring Report",
+      description: "Environmental and social safeguards compliance",
+      format: "PDF",
+    },
+    {
+      name: "Disbursement Tracking Report",
+      description: "Fund utilization and disbursement analysis",
+      format: "Excel",
+    },
   ],
-  'BILATERAL_PARTNERS': [
-    { name: 'Partnership Report', description: 'Bilateral cooperation program overview', format: 'PDF' },
-    { name: 'Technical Progress Report', description: 'Technical assistance and capacity building progress', format: 'Word' },
-    { name: 'Diplomatic Brief', description: 'High-level diplomatic engagement summary', format: 'PDF' },
-    { name: 'Cooperation Summary', description: 'Multi-sectoral cooperation achievements', format: 'PDF' },
-    { name: 'Knowledge Transfer Report', description: 'Skills and knowledge transfer activities', format: 'Excel' }
+  BILATERAL_PARTNERS: [
+    {
+      name: "Partnership Report",
+      description: "Bilateral cooperation program overview",
+      format: "PDF",
+    },
+    {
+      name: "Technical Progress Report",
+      description: "Technical assistance and capacity building progress",
+      format: "Word",
+    },
+    {
+      name: "Diplomatic Brief",
+      description: "High-level diplomatic engagement summary",
+      format: "PDF",
+    },
+    {
+      name: "Cooperation Summary",
+      description: "Multi-sectoral cooperation achievements",
+      format: "PDF",
+    },
+    {
+      name: "Knowledge Transfer Report",
+      description: "Skills and knowledge transfer activities",
+      format: "Excel",
+    },
   ],
-  'CONTRACTORS_CONSULTANTS': [
-    { name: 'Progress Report', description: 'Detailed project progress and milestone updates', format: 'PDF' },
-    { name: 'Financial Claims Report', description: 'Payment requests and financial reconciliation', format: 'Excel' },
-    { name: 'Quality Assurance Report', description: 'Quality control and compliance documentation', format: 'PDF' },
-    { name: 'Completion Certificate', description: 'Project completion and handover documentation', format: 'PDF' },
-    { name: 'Resource Utilization Report', description: 'Equipment, materials, and workforce utilization', format: 'Excel' }
+  CONTRACTORS_CONSULTANTS: [
+    {
+      name: "Progress Report",
+      description: "Detailed project progress and milestone updates",
+      format: "PDF",
+    },
+    {
+      name: "Financial Claims Report",
+      description: "Payment requests and financial reconciliation",
+      format: "Excel",
+    },
+    {
+      name: "Quality Assurance Report",
+      description: "Quality control and compliance documentation",
+      format: "PDF",
+    },
+    {
+      name: "Completion Certificate",
+      description: "Project completion and handover documentation",
+      format: "PDF",
+    },
+    {
+      name: "Resource Utilization Report",
+      description: "Equipment, materials, and workforce utilization",
+      format: "Excel",
+    },
   ],
-  'COMMUNITY_STAKEHOLDERS': [
-    { name: 'Community Benefits Report', description: 'Infrastructure benefits and local impact assessment', format: 'PDF' },
-    { name: 'Feedback Summary Report', description: 'Community feedback compilation and analysis', format: 'Word' },
-    { name: 'Grievance Status Report', description: 'Grievance mechanism performance and resolution', format: 'PDF' },
-    { name: 'Local Employment Report', description: 'Employment generation and skills development', format: 'Excel' },
-    { name: 'Social Impact Assessment', description: 'Community social and cultural impact evaluation', format: 'PDF' }
-  ]
+  COMMUNITY_STAKEHOLDERS: [
+    {
+      name: "Community Benefits Report",
+      description: "Infrastructure benefits and local impact assessment",
+      format: "PDF",
+    },
+    {
+      name: "Feedback Summary Report",
+      description: "Community feedback compilation and analysis",
+      format: "Word",
+    },
+    {
+      name: "Grievance Status Report",
+      description: "Grievance mechanism performance and resolution",
+      format: "PDF",
+    },
+    {
+      name: "Local Employment Report",
+      description: "Employment generation and skills development",
+      format: "Excel",
+    },
+    {
+      name: "Social Impact Assessment",
+      description: "Community social and cultural impact evaluation",
+      format: "PDF",
+    },
+  ],
 };
 
-export default function StakeholderDashboard({ userRole, entityType, entityId, userName }: StakeholderDashboardProps) {
+export default function StakeholderDashboard({
+  userRole,
+  entityType,
+  entityId,
+  userName,
+}: StakeholderDashboardProps) {
   const [activeView, setActiveView] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
-  const [selectedReport, setSelectedReport] = useState('');
-  const [reportDateRange, setReportDateRange] = useState({ start: '', end: '' });
+  const [selectedReport, setSelectedReport] = useState("");
+  const [reportDateRange, setReportDateRange] = useState({
+    start: "",
+    end: "",
+  });
 
-  const dashboardConfig = STAKEHOLDER_DASHBOARDS[entityType] || STAKEHOLDER_DASHBOARDS['CENTRAL_GOVERNMENT'];
-  const availableReports = STAKEHOLDER_REPORTS[entityType] || STAKEHOLDER_REPORTS['CENTRAL_GOVERNMENT'];
+  const dashboardConfig =
+    STAKEHOLDER_DASHBOARDS[entityType] ||
+    STAKEHOLDER_DASHBOARDS["CENTRAL_GOVERNMENT"];
+  const availableReports =
+    STAKEHOLDER_REPORTS[entityType] ||
+    STAKEHOLDER_REPORTS["CENTRAL_GOVERNMENT"];
 
   useEffect(() => {
     loadDashboardData();
@@ -271,58 +551,58 @@ export default function StakeholderDashboard({ userRole, entityType, entityId, u
       const mockNotifications = [
         {
           id: 1,
-          type: 'info',
-          title: 'Project Update Available',
-          message: 'New progress report for Mt. Hagen-Kagamuga Road project',
+          type: "info",
+          title: "Project Update Available",
+          message: "New progress report for Mt. Hagen-Kagamuga Road project",
           timestamp: new Date(),
-          read: false
+          read: false,
         },
         {
           id: 2,
-          type: 'warning',
-          title: 'Budget Alert',
-          message: 'Monthly budget review required for provincial projects',
+          type: "warning",
+          title: "Budget Alert",
+          message: "Monthly budget review required for provincial projects",
           timestamp: new Date(Date.now() - 3600000),
-          read: false
+          read: false,
         },
         {
           id: 3,
-          type: 'success',
-          title: 'Milestone Achieved',
-          message: 'Lae-Nadzab Highway Phase 1 completed ahead of schedule',
+          type: "success",
+          title: "Milestone Achieved",
+          message: "Lae-Nadzab Highway Phase 1 completed ahead of schedule",
           timestamp: new Date(Date.now() - 7200000),
-          read: true
-        }
+          read: true,
+        },
       ];
 
       const mockActivity = [
         {
           id: 1,
-          action: 'Document uploaded',
-          description: 'Progress report submitted for Port Moresby Ring Road',
-          user: 'John Kila',
-          timestamp: new Date(Date.now() - 1800000)
+          action: "Document uploaded",
+          description: "Progress report submitted for Port Moresby Ring Road",
+          user: "John Kila",
+          timestamp: new Date(Date.now() - 1800000),
         },
         {
           id: 2,
-          action: 'Payment processed',
-          description: 'Monthly contractor payment approved',
-          user: 'Finance Team',
-          timestamp: new Date(Date.now() - 3600000)
+          action: "Payment processed",
+          description: "Monthly contractor payment approved",
+          user: "Finance Team",
+          timestamp: new Date(Date.now() - 3600000),
         },
         {
           id: 3,
-          action: 'Quality inspection',
-          description: 'Site inspection completed at Highlands Highway',
-          user: 'Quality Assurance',
-          timestamp: new Date(Date.now() - 5400000)
-        }
+          action: "Quality inspection",
+          description: "Site inspection completed at Highlands Highway",
+          user: "Quality Assurance",
+          timestamp: new Date(Date.now() - 5400000),
+        },
       ];
 
       setNotifications(mockNotifications);
       setRecentActivity(mockActivity);
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
+      console.error("Error loading dashboard data:", error);
     }
   };
 
@@ -330,17 +610,17 @@ export default function StakeholderDashboard({ userRole, entityType, entityId, u
     console.log(`Executing action: ${action}`);
     // Implement specific actions based on stakeholder type
     switch (action) {
-      case 'program-summary':
-        window.open('/reports/program-summary', '_blank');
+      case "program-summary":
+        window.open("/reports/program-summary", "_blank");
         break;
-      case 'progress-update':
+      case "progress-update":
         setActiveView(1);
         break;
-      case 'portfolio-review':
-        window.open('/reports/portfolio-review', '_blank');
+      case "portfolio-review":
+        window.open("/reports/portfolio-review", "_blank");
         break;
-      case 'submit-feedback':
-        window.open('/feedback/submit', '_blank');
+      case "submit-feedback":
+        window.open("/feedback/submit", "_blank");
         break;
       default:
         alert(`Action ${action} will be implemented soon`);
@@ -349,11 +629,11 @@ export default function StakeholderDashboard({ userRole, entityType, entityId, u
 
   const generateReport = () => {
     if (!selectedReport) {
-      alert('Please select a report type');
+      alert("Please select a report type");
       return;
     }
 
-    const report = availableReports.find(r => r.name === selectedReport);
+    const report = availableReports.find((r) => r.name === selectedReport);
     if (report) {
       alert(`Generating ${report.name} in ${report.format} format...`);
       // Implement actual report generation
@@ -369,17 +649,30 @@ export default function StakeholderDashboard({ userRole, entityType, entityId, u
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">{metric.label}</p>
-                  <p className="text-3xl font-bold text-gray-900">{metric.value}</p>
-                  <p className={`text-sm ${
-                    metric.change.startsWith('+') ? 'text-green-600' :
-                    metric.change.startsWith('-') ? 'text-red-600' : 'text-gray-600'
-                  }`}>
+                  <p className="text-sm font-medium text-gray-600">
+                    {metric.label}
+                  </p>
+                  <p className="text-3xl font-bold text-gray-900">
+                    {metric.value}
+                  </p>
+                  <p
+                    className={`text-sm ${
+                      metric.change.startsWith("+")
+                        ? "text-green-600"
+                        : metric.change.startsWith("-")
+                          ? "text-red-600"
+                          : "text-gray-600"
+                    }`}
+                  >
                     {metric.change} from last period
                   </p>
                 </div>
-                <div className={`p-3 rounded-full ${dashboardConfig.primaryColor} bg-opacity-10`}>
-                  <IconComponent className={`h-6 w-6 ${dashboardConfig.primaryColor.replace('bg-', 'text-')}`} />
+                <div
+                  className={`p-3 rounded-full ${dashboardConfig.primaryColor} bg-opacity-10`}
+                >
+                  <IconComponent
+                    className={`h-6 w-6 ${dashboardConfig.primaryColor.replace("bg-", "text-")}`}
+                  />
                 </div>
               </div>
             </CardContent>
@@ -430,19 +723,22 @@ export default function StakeholderDashboard({ userRole, entityType, entityId, u
             <div
               key={notification.id}
               className={`p-3 border-l-4 rounded-r-lg ${
-                notification.type === 'warning'
-                  ? 'border-yellow-500 bg-yellow-50'
-                  : notification.type === 'success'
-                  ? 'border-green-500 bg-green-50'
-                  : 'border-blue-500 bg-blue-50'
-              } ${notification.read ? 'opacity-60' : ''}`}
+                notification.type === "warning"
+                  ? "border-yellow-500 bg-yellow-50"
+                  : notification.type === "success"
+                    ? "border-green-500 bg-green-50"
+                    : "border-blue-500 bg-blue-50"
+              } ${notification.read ? "opacity-60" : ""}`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <h4 className="font-medium text-sm">{notification.title}</h4>
-                  <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {notification.message}
+                  </p>
                   <p className="text-xs text-gray-500 mt-2">
-                    {notification.timestamp.toLocaleDateString()} at {notification.timestamp.toLocaleTimeString()}
+                    {notification.timestamp.toLocaleDateString()} at{" "}
+                    {notification.timestamp.toLocaleTimeString()}
                   </p>
                 </div>
                 {!notification.read && (
@@ -494,7 +790,9 @@ export default function StakeholderDashboard({ userRole, entityType, entityId, u
           <FileText className="h-5 w-5" />
           Generate Reports
         </CardTitle>
-        <CardDescription>Create stakeholder-specific reports and documentation</CardDescription>
+        <CardDescription>
+          Create stakeholder-specific reports and documentation
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -519,13 +817,23 @@ export default function StakeholderDashboard({ userRole, entityType, entityId, u
               <Input
                 type="date"
                 value={reportDateRange.start}
-                onChange={(e) => setReportDateRange(prev => ({ ...prev, start: e.target.value }))}
+                onChange={(e) =>
+                  setReportDateRange((prev) => ({
+                    ...prev,
+                    start: e.target.value,
+                  }))
+                }
                 className="flex-1"
               />
               <Input
                 type="date"
                 value={reportDateRange.end}
-                onChange={(e) => setReportDateRange(prev => ({ ...prev, end: e.target.value }))}
+                onChange={(e) =>
+                  setReportDateRange((prev) => ({
+                    ...prev,
+                    end: e.target.value,
+                  }))
+                }
                 className="flex-1"
               />
             </div>
@@ -539,10 +847,13 @@ export default function StakeholderDashboard({ userRole, entityType, entityId, u
         {selectedReport && (
           <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
             <h4 className="font-medium text-blue-900">
-              {availableReports.find(r => r.name === selectedReport)?.name}
+              {availableReports.find((r) => r.name === selectedReport)?.name}
             </h4>
             <p className="text-sm text-blue-700 mt-1">
-              {availableReports.find(r => r.name === selectedReport)?.description}
+              {
+                availableReports.find((r) => r.name === selectedReport)
+                  ?.description
+              }
             </p>
           </div>
         )}
@@ -555,12 +866,14 @@ export default function StakeholderDashboard({ userRole, entityType, entityId, u
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{dashboardConfig.title}</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {dashboardConfig.title}
+          </h1>
           <p className="text-gray-600 mt-1">{dashboardConfig.subtitle}</p>
           <div className="flex items-center gap-2 mt-2">
             <Badge variant="outline">Welcome, {userName}</Badge>
             <Badge className={`${dashboardConfig.primaryColor} text-white`}>
-              {entityType.replace('_', ' ').toLowerCase()}
+              {entityType.replace("_", " ").toLowerCase()}
             </Badge>
           </div>
         </div>
@@ -585,10 +898,17 @@ export default function StakeholderDashboard({ userRole, entityType, entityId, u
       {renderMetrics()}
 
       {/* Main Content Tabs */}
-      <Tabs value={activeView.toString()} onValueChange={(value) => setActiveView(Number.parseInt(value))}>
+      <Tabs
+        value={activeView.toString()}
+        onValueChange={(value) => setActiveView(Number.parseInt(value))}
+      >
         <TabsList className="grid w-full grid-cols-6">
           {dashboardConfig.views.map((view, index) => (
-            <TabsTrigger key={index} value={index.toString()} className="text-xs">
+            <TabsTrigger
+              key={index}
+              value={index.toString()}
+              className="text-xs"
+            >
               {view}
             </TabsTrigger>
           ))}
@@ -611,9 +931,12 @@ export default function StakeholderDashboard({ userRole, entityType, entityId, u
           <Card>
             <CardContent className="p-12 text-center">
               <BarChart3 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">{dashboardConfig.views[1]}</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                {dashboardConfig.views[1]}
+              </h3>
               <p className="text-gray-600 mb-4">
-                Detailed {dashboardConfig.views[1].toLowerCase()} view for {entityType.replace('_', ' ').toLowerCase()} stakeholders
+                Detailed {dashboardConfig.views[1].toLowerCase()} view for{" "}
+                {entityType.replace("_", " ").toLowerCase()} stakeholders
               </p>
               <Button className={dashboardConfig.primaryColor}>
                 Access {dashboardConfig.views[1]}
@@ -626,9 +949,12 @@ export default function StakeholderDashboard({ userRole, entityType, entityId, u
           <Card>
             <CardContent className="p-12 text-center">
               <PieChart className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">{dashboardConfig.views[2]}</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                {dashboardConfig.views[2]}
+              </h3>
               <p className="text-gray-600 mb-4">
-                Comprehensive {dashboardConfig.views[2].toLowerCase()} management and analysis
+                Comprehensive {dashboardConfig.views[2].toLowerCase()}{" "}
+                management and analysis
               </p>
               <Button className={dashboardConfig.primaryColor}>
                 Access {dashboardConfig.views[2]}
@@ -641,9 +967,12 @@ export default function StakeholderDashboard({ userRole, entityType, entityId, u
           <Card>
             <CardContent className="p-12 text-center">
               <Network className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">{dashboardConfig.views[3]}</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                {dashboardConfig.views[3]}
+              </h3>
               <p className="text-gray-600 mb-4">
-                Advanced {dashboardConfig.views[3].toLowerCase()} tools and resources
+                Advanced {dashboardConfig.views[3].toLowerCase()} tools and
+                resources
               </p>
               <Button className={dashboardConfig.primaryColor}>
                 Access {dashboardConfig.views[3]}
@@ -656,9 +985,12 @@ export default function StakeholderDashboard({ userRole, entityType, entityId, u
           <Card>
             <CardContent className="p-12 text-center">
               <FileText className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">{dashboardConfig.views[4]}</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                {dashboardConfig.views[4]}
+              </h3>
               <p className="text-gray-600 mb-4">
-                Specialized {dashboardConfig.views[4].toLowerCase()} functionality
+                Specialized {dashboardConfig.views[4].toLowerCase()}{" "}
+                functionality
               </p>
               <Button className={dashboardConfig.primaryColor}>
                 Access {dashboardConfig.views[4]}
@@ -671,9 +1003,12 @@ export default function StakeholderDashboard({ userRole, entityType, entityId, u
           <Card>
             <CardContent className="p-12 text-center">
               <Target className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">{dashboardConfig.views[5]}</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                {dashboardConfig.views[5]}
+              </h3>
               <p className="text-gray-600 mb-4">
-                Strategic {dashboardConfig.views[5].toLowerCase()} planning and execution
+                Strategic {dashboardConfig.views[5].toLowerCase()} planning and
+                execution
               </p>
               <Button className={dashboardConfig.primaryColor}>
                 Access {dashboardConfig.views[5]}

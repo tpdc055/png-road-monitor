@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 // PNG Language Support - English and Tok Pisin
 export type Language = "en" | "tp";
@@ -17,164 +17,164 @@ const translations: Translations = {
   // Navigation
   "nav.projects": {
     en: "Projects",
-    tp: "Ol Wok"
+    tp: "Ol Wok",
   },
   "nav.gps": {
     en: "GPS Tracking",
-    tp: "GPS Painim"
+    tp: "GPS Painim",
   },
   "nav.progress": {
     en: "Progress Mapping",
-    tp: "Wok i Go Hap"
+    tp: "Wok i Go Hap",
   },
   "nav.financial": {
     en: "Financial",
-    tp: "Mani Samting"
+    tp: "Mani Samting",
   },
 
   // Header
   "header.title": {
     en: "PNG Road Construction Monitor",
-    tp: "PNG Rot Bildim Lukautim Sistem"
+    tp: "PNG Rot Bildim Lukautim Sistem",
   },
   "header.subtitle": {
     en: "Papua New Guinea Department of Works",
-    tp: "Papua Niugini Gavman Wok Ofis"
+    tp: "Papua Niugini Gavman Wok Ofis",
   },
   "header.welcome": {
     en: "Welcome",
-    tp: "Welkam"
+    tp: "Welkam",
   },
 
   // Common Actions
   "action.signin": {
     en: "Sign In",
-    tp: "Go Insait"
+    tp: "Go Insait",
   },
   "action.signout": {
     en: "Sign Out",
-    tp: "Go Ausait"
+    tp: "Go Ausait",
   },
   "action.save": {
     en: "Save",
-    tp: "Seiv"
+    tp: "Seiv",
   },
   "action.cancel": {
     en: "Cancel",
-    tp: "Lusim"
+    tp: "Lusim",
   },
   "action.edit": {
     en: "Edit",
-    tp: "Senisim"
+    tp: "Senisim",
   },
   "action.delete": {
     en: "Delete",
-    tp: "Rausim"
+    tp: "Rausim",
   },
 
   // Project Status
   "status.planning": {
     en: "Planning",
-    tp: "Tingting"
+    tp: "Tingting",
   },
   "status.active": {
     en: "Active",
-    tp: "i Wok"
+    tp: "i Wok",
   },
   "status.completed": {
     en: "Completed",
-    tp: "Pinis"
+    tp: "Pinis",
   },
   "status.onhold": {
     en: "On Hold",
-    tp: "Wet Smol"
+    tp: "Wet Smol",
   },
 
   // Provinces
   "province.central": {
     en: "Central Province",
-    tp: "Sentral Provins"
+    tp: "Sentral Provins",
   },
   "province.western_highlands": {
     en: "Western Highlands",
-    tp: "Westen Hailans"
+    tp: "Westen Hailans",
   },
   "province.morobe": {
     en: "Morobe Province",
-    tp: "Morobe Provins"
+    tp: "Morobe Provins",
   },
   "province.ncd": {
     en: "Port Moresby (NCD)",
-    tp: "Pot Mosbi (NCD)"
+    tp: "Pot Mosbi (NCD)",
   },
 
   // Financial Terms
   "financial.budget": {
     en: "Budget",
-    tp: "Mani Kaunim"
+    tp: "Mani Kaunim",
   },
   "financial.spent": {
     en: "Spent",
-    tp: "Mani Pinis"
+    tp: "Mani Pinis",
   },
   "financial.remaining": {
     en: "Remaining",
-    tp: "Mani Stap"
+    tp: "Mani Stap",
   },
   "financial.funding_source": {
     en: "Funding Source",
-    tp: "Mani i Kam Long We"
+    tp: "Mani i Kam Long We",
   },
 
   // Form Labels
   "form.email": {
     en: "Email Address",
-    tp: "Imel Adres"
+    tp: "Imel Adres",
   },
   "form.password": {
     en: "Password",
-    tp: "Passwot"
+    tp: "Passwot",
   },
   "form.project_name": {
     en: "Project Name",
-    tp: "Nem Bilong Wok"
+    tp: "Nem Bilong Wok",
   },
   "form.location": {
     en: "Location",
-    tp: "Ples"
+    tp: "Ples",
   },
   "form.description": {
     en: "Description",
-    tp: "Tok Klia"
+    tp: "Tok Klia",
   },
 
   // Demo Credentials
   "demo.title": {
     en: "Demo Credentials",
-    tp: "Triaim Nem na Passwot"
+    tp: "Triaim Nem na Passwot",
   },
   "demo.description": {
     en: "Click on any credential below to auto-fill the login form",
-    tp: "Klikim wanpela nem bilong triaim"
+    tp: "Klikim wanpela nem bilong triaim",
   },
 
   // User Roles
   "role.administrator": {
     en: "Administrator",
-    tp: "Bosim Man"
+    tp: "Bosim Man",
   },
   "role.project_manager": {
     en: "Project Manager",
-    tp: "Wok Bosim Man"
+    tp: "Wok Bosim Man",
   },
   "role.site_engineer": {
     en: "Site Engineer",
-    tp: "Enjinia"
+    tp: "Enjinia",
   },
   "role.financial_officer": {
     en: "Financial Officer",
-    tp: "Mani Man"
-  }
+    tp: "Mani Man",
+  },
 };
 
 interface LanguageContextType {
@@ -183,13 +183,17 @@ interface LanguageContextType {
   t: (key: string) => string;
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+const LanguageContext = createContext<LanguageContextType | undefined>(
+  undefined,
+);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguage] = useState<Language>("en");
 
   useEffect(() => {
-    const savedLanguage = localStorage.getItem("png_road_monitor_language") as Language;
+    const savedLanguage = localStorage.getItem(
+      "png_road_monitor_language",
+    ) as Language;
     if (savedLanguage && (savedLanguage === "en" || savedLanguage === "tp")) {
       setLanguage(savedLanguage);
     }
@@ -214,7 +218,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       value={{
         language,
         setLanguage: changeLanguage,
-        t: translate
+        t: translate,
       }}
     >
       {children}

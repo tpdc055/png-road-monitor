@@ -1,5 +1,5 @@
-import * as React from "react";
 import { cn } from "@/lib/utils";
+import * as React from "react";
 
 const Alert = React.forwardRef<
   HTMLDivElement,
@@ -13,7 +13,7 @@ const Alert = React.forwardRef<
       variant === "destructive"
         ? "border-red-200 bg-red-50 text-red-800"
         : "border-gray-200 bg-gray-50",
-      className
+      className,
     )}
     {...props}
   />

@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { MockAPIService } from '@/lib/mockApiService';
+import { MockAPIService } from "@/lib/mockApiService";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
@@ -7,12 +7,15 @@ export async function GET() {
     const result = await MockAPIService.getProjects();
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Error fetching projects:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to fetch projects',
-      details: error.message
-    }, { status: 500 });
+    console.error("Error fetching projects:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to fetch projects",
+        details: error.message,
+      },
+      { status: 500 },
+    );
   }
 }
 
@@ -22,10 +25,13 @@ export async function POST(request: Request) {
 
     // Validate required fields
     if (!body.name || !body.location || !body.provinceId) {
-      return NextResponse.json({
-        success: false,
-        error: 'Missing required fields: name, location, provinceId'
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Missing required fields: name, location, provinceId",
+        },
+        { status: 400 },
+      );
     }
 
     // Pure mock data response - no database dependencies
@@ -33,11 +39,14 @@ export async function POST(request: Request) {
 
     return NextResponse.json(result, { status: result.success ? 201 : 400 });
   } catch (error) {
-    console.error('Error creating project:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to create project',
-      details: error.message
-    }, { status: 500 });
+    console.error("Error creating project:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Failed to create project",
+        details: error.message,
+      },
+      { status: 500 },
+    );
   }
 }

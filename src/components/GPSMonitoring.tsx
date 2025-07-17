@@ -1,25 +1,37 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  MapPin,
-  Truck,
-  Navigation,
-  Clock,
-  Fuel,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Activity,
   AlertTriangle,
+  Clock,
+  Filter,
+  Fuel,
+  MapPin,
+  Navigation,
   RefreshCw,
   Search,
-  Filter,
+  Truck,
   Zap,
-  Activity
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface Vehicle {
   id: string;
@@ -47,14 +59,14 @@ const mockVehicles: Vehicle[] = [
     location: {
       lat: -6.314993,
       lng: 143.95555,
-      address: "Highlands Highway, Mt. Hagen, PNG"
+      address: "Highlands Highway, Mt. Hagen, PNG",
     },
     status: "active",
     speed: 0,
     fuel: 75,
     lastUpdate: "2 minutes ago",
     driver: "John Kila",
-    project: "Mt. Hagen-Kagamuga Road"
+    project: "Mt. Hagen-Kagamuga Road",
   },
   {
     id: "TRUCK002",
@@ -63,14 +75,14 @@ const mockVehicles: Vehicle[] = [
     location: {
       lat: -9.4438,
       lng: 147.1803,
-      address: "Hiritano Highway, Port Moresby, PNG"
+      address: "Hiritano Highway, Port Moresby, PNG",
     },
     status: "active",
     speed: 45,
     fuel: 60,
     lastUpdate: "1 minute ago",
     driver: "Maria Temu",
-    project: "Port Moresby Ring Road"
+    project: "Port Moresby Ring Road",
   },
   {
     id: "GRADE003",
@@ -78,15 +90,15 @@ const mockVehicles: Vehicle[] = [
     type: "grader",
     location: {
       lat: -6.7924,
-      lng: 146.9970,
-      address: "Ramu Highway, Lae, PNG"
+      lng: 146.997,
+      address: "Ramu Highway, Lae, PNG",
     },
     status: "idle",
     speed: 0,
     fuel: 40,
     lastUpdate: "5 minutes ago",
     driver: "Peter Namaliu",
-    project: "Lae-Nadzab Road Upgrade"
+    project: "Lae-Nadzab Road Upgrade",
   },
   {
     id: "ROLL004",
@@ -95,14 +107,14 @@ const mockVehicles: Vehicle[] = [
     location: {
       lat: -5.2085,
       lng: 145.7887,
-      address: "Sepik Highway, Wewak, PNG"
+      address: "Sepik Highway, Wewak, PNG",
     },
     status: "maintenance",
     speed: 0,
     fuel: 20,
     lastUpdate: "30 minutes ago",
     driver: "Sarah Waigani",
-    project: "Wewak Coastal Road"
+    project: "Wewak Coastal Road",
   },
   {
     id: "BULL005",
@@ -111,15 +123,15 @@ const mockVehicles: Vehicle[] = [
     location: {
       lat: -4.2599,
       lng: 152.1419,
-      address: "Kokoda Track, Popondetta, PNG"
+      address: "Kokoda Track, Popondetta, PNG",
     },
     status: "offline",
     speed: 0,
     fuel: 85,
     lastUpdate: "2 hours ago",
     driver: "David Okuk",
-    project: "Kokoda Memorial Road"
-  }
+    project: "Kokoda Memorial Road",
+  },
 ];
 
 const getStatusColor = (status: Vehicle["status"]) => {
@@ -153,18 +165,18 @@ export default function GPSMonitoring() {
   useEffect(() => {
     const interval = setInterval(() => {
       // Only update active vehicles to reduce processing
-      setVehicles(prevVehicles =>
-        prevVehicles.map(vehicle => {
+      setVehicles((prevVehicles) =>
+        prevVehicles.map((vehicle) => {
           if (vehicle.status === "active") {
             return {
               ...vehicle,
               speed: Math.floor(Math.random() * 60),
               fuel: Math.max(0, vehicle.fuel - Math.random() * 1), // Reduced fuel consumption rate
-              lastUpdate: "Just now"
+              lastUpdate: "Just now",
             };
           }
           return vehicle; // Return unchanged for inactive vehicles
-        })
+        }),
       );
       setLastRefresh(new Date());
     }, 15000); // Update every 15 seconds (increased from 10 seconds)
@@ -172,11 +184,13 @@ export default function GPSMonitoring() {
     return () => clearInterval(interval);
   }, []); // Keep empty dependency array
 
-  const filteredVehicles = vehicles.filter(vehicle => {
-    const matchesSearch = vehicle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         vehicle.driver.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         vehicle.project.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || vehicle.status === statusFilter;
+  const filteredVehicles = vehicles.filter((vehicle) => {
+    const matchesSearch =
+      vehicle.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vehicle.driver.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      vehicle.project.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" || vehicle.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -189,8 +203,12 @@ export default function GPSMonitoring() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">GPS Vehicle Tracking</h2>
-          <p className="text-gray-600">Real-time monitoring of PNG road construction equipment</p>
+          <h2 className="text-2xl font-bold text-gray-900">
+            GPS Vehicle Tracking
+          </h2>
+          <p className="text-gray-600">
+            Real-time monitoring of PNG road construction equipment
+          </p>
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Activity className="h-4 w-4 text-green-500" />
@@ -209,7 +227,7 @@ export default function GPSMonitoring() {
               <div>
                 <p className="text-sm text-gray-600">Active</p>
                 <p className="font-semibold text-green-600">
-                  {vehicles.filter(v => v.status === "active").length}
+                  {vehicles.filter((v) => v.status === "active").length}
                 </p>
               </div>
             </div>
@@ -225,7 +243,7 @@ export default function GPSMonitoring() {
               <div>
                 <p className="text-sm text-gray-600">Idle</p>
                 <p className="font-semibold text-yellow-600">
-                  {vehicles.filter(v => v.status === "idle").length}
+                  {vehicles.filter((v) => v.status === "idle").length}
                 </p>
               </div>
             </div>
@@ -241,7 +259,7 @@ export default function GPSMonitoring() {
               <div>
                 <p className="text-sm text-gray-600">Maintenance</p>
                 <p className="font-semibold text-orange-600">
-                  {vehicles.filter(v => v.status === "maintenance").length}
+                  {vehicles.filter((v) => v.status === "maintenance").length}
                 </p>
               </div>
             </div>
@@ -257,7 +275,7 @@ export default function GPSMonitoring() {
               <div>
                 <p className="text-sm text-gray-600">Offline</p>
                 <p className="font-semibold text-red-600">
-                  {vehicles.filter(v => v.status === "offline").length}
+                  {vehicles.filter((v) => v.status === "offline").length}
                 </p>
               </div>
             </div>
@@ -300,7 +318,11 @@ export default function GPSMonitoring() {
             </div>
 
             <div className="sm:w-32 flex items-end">
-              <Button onClick={refreshData} variant="outline" className="w-full">
+              <Button
+                onClick={refreshData}
+                variant="outline"
+                className="w-full"
+              >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Refresh
               </Button>
@@ -317,7 +339,9 @@ export default function GPSMonitoring() {
             <Card
               key={vehicle.id}
               className={`cursor-pointer transition-all ${
-                selectedVehicle?.id === vehicle.id ? "ring-2 ring-blue-500" : "hover:shadow-md"
+                selectedVehicle?.id === vehicle.id
+                  ? "ring-2 ring-blue-500"
+                  : "hover:shadow-md"
               }`}
               onClick={() => setSelectedVehicle(vehicle)}
             >
@@ -333,7 +357,8 @@ export default function GPSMonitoring() {
                     </div>
                   </div>
                   <Badge className={getStatusColor(vehicle.status)}>
-                    {vehicle.status.charAt(0).toUpperCase() + vehicle.status.slice(1)}
+                    {vehicle.status.charAt(0).toUpperCase() +
+                      vehicle.status.slice(1)}
                   </Badge>
                 </div>
               </CardHeader>
@@ -353,11 +378,19 @@ export default function GPSMonitoring() {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <MapPin className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm text-gray-600">{vehicle.location.address}</span>
+                    <span className="text-sm text-gray-600">
+                      {vehicle.location.address}
+                    </span>
                   </div>
-                  <p className="text-sm"><strong>Driver:</strong> {vehicle.driver}</p>
-                  <p className="text-sm"><strong>Project:</strong> {vehicle.project}</p>
-                  <p className="text-xs text-gray-500">Last update: {vehicle.lastUpdate}</p>
+                  <p className="text-sm">
+                    <strong>Driver:</strong> {vehicle.driver}
+                  </p>
+                  <p className="text-sm">
+                    <strong>Project:</strong> {vehicle.project}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Last update: {vehicle.lastUpdate}
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -370,7 +403,9 @@ export default function GPSMonitoring() {
           <CardContent className="p-12 text-center">
             <Truck className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">No vehicles found</h3>
-            <p className="text-gray-600">Try adjusting your search or filter criteria.</p>
+            <p className="text-gray-600">
+              Try adjusting your search or filter criteria.
+            </p>
           </CardContent>
         </Card>
       )}
@@ -392,26 +427,45 @@ export default function GPSMonitoring() {
               <div className="space-y-3">
                 <h4 className="font-semibold">Location Details</h4>
                 <div className="space-y-2 text-sm">
-                  <p><strong>Coordinates:</strong> {selectedVehicle.location.lat.toFixed(6)}, {selectedVehicle.location.lng.toFixed(6)}</p>
-                  <p><strong>Address:</strong> {selectedVehicle.location.address}</p>
-                  <p><strong>Current Speed:</strong> {selectedVehicle.speed} km/h</p>
+                  <p>
+                    <strong>Coordinates:</strong>{" "}
+                    {selectedVehicle.location.lat.toFixed(6)},{" "}
+                    {selectedVehicle.location.lng.toFixed(6)}
+                  </p>
+                  <p>
+                    <strong>Address:</strong> {selectedVehicle.location.address}
+                  </p>
+                  <p>
+                    <strong>Current Speed:</strong> {selectedVehicle.speed} km/h
+                  </p>
                 </div>
               </div>
 
               <div className="space-y-3">
                 <h4 className="font-semibold">Vehicle Status</h4>
                 <div className="space-y-2 text-sm">
-                  <p><strong>Fuel Level:</strong> {selectedVehicle.fuel.toFixed(1)}%</p>
-                  <p><strong>Driver:</strong> {selectedVehicle.driver}</p>
-                  <p><strong>Assigned Project:</strong> {selectedVehicle.project}</p>
-                  <p><strong>Last Update:</strong> {selectedVehicle.lastUpdate}</p>
+                  <p>
+                    <strong>Fuel Level:</strong>{" "}
+                    {selectedVehicle.fuel.toFixed(1)}%
+                  </p>
+                  <p>
+                    <strong>Driver:</strong> {selectedVehicle.driver}
+                  </p>
+                  <p>
+                    <strong>Assigned Project:</strong> {selectedVehicle.project}
+                  </p>
+                  <p>
+                    <strong>Last Update:</strong> {selectedVehicle.lastUpdate}
+                  </p>
                 </div>
               </div>
             </div>
 
             <div className="p-4 bg-blue-50 rounded-lg">
               <p className="text-sm text-blue-800">
-                <strong>Note:</strong> Google Maps integration will be added next to show precise vehicle locations and routes on an interactive map.
+                <strong>Note:</strong> Google Maps integration will be added
+                next to show precise vehicle locations and routes on an
+                interactive map.
               </p>
             </div>
           </CardContent>

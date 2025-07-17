@@ -1,28 +1,40 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import {
-  Building2,
-  Edit,
-  Save,
-  X,
-  ArrowLeft,
-  MapPin,
-  Calendar,
-  DollarSign,
-  Users,
-  Loader2,
-  AlertCircle,
-  CheckCircle
-} from "lucide-react";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { MockAPIService } from "@/lib/mockApiService";
+import {
+  AlertCircle,
+  ArrowLeft,
+  Building2,
+  Calendar,
+  CheckCircle,
+  DollarSign,
+  Edit,
+  Loader2,
+  MapPin,
+  Save,
+  Users,
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface Project {
   id: string;
@@ -75,18 +87,30 @@ interface ProjectEditorProps {
 const statusOptions = [
   { value: "PLANNING", label: "Planning", color: "bg-blue-100 text-blue-800" },
   { value: "ACTIVE", label: "Active", color: "bg-green-100 text-green-800" },
-  { value: "ON_HOLD", label: "On Hold", color: "bg-yellow-100 text-yellow-800" },
-  { value: "COMPLETED", label: "Completed", color: "bg-gray-100 text-gray-800" }
+  {
+    value: "ON_HOLD",
+    label: "On Hold",
+    color: "bg-yellow-100 text-yellow-800",
+  },
+  {
+    value: "COMPLETED",
+    label: "Completed",
+    color: "bg-gray-100 text-gray-800",
+  },
 ];
 
 const fundingOptions = [
   { value: "GOVERNMENT", label: "PNG Government" },
   { value: "WORLD_BANK", label: "World Bank" },
   { value: "ADB", label: "Asian Development Bank" },
-  { value: "JOINT", label: "Joint Funding" }
+  { value: "JOINT", label: "Joint Funding" },
 ];
 
-export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEditorProps) {
+export default function ProjectEditor({
+  projectId,
+  onClose,
+  onSave,
+}: ProjectEditorProps) {
   const [project, setProject] = useState<Project | null>(null);
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -105,7 +129,7 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
     endDate: "",
     contractor: "",
     managerId: "",
-    fundingSource: "GOVERNMENT" as Project["fundingSource"]
+    fundingSource: "GOVERNMENT" as Project["fundingSource"],
   });
 
   // Fetch project data and other required data
@@ -122,7 +146,7 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
       const [projectData, provincesData, usersData] = await Promise.all([
         MockAPIService.getProject(projectId),
         MockAPIService.getProvinces(),
-        MockAPIService.getUsers()
+        MockAPIService.getUsers(),
       ]);
 
       if (!projectData.success) {
@@ -135,9 +159,12 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
       }
 
       if (usersData.success) {
-        setUsers(usersData.data.filter((user: User) =>
-          user.role === 'PROJECT_MANAGER' || user.role === 'ADMIN'
-        ));
+        setUsers(
+          usersData.data.filter(
+            (user: User) =>
+              user.role === "PROJECT_MANAGER" || user.role === "ADMIN",
+          ),
+        );
       }
 
       // Set project data
@@ -152,15 +179,14 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
         provinceId: proj.province.id,
         status: proj.status,
         budget: proj.budget.toString(),
-        startDate: proj.startDate ? proj.startDate.split('T')[0] : "",
-        endDate: proj.endDate ? proj.endDate.split('T')[0] : "",
+        startDate: proj.startDate ? proj.startDate.split("T")[0] : "",
+        endDate: proj.endDate ? proj.endDate.split("T")[0] : "",
         contractor: proj.contractor || "",
         managerId: proj.manager?.id || "unassigned",
-        fundingSource: proj.fundingSource
+        fundingSource: proj.fundingSource,
       });
-
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
       setError("Failed to load project data");
     } finally {
       setIsLoading(false);
@@ -170,7 +196,12 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.location || !formData.provinceId || !formData.budget) {
+    if (
+      !formData.name ||
+      !formData.location ||
+      !formData.provinceId ||
+      !formData.budget
+    ) {
       setError("Please fill in all required fields");
       return;
     }
@@ -190,8 +221,9 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
         startDate: formData.startDate || null,
         endDate: formData.endDate || null,
         contractor: formData.contractor || null,
-        managerId: formData.managerId !== "unassigned" ? formData.managerId : null,
-        fundingSource: formData.fundingSource
+        managerId:
+          formData.managerId !== "unassigned" ? formData.managerId : null,
+        fundingSource: formData.fundingSource,
       });
 
       if (data.success) {
@@ -201,7 +233,7 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
         setError(data.error || "Failed to update project");
       }
     } catch (error) {
-      console.error('Error updating project:', error);
+      console.error("Error updating project:", error);
       setError("Failed to update project. Please try again.");
     } finally {
       setIsSaving(false);
@@ -213,11 +245,9 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
   };
 
   const getStatusBadge = (status: Project["status"]) => {
-    const statusOption = statusOptions.find(opt => opt.value === status);
+    const statusOption = statusOptions.find((opt) => opt.value === status);
     return statusOption ? (
-      <Badge className={statusOption.color}>
-        {statusOption.label}
-      </Badge>
+      <Badge className={statusOption.color}>{statusOption.label}</Badge>
     ) : null;
   };
 
@@ -281,33 +311,47 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
       <Card>
         <CardHeader>
           <CardTitle>Current Project Information</CardTitle>
-          <CardDescription>Overview of the existing project before making changes</CardDescription>
+          <CardDescription>
+            Overview of the existing project before making changes
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div>
               <span className="text-gray-500">Budget:</span>
-              <span className="ml-2 font-semibold">{formatCurrency(project.budget)}</span>
+              <span className="ml-2 font-semibold">
+                {formatCurrency(project.budget)}
+              </span>
             </div>
             <div>
               <span className="text-gray-500">Spent:</span>
-              <span className="ml-2 font-semibold">{formatCurrency(project.spent)}</span>
+              <span className="ml-2 font-semibold">
+                {formatCurrency(project.spent)}
+              </span>
             </div>
             <div>
               <span className="text-gray-500">Province:</span>
-              <span className="ml-2 font-semibold">{project.province.name}</span>
+              <span className="ml-2 font-semibold">
+                {project.province.name}
+              </span>
             </div>
             <div>
               <span className="text-gray-500">Manager:</span>
-              <span className="ml-2 font-semibold">{project.manager?.name || "Not assigned"}</span>
+              <span className="ml-2 font-semibold">
+                {project.manager?.name || "Not assigned"}
+              </span>
             </div>
             <div>
               <span className="text-gray-500">Contractor:</span>
-              <span className="ml-2 font-semibold">{project.contractor || "Not assigned"}</span>
+              <span className="ml-2 font-semibold">
+                {project.contractor || "Not assigned"}
+              </span>
             </div>
             <div>
               <span className="text-gray-500">Last Updated:</span>
-              <span className="ml-2 font-semibold">{new Date(project.updatedAt).toLocaleDateString()}</span>
+              <span className="ml-2 font-semibold">
+                {new Date(project.updatedAt).toLocaleDateString()}
+              </span>
             </div>
           </div>
         </CardContent>
@@ -317,7 +361,9 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
       <Card>
         <CardHeader>
           <CardTitle>Edit Project Details</CardTitle>
-          <CardDescription>Update the project information below</CardDescription>
+          <CardDescription>
+            Update the project information below
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -336,7 +382,9 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
                 <Input
                   id="name"
                   value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   placeholder="Enter project name"
                 />
               </div>
@@ -345,13 +393,15 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
                 <Label htmlFor="province">Province *</Label>
                 <Select
                   value={formData.provinceId}
-                  onValueChange={(value) => setFormData({...formData, provinceId: value})}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, provinceId: value })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select province" />
                   </SelectTrigger>
                   <SelectContent>
-                    {provinces.map(province => (
+                    {provinces.map((province) => (
                       <SelectItem key={province.id} value={province.id}>
                         {province.name}
                       </SelectItem>
@@ -366,7 +416,9 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
               <Input
                 id="location"
                 value={formData.location}
-                onChange={(e) => setFormData({...formData, location: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, location: e.target.value })
+                }
                 placeholder="Enter specific location details"
               />
             </div>
@@ -376,7 +428,9 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => setFormData({...formData, description: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Enter project description"
                 rows={3}
               />
@@ -388,13 +442,18 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
                 <Label htmlFor="status">Project Status</Label>
                 <Select
                   value={formData.status}
-                  onValueChange={(value) => setFormData({...formData, status: value as Project["status"]})}
+                  onValueChange={(value) =>
+                    setFormData({
+                      ...formData,
+                      status: value as Project["status"],
+                    })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {statusOptions.map(option => (
+                    {statusOptions.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -409,7 +468,9 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
                   id="budget"
                   type="number"
                   value={formData.budget}
-                  onChange={(e) => setFormData({...formData, budget: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, budget: e.target.value })
+                  }
                   placeholder="0"
                 />
               </div>
@@ -418,13 +479,18 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
                 <Label htmlFor="funding">Funding Source</Label>
                 <Select
                   value={formData.fundingSource}
-                  onValueChange={(value) => setFormData({...formData, fundingSource: value as Project["fundingSource"]})}
+                  onValueChange={(value) =>
+                    setFormData({
+                      ...formData,
+                      fundingSource: value as Project["fundingSource"],
+                    })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {fundingOptions.map(option => (
+                    {fundingOptions.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -442,7 +508,9 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
                   id="startDate"
                   type="date"
                   value={formData.startDate}
-                  onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, startDate: e.target.value })
+                  }
                 />
               </div>
 
@@ -452,7 +520,9 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
                   id="endDate"
                   type="date"
                   value={formData.endDate}
-                  onChange={(e) => setFormData({...formData, endDate: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, endDate: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -464,7 +534,9 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
                 <Input
                   id="contractor"
                   value={formData.contractor}
-                  onChange={(e) => setFormData({...formData, contractor: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, contractor: e.target.value })
+                  }
                   placeholder="Contractor name"
                 />
               </div>
@@ -473,14 +545,18 @@ export default function ProjectEditor({ projectId, onClose, onSave }: ProjectEdi
                 <Label htmlFor="manager">Project Manager</Label>
                 <Select
                   value={formData.managerId}
-                  onValueChange={(value) => setFormData({...formData, managerId: value})}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, managerId: value })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select manager" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="unassigned">No manager assigned</SelectItem>
-                    {users.map(user => (
+                    <SelectItem value="unassigned">
+                      No manager assigned
+                    </SelectItem>
+                    {users.map((user) => (
                       <SelectItem key={user.id} value={user.id}>
                         {user.name} ({user.role})
                       </SelectItem>

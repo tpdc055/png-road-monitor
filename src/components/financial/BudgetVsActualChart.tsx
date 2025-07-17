@@ -1,11 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { BarChart3, TrendingUp, TrendingDown, AlertTriangle } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { PNG_BUDGET_CATEGORIES } from "@/types/financial";
+import {
+  AlertTriangle,
+  BarChart3,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface BudgetCategory {
   category: string;
@@ -21,7 +39,9 @@ interface BudgetVsActualChartProps {
   projectId: string;
 }
 
-export default function BudgetVsActualChart({ projectId }: BudgetVsActualChartProps) {
+export default function BudgetVsActualChart({
+  projectId,
+}: BudgetVsActualChartProps) {
   const [budgetData, setBudgetData] = useState<BudgetCategory[]>([]);
 
   useEffect(() => {
@@ -38,7 +58,7 @@ export default function BudgetVsActualChart({ projectId }: BudgetVsActualChartPr
         commitments: 2000000,
         variance: -3000000,
         variancePercentage: -6.7,
-        status: "under-budget"
+        status: "under-budget",
       },
       {
         category: "Pavement",
@@ -47,7 +67,7 @@ export default function BudgetVsActualChart({ projectId }: BudgetVsActualChartPr
         commitments: 1500000,
         variance: 3000000,
         variancePercentage: 8.6,
-        status: "over-budget"
+        status: "over-budget",
       },
       {
         category: "Drainage",
@@ -56,7 +76,7 @@ export default function BudgetVsActualChart({ projectId }: BudgetVsActualChartPr
         commitments: 500000,
         variance: 1500000,
         variancePercentage: 8.3,
-        status: "over-budget"
+        status: "over-budget",
       },
       {
         category: "Bridges",
@@ -65,7 +85,7 @@ export default function BudgetVsActualChart({ projectId }: BudgetVsActualChartPr
         commitments: 2000000,
         variance: 3000000,
         variancePercentage: 12.0,
-        status: "critical"
+        status: "critical",
       },
       {
         category: "Project Management",
@@ -74,7 +94,7 @@ export default function BudgetVsActualChart({ projectId }: BudgetVsActualChartPr
         commitments: 500000,
         variance: -500000,
         variancePercentage: -6.3,
-        status: "under-budget"
+        status: "under-budget",
       },
       {
         category: "Contingency",
@@ -83,8 +103,8 @@ export default function BudgetVsActualChart({ projectId }: BudgetVsActualChartPr
         commitments: 1000000,
         variance: -11500000,
         variancePercentage: -76.7,
-        status: "on-track"
-      }
+        status: "on-track",
+      },
     ];
 
     setBudgetData(mockData);
@@ -96,23 +116,38 @@ export default function BudgetVsActualChart({ projectId }: BudgetVsActualChartPr
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "on-track": return "bg-green-100 text-green-800";
-      case "under-budget": return "bg-blue-100 text-blue-800";
-      case "over-budget": return "bg-orange-100 text-orange-800";
-      case "critical": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "on-track":
+        return "bg-green-100 text-green-800";
+      case "under-budget":
+        return "bg-blue-100 text-blue-800";
+      case "over-budget":
+        return "bg-orange-100 text-orange-800";
+      case "critical":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getVarianceIcon = (variance: number) => {
     if (variance > 0) return <TrendingUp className="h-4 w-4 text-red-500" />;
-    if (variance < 0) return <TrendingDown className="h-4 w-4 text-green-500" />;
+    if (variance < 0)
+      return <TrendingDown className="h-4 w-4 text-green-500" />;
     return null;
   };
 
-  const totalBudget = budgetData.reduce((sum, item) => sum + item.budgetedAmount, 0);
-  const totalActual = budgetData.reduce((sum, item) => sum + item.actualAmount, 0);
-  const totalCommitments = budgetData.reduce((sum, item) => sum + item.commitments, 0);
+  const totalBudget = budgetData.reduce(
+    (sum, item) => sum + item.budgetedAmount,
+    0,
+  );
+  const totalActual = budgetData.reduce(
+    (sum, item) => sum + item.actualAmount,
+    0,
+  );
+  const totalCommitments = budgetData.reduce(
+    (sum, item) => sum + item.commitments,
+    0,
+  );
   const totalVariance = totalActual - totalBudget;
   const totalVariancePercentage = (totalVariance / totalBudget) * 100;
 
@@ -157,8 +192,11 @@ export default function BudgetVsActualChart({ projectId }: BudgetVsActualChartPr
           <CardContent className="p-4">
             <div className="text-center">
               <p className="text-sm text-gray-600">Total Variance</p>
-              <p className={`text-2xl font-bold ${totalVariance >= 0 ? 'text-red-600' : 'text-green-600'}`}>
-                {totalVariance >= 0 ? '+' : ''}{totalVariancePercentage.toFixed(1)}%
+              <p
+                className={`text-2xl font-bold ${totalVariance >= 0 ? "text-red-600" : "text-green-600"}`}
+              >
+                {totalVariance >= 0 ? "+" : ""}
+                {totalVariancePercentage.toFixed(1)}%
               </p>
               <p className="text-xs text-gray-500">
                 {formatCurrency(Math.abs(totalVariance))}
@@ -172,14 +210,18 @@ export default function BudgetVsActualChart({ projectId }: BudgetVsActualChartPr
       <Card>
         <CardHeader>
           <CardTitle>Budget vs Actual by Category</CardTitle>
-          <CardDescription>Visual comparison of budgeted vs actual spending</CardDescription>
+          <CardDescription>
+            Visual comparison of budgeted vs actual spending
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-64 flex items-center justify-center text-gray-500 border-2 border-dashed border-gray-200 rounded-lg">
             <div className="text-center">
               <BarChart3 className="h-12 w-12 mx-auto mb-2" />
               <p>Budget vs Actual Chart</p>
-              <p className="text-sm">Interactive chart will be displayed here</p>
+              <p className="text-sm">
+                Interactive chart will be displayed here
+              </p>
             </div>
           </div>
         </CardContent>
@@ -219,8 +261,13 @@ export default function BudgetVsActualChart({ projectId }: BudgetVsActualChartPr
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-1">
                       {getVarianceIcon(item.variance)}
-                      <span className={item.variance >= 0 ? 'text-red-600' : 'text-green-600'}>
-                        {item.variance >= 0 ? '+' : ''}{item.variancePercentage.toFixed(1)}%
+                      <span
+                        className={
+                          item.variance >= 0 ? "text-red-600" : "text-green-600"
+                        }
+                      >
+                        {item.variance >= 0 ? "+" : ""}
+                        {item.variancePercentage.toFixed(1)}%
                       </span>
                     </div>
                     <div className="text-xs text-gray-500">
@@ -240,7 +287,7 @@ export default function BudgetVsActualChart({ projectId }: BudgetVsActualChartPr
       </Card>
 
       {/* Alerts for Critical Categories */}
-      {budgetData.some(item => item.status === "critical") && (
+      {budgetData.some((item) => item.status === "critical") && (
         <Card className="border-red-200 bg-red-50">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-red-800">
@@ -251,9 +298,12 @@ export default function BudgetVsActualChart({ projectId }: BudgetVsActualChartPr
           <CardContent>
             <div className="space-y-2">
               {budgetData
-                .filter(item => item.status === "critical")
-                .map(item => (
-                  <div key={item.category} className="flex items-center justify-between p-2 bg-white rounded border">
+                .filter((item) => item.status === "critical")
+                .map((item) => (
+                  <div
+                    key={item.category}
+                    className="flex items-center justify-between p-2 bg-white rounded border"
+                  >
                     <span className="font-medium">{item.category}</span>
                     <span className="text-red-600 font-semibold">
                       {item.variancePercentage.toFixed(1)}% over budget

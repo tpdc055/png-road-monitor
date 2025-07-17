@@ -1,33 +1,52 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import RoadProgressMapper from "@/components/RoadProgressMapper";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import {
-  MapPin,
-  Plus,
-  Save,
-  X,
-  Edit,
-  Trash2,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/contexts/AuthContext";
+import { MockAPIService } from "@/lib/mockApiService";
+import {
+  Building2,
   Check,
-  Navigation,
   Clock,
+  Edit,
   Info,
   Loader2,
-  Building2,
+  MapPin,
+  Navigation,
+  Plus,
   Route,
-  Target
+  Save,
+  Target,
+  Trash2,
+  X,
 } from "lucide-react";
-import { MockAPIService } from "@/lib/mockApiService";
-import RoadProgressMapper from "@/components/RoadProgressMapper";
+import { useEffect, useState } from "react";
 
 interface GPSCoordinate {
   id: string;
@@ -92,18 +111,20 @@ export default function GPSTaskEntry() {
     startChainage: "",
     endChainage: "",
     description: "",
-    coordinates: []
+    coordinates: [],
   });
 
   const [savedTasks, setSavedTasks] = useState<GPSTask[]>([]);
   const [newCoordinate, setNewCoordinate] = useState({
     latitude: "",
     longitude: "",
-    description: ""
+    description: "",
   });
 
-  const [editingCoordinate, setEditingCoordinate] = useState<string | null>(null);
-  const [editValues, setEditValues] = useState<{[key: string]: string}>({});
+  const [editingCoordinate, setEditingCoordinate] = useState<string | null>(
+    null,
+  );
+  const [editValues, setEditValues] = useState<{ [key: string]: string }>({});
 
   // Fetch data on component mount
   useEffect(() => {
@@ -117,7 +138,7 @@ export default function GPSTaskEntry() {
       // Use MockAPIService for immediate functionality
       const [projectsData, workTypesData] = await Promise.all([
         MockAPIService.getProjects(),
-        MockAPIService.getWorkTypes()
+        MockAPIService.getWorkTypes(),
       ]);
 
       if (projectsData.success) {
@@ -128,14 +149,14 @@ export default function GPSTaskEntry() {
         setWorkTypes(workTypesData.data);
         // Set default work type if available
         if (workTypesData.data.length > 0) {
-          setCurrentTask(prev => ({
+          setCurrentTask((prev) => ({
             ...prev,
-            workType: workTypesData.data[0].name
+            workType: workTypesData.data[0].name,
           }));
         }
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -153,7 +174,9 @@ export default function GPSTaskEntry() {
 
     // Validate PNG coordinate ranges
     if (lat > 0 || lat < -12) {
-      alert("Latitude should be negative for PNG (typically -2 to -12 degrees)");
+      alert(
+        "Latitude should be negative for PNG (typically -2 to -12 degrees)",
+      );
       return;
     }
 
@@ -166,27 +189,29 @@ export default function GPSTaskEntry() {
       id: `gps_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       latitude: lat,
       longitude: lng,
-      description: newCoordinate.description || `Point ${(currentTask.coordinates?.length || 0) + 1}`,
-      timestamp: new Date().toLocaleTimeString()
+      description:
+        newCoordinate.description ||
+        `Point ${(currentTask.coordinates?.length || 0) + 1}`,
+      timestamp: new Date().toLocaleTimeString(),
     };
 
-    setCurrentTask(prev => ({
+    setCurrentTask((prev) => ({
       ...prev,
-      coordinates: [...(prev.coordinates || []), coordinate]
+      coordinates: [...(prev.coordinates || []), coordinate],
     }));
 
     // Clear the input form
     setNewCoordinate({
       latitude: "",
       longitude: "",
-      description: ""
+      description: "",
     });
   };
 
   const deleteCoordinate = (id: string) => {
-    setCurrentTask(prev => ({
+    setCurrentTask((prev) => ({
       ...prev,
-      coordinates: prev.coordinates?.filter(coord => coord.id !== id) || []
+      coordinates: prev.coordinates?.filter((coord) => coord.id !== id) || [],
     }));
   };
 
@@ -195,7 +220,7 @@ export default function GPSTaskEntry() {
     setEditValues({
       latitude: coordinate.latitude.toString(),
       longitude: coordinate.longitude.toString(),
-      description: coordinate.description
+      description: coordinate.description,
     });
   };
 
@@ -210,7 +235,9 @@ export default function GPSTaskEntry() {
 
     // Validate PNG coordinate ranges
     if (lat > 0 || lat < -12) {
-      alert("Latitude should be negative for PNG (typically -2 to -12 degrees)");
+      alert(
+        "Latitude should be negative for PNG (typically -2 to -12 degrees)",
+      );
       return;
     }
 
@@ -219,18 +246,19 @@ export default function GPSTaskEntry() {
       return;
     }
 
-    setCurrentTask(prev => ({
+    setCurrentTask((prev) => ({
       ...prev,
-      coordinates: prev.coordinates?.map(coord =>
-        coord.id === id
-          ? {
-              ...coord,
-              latitude: lat,
-              longitude: lng,
-              description: editValues.description
-            }
-          : coord
-      ) || []
+      coordinates:
+        prev.coordinates?.map((coord) =>
+          coord.id === id
+            ? {
+                ...coord,
+                latitude: lat,
+                longitude: lng,
+                description: editValues.description,
+              }
+            : coord,
+        ) || [],
     }));
 
     setEditingCoordinate(null);
@@ -243,7 +271,11 @@ export default function GPSTaskEntry() {
   };
 
   const saveTask = async () => {
-    if (!currentTask.taskName || !currentTask.workType || !currentTask.coordinates?.length) {
+    if (
+      !currentTask.taskName ||
+      !currentTask.workType ||
+      !currentTask.coordinates?.length
+    ) {
       alert("Please fill in task details and add at least one GPS coordinate");
       return;
     }
@@ -262,7 +294,7 @@ export default function GPSTaskEntry() {
       setIsSaving(true);
 
       // Use MockAPIService for immediate functionality
-      const savePromises = currentTask.coordinates.map(coord =>
+      const savePromises = currentTask.coordinates.map((coord) =>
         MockAPIService.createGPSEntry({
           latitude: coord.latitude,
           longitude: coord.longitude,
@@ -274,15 +306,17 @@ export default function GPSTaskEntry() {
           roadSide: currentTask.roadSide,
           startChainage: currentTask.startChainage,
           endChainage: currentTask.endChainage,
-          taskDescription: currentTask.description
-        })
+          taskDescription: currentTask.description,
+        }),
       );
 
       const results = await Promise.all(savePromises);
 
-      const failedSaves = results.filter(r => !r.success);
+      const failedSaves = results.filter((r) => !r.success);
       if (failedSaves.length > 0) {
-        alert(`Failed to save ${failedSaves.length} GPS coordinates. Please try again.`);
+        alert(
+          `Failed to save ${failedSaves.length} GPS coordinates. Please try again.`,
+        );
         return;
       }
 
@@ -297,10 +331,10 @@ export default function GPSTaskEntry() {
         description: currentTask.description,
         coordinates: currentTask.coordinates,
         createdAt: new Date().toLocaleString(),
-        status: "saved"
+        status: "saved",
       };
 
-      setSavedTasks(prev => [task, ...prev]);
+      setSavedTasks((prev) => [task, ...prev]);
 
       // Reset current task
       setCurrentTask({
@@ -310,12 +344,12 @@ export default function GPSTaskEntry() {
         startChainage: "",
         endChainage: "",
         description: "",
-        coordinates: []
+        coordinates: [],
       });
 
       alert("GPS task saved successfully to the database!");
     } catch (error) {
-      console.error('Error saving GPS task:', error);
+      console.error("Error saving GPS task:", error);
       alert("Failed to save GPS task. Please try again.");
     } finally {
       setIsSaving(false);
@@ -340,8 +374,12 @@ export default function GPSTaskEntry() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">GPS Data Entry</h2>
-        <p className="text-gray-600">Enter GPS coordinates for PNG road construction work tasks</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          GPS Data Entry
+        </h2>
+        <p className="text-gray-600">
+          Enter GPS coordinates for PNG road construction work tasks
+        </p>
       </div>
 
       {/* Project Selection */}
@@ -351,7 +389,9 @@ export default function GPSTaskEntry() {
             <Building2 className="h-5 w-5" />
             Select Project
           </CardTitle>
-          <CardDescription>Choose the project for this GPS data entry session</CardDescription>
+          <CardDescription>
+            Choose the project for this GPS data entry session
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4">
@@ -365,9 +405,10 @@ export default function GPSTaskEntry() {
                   <SelectValue placeholder="Select a project" />
                 </SelectTrigger>
                 <SelectContent>
-                  {projects.map(project => (
+                  {projects.map((project) => (
                     <SelectItem key={project.id} value={project.id}>
-                      {project.name} - {project.location}, {project.province.name}
+                      {project.name} - {project.location},{" "}
+                      {project.province.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -384,7 +425,9 @@ export default function GPSTaskEntry() {
             <Navigation className="h-5 w-5" />
             Task Details
           </CardTitle>
-          <CardDescription>Enter work task information once, then add multiple GPS coordinates</CardDescription>
+          <CardDescription>
+            Enter work task information once, then add multiple GPS coordinates
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -394,7 +437,12 @@ export default function GPSTaskEntry() {
                 id="task-name"
                 placeholder="e.g., Highlands Highway Pothole Repair"
                 value={currentTask.taskName}
-                onChange={(e) => setCurrentTask(prev => ({...prev, taskName: e.target.value}))}
+                onChange={(e) =>
+                  setCurrentTask((prev) => ({
+                    ...prev,
+                    taskName: e.target.value,
+                  }))
+                }
               />
             </div>
 
@@ -402,13 +450,15 @@ export default function GPSTaskEntry() {
               <Label htmlFor="work-type">Work Type *</Label>
               <Select
                 value={currentTask.workType}
-                onValueChange={(value) => setCurrentTask(prev => ({...prev, workType: value}))}
+                onValueChange={(value) =>
+                  setCurrentTask((prev) => ({ ...prev, workType: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select work type" />
                 </SelectTrigger>
                 <SelectContent>
-                  {workTypes.map(type => (
+                  {workTypes.map((type) => (
                     <SelectItem key={type.id} value={type.name}>
                       {type.name} {type.category && `(${type.category})`}
                     </SelectItem>
@@ -423,14 +473,18 @@ export default function GPSTaskEntry() {
               <Label htmlFor="road-side">Road Side</Label>
               <Select
                 value={currentTask.roadSide}
-                onValueChange={(value) => setCurrentTask(prev => ({...prev, roadSide: value}))}
+                onValueChange={(value) =>
+                  setCurrentTask((prev) => ({ ...prev, roadSide: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select road side" />
                 </SelectTrigger>
                 <SelectContent>
-                  {roadSides.map(side => (
-                    <SelectItem key={side} value={side}>{side}</SelectItem>
+                  {roadSides.map((side) => (
+                    <SelectItem key={side} value={side}>
+                      {side}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -442,7 +496,12 @@ export default function GPSTaskEntry() {
                 id="start-chainage"
                 placeholder="e.g., 12+500"
                 value={currentTask.startChainage}
-                onChange={(e) => setCurrentTask(prev => ({...prev, startChainage: e.target.value}))}
+                onChange={(e) =>
+                  setCurrentTask((prev) => ({
+                    ...prev,
+                    startChainage: e.target.value,
+                  }))
+                }
               />
             </div>
 
@@ -452,7 +511,12 @@ export default function GPSTaskEntry() {
                 id="end-chainage"
                 placeholder="e.g., 12+600"
                 value={currentTask.endChainage}
-                onChange={(e) => setCurrentTask(prev => ({...prev, endChainage: e.target.value}))}
+                onChange={(e) =>
+                  setCurrentTask((prev) => ({
+                    ...prev,
+                    endChainage: e.target.value,
+                  }))
+                }
               />
             </div>
           </div>
@@ -463,7 +527,12 @@ export default function GPSTaskEntry() {
               id="task-description"
               placeholder="Additional details about the work being performed..."
               value={currentTask.description}
-              onChange={(e) => setCurrentTask(prev => ({...prev, description: e.target.value}))}
+              onChange={(e) =>
+                setCurrentTask((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
               rows={2}
             />
           </div>
@@ -477,7 +546,9 @@ export default function GPSTaskEntry() {
             <MapPin className="h-5 w-5" />
             GPS Coordinates (Add Multiple Points)
           </CardTitle>
-          <CardDescription>Add GPS coordinates as you progress through the work</CardDescription>
+          <CardDescription>
+            Add GPS coordinates as you progress through the work
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -489,7 +560,12 @@ export default function GPSTaskEntry() {
                 step="any"
                 placeholder="-6.314993"
                 value={newCoordinate.latitude}
-                onChange={(e) => setNewCoordinate(prev => ({...prev, latitude: e.target.value}))}
+                onChange={(e) =>
+                  setNewCoordinate((prev) => ({
+                    ...prev,
+                    latitude: e.target.value,
+                  }))
+                }
                 onKeyPress={handleKeyPress}
               />
             </div>
@@ -502,7 +578,12 @@ export default function GPSTaskEntry() {
                 step="any"
                 placeholder="143.95555"
                 value={newCoordinate.longitude}
-                onChange={(e) => setNewCoordinate(prev => ({...prev, longitude: e.target.value}))}
+                onChange={(e) =>
+                  setNewCoordinate((prev) => ({
+                    ...prev,
+                    longitude: e.target.value,
+                  }))
+                }
                 onKeyPress={handleKeyPress}
               />
             </div>
@@ -513,7 +594,12 @@ export default function GPSTaskEntry() {
                 id="description"
                 placeholder="Point description"
                 value={newCoordinate.description}
-                onChange={(e) => setNewCoordinate(prev => ({...prev, description: e.target.value}))}
+                onChange={(e) =>
+                  setNewCoordinate((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
                 onKeyPress={handleKeyPress}
               />
             </div>
@@ -534,9 +620,20 @@ export default function GPSTaskEntry() {
             <div className="flex items-start gap-2">
               <Info className="h-4 w-4 text-blue-600 mt-0.5" />
               <div className="text-sm text-blue-800">
-                <p><strong>Tip:</strong> Press Enter in any field to quickly add the GPS point</p>
-                <p><strong>PNG Coordinates:</strong> Latitude should be negative (e.g., -6.314993), Longitude positive (e.g., 143.95555)</p>
-                {!selectedProjectId && <p><strong>Note:</strong> Please select a project before adding GPS points</p>}
+                <p>
+                  <strong>Tip:</strong> Press Enter in any field to quickly add
+                  the GPS point
+                </p>
+                <p>
+                  <strong>PNG Coordinates:</strong> Latitude should be negative
+                  (e.g., -6.314993), Longitude positive (e.g., 143.95555)
+                </p>
+                {!selectedProjectId && (
+                  <p>
+                    <strong>Note:</strong> Please select a project before adding
+                    GPS points
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -547,7 +644,10 @@ export default function GPSTaskEntry() {
       {currentTask.coordinates && currentTask.coordinates.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>GPS Coordinates for This Task ({currentTask.coordinates.length} points)</CardTitle>
+            <CardTitle>
+              GPS Coordinates for This Task ({currentTask.coordinates.length}{" "}
+              points)
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
@@ -571,7 +671,12 @@ export default function GPSTaskEntry() {
                           type="number"
                           step="any"
                           value={editValues.latitude}
-                          onChange={(e) => setEditValues(prev => ({...prev, latitude: e.target.value}))}
+                          onChange={(e) =>
+                            setEditValues((prev) => ({
+                              ...prev,
+                              latitude: e.target.value,
+                            }))
+                          }
                           className="w-24"
                         />
                       ) : (
@@ -584,7 +689,12 @@ export default function GPSTaskEntry() {
                           type="number"
                           step="any"
                           value={editValues.longitude}
-                          onChange={(e) => setEditValues(prev => ({...prev, longitude: e.target.value}))}
+                          onChange={(e) =>
+                            setEditValues((prev) => ({
+                              ...prev,
+                              longitude: e.target.value,
+                            }))
+                          }
                           className="w-24"
                         />
                       ) : (
@@ -595,7 +705,12 @@ export default function GPSTaskEntry() {
                       {editingCoordinate === coord.id ? (
                         <Input
                           value={editValues.description}
-                          onChange={(e) => setEditValues(prev => ({...prev, description: e.target.value}))}
+                          onChange={(e) =>
+                            setEditValues((prev) => ({
+                              ...prev,
+                              description: e.target.value,
+                            }))
+                          }
                           className="w-32"
                         />
                       ) : (
@@ -607,19 +722,38 @@ export default function GPSTaskEntry() {
                       <div className="flex gap-1">
                         {editingCoordinate === coord.id ? (
                           <>
-                            <Button size="sm" onClick={() => saveEdit(coord.id)} className="h-8 w-8 p-0">
+                            <Button
+                              size="sm"
+                              onClick={() => saveEdit(coord.id)}
+                              className="h-8 w-8 p-0"
+                            >
                               <Check className="h-3 w-3" />
                             </Button>
-                            <Button size="sm" variant="outline" onClick={cancelEdit} className="h-8 w-8 p-0">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={cancelEdit}
+                              className="h-8 w-8 p-0"
+                            >
                               <X className="h-3 w-3" />
                             </Button>
                           </>
                         ) : (
                           <>
-                            <Button size="sm" variant="outline" onClick={() => startEditing(coord)} className="h-8 w-8 p-0">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => startEditing(coord)}
+                              className="h-8 w-8 p-0"
+                            >
                               <Edit className="h-3 w-3" />
                             </Button>
-                            <Button size="sm" variant="outline" onClick={() => deleteCoordinate(coord.id)} className="h-8 w-8 p-0 text-red-600 hover:text-red-700">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => deleteCoordinate(coord.id)}
+                              className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
+                            >
                               <Trash2 className="h-3 w-3" />
                             </Button>
                           </>
@@ -676,15 +810,17 @@ export default function GPSTaskEntry() {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => setCurrentTask({
-                  taskName: "",
-                  workType: workTypes.length > 0 ? workTypes[0].name : "",
-                  roadSide: "Both Sides",
-                  startChainage: "",
-                  endChainage: "",
-                  description: "",
-                  coordinates: []
-                })}
+                onClick={() =>
+                  setCurrentTask({
+                    taskName: "",
+                    workType: workTypes.length > 0 ? workTypes[0].name : "",
+                    roadSide: "Both Sides",
+                    startChainage: "",
+                    endChainage: "",
+                    description: "",
+                    coordinates: [],
+                  })
+                }
               >
                 <X className="h-4 w-4 mr-2" />
                 Cancel
@@ -714,11 +850,26 @@ export default function GPSTaskEntry() {
                     </Badge>
                   </div>
                   <div className="text-sm text-gray-600 space-y-1">
-                    <p><strong>Work Type:</strong> {task.workType}</p>
-                    <p><strong>Road Side:</strong> {task.roadSide}</p>
-                    {task.startChainage && <p><strong>Chainage:</strong> {task.startChainage} - {task.endChainage}</p>}
-                    <p><strong>Created:</strong> {task.createdAt}</p>
-                    {task.description && <p><strong>Description:</strong> {task.description}</p>}
+                    <p>
+                      <strong>Work Type:</strong> {task.workType}
+                    </p>
+                    <p>
+                      <strong>Road Side:</strong> {task.roadSide}
+                    </p>
+                    {task.startChainage && (
+                      <p>
+                        <strong>Chainage:</strong> {task.startChainage} -{" "}
+                        {task.endChainage}
+                      </p>
+                    )}
+                    <p>
+                      <strong>Created:</strong> {task.createdAt}
+                    </p>
+                    {task.description && (
+                      <p>
+                        <strong>Description:</strong> {task.description}
+                      </p>
+                    )}
                   </div>
                 </div>
               ))}

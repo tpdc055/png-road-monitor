@@ -1,11 +1,17 @@
-'use client';
+"use client";
 
-import React, { useState, useCallback, useEffect } from 'react';
-import { GoogleMap, LoadScript, Marker, InfoWindow, Polyline } from '@react-google-maps/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { MapPin, Navigation, Layers, ZoomIn, ZoomOut } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  GoogleMap,
+  InfoWindow,
+  LoadScript,
+  Marker,
+  Polyline,
+} from "@react-google-maps/api";
+import { Layers, MapPin, Navigation, ZoomIn, ZoomOut } from "lucide-react";
+import React, { useState, useCallback, useEffect } from "react";
 
 interface Project {
   id: string;
@@ -47,29 +53,29 @@ interface GoogleMapComponentProps {
 // PNG center coordinates
 const PNG_CENTER = {
   lat: -6.314993,
-  lng: 143.95555
+  lng: 143.95555,
 };
 
 // Project coordinates for major PNG locations
 const PROJECT_COORDINATES: Record<string, { lat: number; lng: number }> = {
-  'proj-1': { lat: -5.837104, lng: 144.295472 }, // Mt. Hagen-Kagamuga
-  'proj-2': { lat: -9.4438, lng: 147.1803 },     // Port Moresby Ring Road
-  'proj-3': { lat: -6.7248, lng: 147.0003 },     // Lae-Nadzab Highway
-  'proj-4': { lat: -6.0847, lng: 145.3933 },     // Highlands Highway
-  'proj-5': { lat: -2.6816, lng: 141.3031 },     // Vanimo-Green River
+  "proj-1": { lat: -5.837104, lng: 144.295472 }, // Mt. Hagen-Kagamuga
+  "proj-2": { lat: -9.4438, lng: 147.1803 }, // Port Moresby Ring Road
+  "proj-3": { lat: -6.7248, lng: 147.0003 }, // Lae-Nadzab Highway
+  "proj-4": { lat: -6.0847, lng: 145.3933 }, // Highlands Highway
+  "proj-5": { lat: -2.6816, lng: 141.3031 }, // Vanimo-Green River
 };
 
 const STATUS_COLORS = {
-  'ACTIVE': '#10b981',      // Green
-  'PLANNING': '#3b82f6',    // Blue
-  'ON_HOLD': '#f59e0b',     // Yellow
-  'COMPLETED': '#8b5cf6',   // Purple
-  'CANCELLED': '#ef4444',   // Red
+  ACTIVE: "#10b981", // Green
+  PLANNING: "#3b82f6", // Blue
+  ON_HOLD: "#f59e0b", // Yellow
+  COMPLETED: "#8b5cf6", // Purple
+  CANCELLED: "#ef4444", // Red
 };
 
 const mapContainerStyle = {
-  width: '100%',
-  height: '600px'
+  width: "100%",
+  height: "600px",
 };
 
 const defaultMapOptions = {
@@ -80,21 +86,21 @@ const defaultMapOptions = {
   fullscreenControl: true,
   styles: [
     {
-      featureType: 'road.highway',
-      elementType: 'geometry',
-      stylers: [{ color: '#746855' }]
+      featureType: "road.highway",
+      elementType: "geometry",
+      stylers: [{ color: "#746855" }],
     },
     {
-      featureType: 'road.arterial',
-      elementType: 'geometry',
-      stylers: [{ color: '#987284' }]
+      featureType: "road.arterial",
+      elementType: "geometry",
+      stylers: [{ color: "#987284" }],
     },
     {
-      featureType: 'water',
-      elementType: 'geometry',
-      stylers: [{ color: '#34d399' }]
-    }
-  ]
+      featureType: "water",
+      elementType: "geometry",
+      stylers: [{ color: "#34d399" }],
+    },
+  ],
 };
 
 export default function GoogleMapComponent({
@@ -102,9 +108,9 @@ export default function GoogleMapComponent({
   gpsPoints = [],
   selectedProject,
   onProjectSelect,
-  height = '600px',
+  height = "600px",
   showGPSPoints = true,
-  showProjectRoutes = false
+  showProjectRoutes = false,
 }: GoogleMapComponentProps) {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedMarker, setSelectedMarker] = useState<Project | null>(null);
@@ -130,14 +136,14 @@ export default function GoogleMapComponent({
 
   // Get status color
   const getStatusColor = (status: string) => {
-    return STATUS_COLORS[status as keyof typeof STATUS_COLORS] || '#6b7280';
+    return STATUS_COLORS[status as keyof typeof STATUS_COLORS] || "#6b7280";
   };
 
   // Format currency
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-PG', {
-      style: 'currency',
-      currency: 'PGK',
+    return new Intl.NumberFormat("en-PG", {
+      style: "currency",
+      currency: "PGK",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
@@ -178,13 +184,13 @@ export default function GoogleMapComponent({
   };
 
   // GPS points for selected project
-  const projectGPSPoints = gpsPoints.filter(point =>
-    selectedProject ? point.projectId === selectedProject.id : true
+  const projectGPSPoints = gpsPoints.filter((point) =>
+    selectedProject ? point.projectId === selectedProject.id : true,
   );
 
   const mapStyle = {
     ...mapContainerStyle,
-    height: height
+    height: height,
   };
 
   return (
@@ -225,12 +231,18 @@ export default function GoogleMapComponent({
       </CardHeader>
       <CardContent className="p-0">
         <LoadScript
-          googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'demo_key'}
+          googleMapsApiKey={
+            process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "demo_key"
+          }
           onLoad={() => setMapLoaded(true)}
         >
           <GoogleMap
             mapContainerStyle={mapStyle}
-            center={selectedProject ? getProjectCoordinates(selectedProject) : PNG_CENTER}
+            center={
+              selectedProject
+                ? getProjectCoordinates(selectedProject)
+                : PNG_CENTER
+            }
             zoom={selectedProject ? 10 : 6}
             onLoad={onLoad}
             onUnmount={onUnmount}
@@ -249,45 +261,48 @@ export default function GoogleMapComponent({
                     path: google.maps.SymbolPath.CIRCLE,
                     fillColor: getStatusColor(project.status),
                     fillOpacity: 0.8,
-                    strokeColor: '#ffffff',
+                    strokeColor: "#ffffff",
                     strokeWeight: 2,
-                    scale: 8
+                    scale: 8,
                   }}
                 />
               );
             })}
 
             {/* GPS Points */}
-            {showGPSPoints && projectGPSPoints.map((point) => (
-              <Marker
-                key={point.id}
-                position={{ lat: point.latitude, lng: point.longitude }}
-                title={`${point.taskName || 'GPS Point'} - ${point.description}`}
-                icon={{
-                  path: google.maps.SymbolPath.CIRCLE,
-                  fillColor: '#ef4444',
-                  fillOpacity: 0.6,
-                  strokeColor: '#ffffff',
-                  strokeWeight: 1,
-                  scale: 4
-                }}
-              />
-            ))}
+            {showGPSPoints &&
+              projectGPSPoints.map((point) => (
+                <Marker
+                  key={point.id}
+                  position={{ lat: point.latitude, lng: point.longitude }}
+                  title={`${point.taskName || "GPS Point"} - ${point.description}`}
+                  icon={{
+                    path: google.maps.SymbolPath.CIRCLE,
+                    fillColor: "#ef4444",
+                    fillOpacity: 0.6,
+                    strokeColor: "#ffffff",
+                    strokeWeight: 1,
+                    scale: 4,
+                  }}
+                />
+              ))}
 
             {/* Project Routes */}
-            {showProjectRoutes && selectedProject && projectGPSPoints.length > 1 && (
-              <Polyline
-                path={projectGPSPoints.map(point => ({
-                  lat: point.latitude,
-                  lng: point.longitude
-                }))}
-                options={{
-                  strokeColor: getStatusColor(selectedProject.status),
-                  strokeOpacity: 0.8,
-                  strokeWeight: 3
-                }}
-              />
-            )}
+            {showProjectRoutes &&
+              selectedProject &&
+              projectGPSPoints.length > 1 && (
+                <Polyline
+                  path={projectGPSPoints.map((point) => ({
+                    lat: point.latitude,
+                    lng: point.longitude,
+                  }))}
+                  options={{
+                    strokeColor: getStatusColor(selectedProject.status),
+                    strokeOpacity: 0.8,
+                    strokeWeight: 3,
+                  }}
+                />
+              )}
 
             {/* Info Window */}
             {selectedMarker && (
@@ -296,32 +311,46 @@ export default function GoogleMapComponent({
                 onCloseClick={() => setSelectedMarker(null)}
               >
                 <div className="p-2 max-w-sm">
-                  <h3 className="font-semibold text-sm mb-2">{selectedMarker.name}</h3>
+                  <h3 className="font-semibold text-sm mb-2">
+                    {selectedMarker.name}
+                  </h3>
                   <div className="space-y-1 text-xs">
                     <div className="flex justify-between">
                       <span>Location:</span>
-                      <span className="font-medium">{selectedMarker.location}</span>
+                      <span className="font-medium">
+                        {selectedMarker.location}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Status:</span>
                       <Badge
                         className="text-xs px-1 py-0"
-                        style={{ backgroundColor: getStatusColor(selectedMarker.status) }}
+                        style={{
+                          backgroundColor: getStatusColor(
+                            selectedMarker.status,
+                          ),
+                        }}
                       >
                         {selectedMarker.status}
                       </Badge>
                     </div>
                     <div className="flex justify-between">
                       <span>Progress:</span>
-                      <span className="font-medium">{selectedMarker.progress}%</span>
+                      <span className="font-medium">
+                        {selectedMarker.progress}%
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Budget:</span>
-                      <span className="font-medium">{formatCurrency(selectedMarker.budget)}</span>
+                      <span className="font-medium">
+                        {formatCurrency(selectedMarker.budget)}
+                      </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Contractor:</span>
-                      <span className="font-medium text-right flex-1 ml-2">{selectedMarker.contractor}</span>
+                      <span className="font-medium text-right flex-1 ml-2">
+                        {selectedMarker.contractor}
+                      </span>
                     </div>
                   </div>
                 </div>

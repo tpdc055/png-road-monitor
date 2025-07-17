@@ -17,26 +17,26 @@ export interface User {
 }
 
 export type UserRole =
-  | 'SYSTEM_ADMIN'
-  | 'GOVERNMENT_ADMIN'
-  | 'DONOR_ADMIN'
-  | 'CONTRACTOR_ADMIN'
-  | 'PROVINCIAL_ADMIN'
-  | 'PROJECT_MANAGER'
-  | 'SITE_ENGINEER'
-  | 'FINANCIAL_OFFICER'
-  | 'COMMUNITY_LIAISON'
-  | 'AUDITOR'
-  | 'READ_ONLY_VIEWER';
+  | "SYSTEM_ADMIN"
+  | "GOVERNMENT_ADMIN"
+  | "DONOR_ADMIN"
+  | "CONTRACTOR_ADMIN"
+  | "PROVINCIAL_ADMIN"
+  | "PROJECT_MANAGER"
+  | "SITE_ENGINEER"
+  | "FINANCIAL_OFFICER"
+  | "COMMUNITY_LIAISON"
+  | "AUDITOR"
+  | "READ_ONLY_VIEWER";
 
 export type EntityType =
-  | 'GOVERNMENT_DEPARTMENT'
-  | 'DONOR_AGENCY'
-  | 'CONTRACTOR'
-  | 'PROVINCIAL_OFFICE'
-  | 'DISTRICT_OFFICE'
-  | 'COMMUNITY'
-  | 'CONSULTANT';
+  | "GOVERNMENT_DEPARTMENT"
+  | "DONOR_AGENCY"
+  | "CONTRACTOR"
+  | "PROVINCIAL_OFFICE"
+  | "DISTRICT_OFFICE"
+  | "COMMUNITY"
+  | "CONSULTANT";
 
 export interface Entity {
   id: string;
@@ -54,16 +54,16 @@ export interface Entity {
 }
 
 export type EntityCategory =
-  | 'CENTRAL_GOVERNMENT'
-  | 'PROVINCIAL_GOVERNMENT'
-  | 'DISTRICT_GOVERNMENT'
-  | 'INTERNATIONAL_DONOR'
-  | 'BILATERAL_DONOR'
-  | 'MULTILATERAL_DONOR'
-  | 'LOCAL_CONTRACTOR'
-  | 'INTERNATIONAL_CONTRACTOR'
-  | 'CONSULTANT'
-  | 'COMMUNITY_GROUP';
+  | "CENTRAL_GOVERNMENT"
+  | "PROVINCIAL_GOVERNMENT"
+  | "DISTRICT_GOVERNMENT"
+  | "INTERNATIONAL_DONOR"
+  | "BILATERAL_DONOR"
+  | "MULTILATERAL_DONOR"
+  | "LOCAL_CONTRACTOR"
+  | "INTERNATIONAL_CONTRACTOR"
+  | "CONSULTANT"
+  | "COMMUNITY_GROUP";
 
 export interface ContactInfo {
   primaryPhone: string;
@@ -111,8 +111,8 @@ export interface FundingSource {
   id: string;
   donorId: string;
   donorName: string;
-  donorType: 'GOVERNMENT' | 'INTERNATIONAL' | 'BILATERAL' | 'MULTILATERAL';
-  fundingType: 'GRANT' | 'LOAN' | 'TECHNICAL_ASSISTANCE' | 'CO_FINANCING';
+  donorType: "GOVERNMENT" | "INTERNATIONAL" | "BILATERAL" | "MULTILATERAL";
+  fundingType: "GRANT" | "LOAN" | "TECHNICAL_ASSISTANCE" | "CO_FINANCING";
   allocatedAmount: number;
   currency: string;
   disbursedAmount: number;
@@ -132,7 +132,7 @@ export interface Disbursement {
   purpose: string;
   requestedBy: string;
   approvedBy: string;
-  status: 'PENDING' | 'APPROVED' | 'DISBURSED' | 'REJECTED';
+  status: "PENDING" | "APPROVED" | "DISBURSED" | "REJECTED";
   documentation: string[];
   auditTrail: AuditTrail[];
 }
@@ -150,13 +150,13 @@ export interface ProjectStakeholder {
 }
 
 export type StakeholderRole =
-  | 'FUNDING_AGENCY'
-  | 'IMPLEMENTING_AGENCY'
-  | 'CONTRACTOR'
-  | 'SUPERVISOR'
-  | 'BENEFICIARY_COMMUNITY'
-  | 'OVERSIGHT_BODY'
-  | 'TECHNICAL_ADVISOR';
+  | "FUNDING_AGENCY"
+  | "IMPLEMENTING_AGENCY"
+  | "CONTRACTOR"
+  | "SUPERVISOR"
+  | "BENEFICIARY_COMMUNITY"
+  | "OVERSIGHT_BODY"
+  | "TECHNICAL_ADVISOR";
 
 export interface EnhancedMilestone extends Milestone {
   stakeholderApprovals: StakeholderApproval[];
@@ -167,7 +167,7 @@ export interface EnhancedMilestone extends Milestone {
 
 export interface StakeholderApproval {
   stakeholderId: string;
-  approvalStatus: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CONDITIONAL';
+  approvalStatus: "PENDING" | "APPROVED" | "REJECTED" | "CONDITIONAL";
   approvalDate?: Date;
   comments?: string;
   conditions?: string[];
@@ -175,7 +175,7 @@ export interface StakeholderApproval {
 
 export interface Evidence {
   id: string;
-  type: 'PHOTO' | 'VIDEO' | 'DOCUMENT' | 'MEASUREMENT' | 'SURVEY';
+  type: "PHOTO" | "VIDEO" | "DOCUMENT" | "MEASUREMENT" | "SURVEY";
   url: string;
   description: string;
   gpsLocation?: Coordinates;
@@ -198,28 +198,62 @@ export interface CommunityFeedback {
   id: string;
   projectId: string;
   submittedBy: string;
-  submitterType: 'COMMUNITY_MEMBER' | 'LOCAL_LEADER' | 'BENEFICIARY' | 'AFFECTED_PERSON';
-  feedbackType: 'COMPLAINT' | 'SUGGESTION' | 'COMPLIMENT' | 'CONCERN' | 'REQUEST';
-  category: 'CONSTRUCTION_QUALITY' | 'ENVIRONMENTAL_IMPACT' | 'SOCIAL_IMPACT' | 'ECONOMIC_IMPACT' | 'ACCESS' | 'SAFETY';
+  submitterType:
+    | "COMMUNITY_MEMBER"
+    | "LOCAL_LEADER"
+    | "BENEFICIARY"
+    | "AFFECTED_PERSON";
+  feedbackType:
+    | "COMPLAINT"
+    | "SUGGESTION"
+    | "COMPLIMENT"
+    | "CONCERN"
+    | "REQUEST";
+  category:
+    | "CONSTRUCTION_QUALITY"
+    | "ENVIRONMENTAL_IMPACT"
+    | "SOCIAL_IMPACT"
+    | "ECONOMIC_IMPACT"
+    | "ACCESS"
+    | "SAFETY";
   description: string;
   location?: Coordinates;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
-  status: 'SUBMITTED' | 'UNDER_REVIEW' | 'INVESTIGATING' | 'RESOLVED' | 'CLOSED';
+  priority: "LOW" | "MEDIUM" | "HIGH" | "URGENT";
+  status:
+    | "SUBMITTED"
+    | "UNDER_REVIEW"
+    | "INVESTIGATING"
+    | "RESOLVED"
+    | "CLOSED";
   assignedTo?: string;
   resolution?: string;
   resolutionDate?: Date;
   submissionDate: Date;
   followUpRequired: boolean;
-  contactPreference: 'PHONE' | 'EMAIL' | 'SMS' | 'IN_PERSON' | 'COMMUNITY_MEETING';
+  contactPreference:
+    | "PHONE"
+    | "EMAIL"
+    | "SMS"
+    | "IN_PERSON"
+    | "COMMUNITY_MEETING";
   isAnonymous: boolean;
   attachments?: string[];
 }
 
 export interface SafeguardRecord {
   id: string;
-  type: 'ENVIRONMENTAL' | 'SOCIAL' | 'LAND_ACQUISITION' | 'RESETTLEMENT' | 'CULTURAL_HERITAGE';
+  type:
+    | "ENVIRONMENTAL"
+    | "SOCIAL"
+    | "LAND_ACQUISITION"
+    | "RESETTLEMENT"
+    | "CULTURAL_HERITAGE";
   requirement: string;
-  status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIALLY_COMPLIANT' | 'UNDER_REVIEW';
+  status:
+    | "COMPLIANT"
+    | "NON_COMPLIANT"
+    | "PARTIALLY_COMPLIANT"
+    | "UNDER_REVIEW";
   assessmentDate: Date;
   assessedBy: string;
   evidence: Evidence[];
@@ -238,35 +272,35 @@ export interface ProjectDocument {
   uploadedBy: string;
   fileUrl: string;
   fileSize: number;
-  accessLevel: 'PUBLIC' | 'STAKEHOLDERS' | 'INTERNAL' | 'CONFIDENTIAL';
+  accessLevel: "PUBLIC" | "STAKEHOLDERS" | "INTERNAL" | "CONFIDENTIAL";
   requiredApprovals: string[];
-  approvalStatus: 'DRAFT' | 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED';
+  approvalStatus: "DRAFT" | "UNDER_REVIEW" | "APPROVED" | "REJECTED";
   expiryDate?: Date;
   isLatestVersion: boolean;
   relatedDocuments?: string[];
 }
 
 export type DocumentType =
-  | 'CONTRACT'
-  | 'TECHNICAL_DRAWING'
-  | 'PROGRESS_REPORT'
-  | 'FINANCIAL_REPORT'
-  | 'ENVIRONMENTAL_ASSESSMENT'
-  | 'SOCIAL_ASSESSMENT'
-  | 'AUDIT_REPORT'
-  | 'COMPLIANCE_CERTIFICATE'
-  | 'PERMIT'
-  | 'CORRESPONDENCE';
+  | "CONTRACT"
+  | "TECHNICAL_DRAWING"
+  | "PROGRESS_REPORT"
+  | "FINANCIAL_REPORT"
+  | "ENVIRONMENTAL_ASSESSMENT"
+  | "SOCIAL_ASSESSMENT"
+  | "AUDIT_REPORT"
+  | "COMPLIANCE_CERTIFICATE"
+  | "PERMIT"
+  | "CORRESPONDENCE";
 
 export type DocumentCategory =
-  | 'PLANNING'
-  | 'IMPLEMENTATION'
-  | 'MONITORING'
-  | 'REPORTING'
-  | 'COMPLIANCE'
-  | 'SAFEGUARDS'
-  | 'FINANCIAL'
-  | 'TECHNICAL';
+  | "PLANNING"
+  | "IMPLEMENTATION"
+  | "MONITORING"
+  | "REPORTING"
+  | "COMPLIANCE"
+  | "SAFEGUARDS"
+  | "FINANCIAL"
+  | "TECHNICAL";
 
 export interface WorkflowState {
   currentStage: ProjectStage;
@@ -278,19 +312,25 @@ export interface WorkflowState {
 }
 
 export type ProjectStage =
-  | 'PLANNING'
-  | 'DESIGN'
-  | 'PROCUREMENT'
-  | 'IMPLEMENTATION'
-  | 'MONITORING'
-  | 'COMPLETION'
-  | 'MAINTENANCE';
+  | "PLANNING"
+  | "DESIGN"
+  | "PROCUREMENT"
+  | "IMPLEMENTATION"
+  | "MONITORING"
+  | "COMPLETION"
+  | "MAINTENANCE";
 
 export interface Blocker {
   id: string;
-  type: 'FUNDING' | 'APPROVAL' | 'TECHNICAL' | 'ENVIRONMENTAL' | 'SOCIAL' | 'PROCUREMENT';
+  type:
+    | "FUNDING"
+    | "APPROVAL"
+    | "TECHNICAL"
+    | "ENVIRONMENTAL"
+    | "SOCIAL"
+    | "PROCUREMENT";
   description: string;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   blockedSince: Date;
   assignedTo: string;
   estimatedResolutionDate?: Date;
@@ -305,15 +345,15 @@ export interface PendingApproval {
   approverName: string;
   requestDate: Date;
   dueDate: Date;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  priority: "LOW" | "MEDIUM" | "HIGH" | "URGENT";
   remindersSent: number;
 }
 
 export interface ReportingRequirement {
   id: string;
   donorId: string;
-  reportType: 'PROGRESS' | 'FINANCIAL' | 'COMPLIANCE' | 'IMPACT' | 'COMPLETION';
-  frequency: 'WEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'ANNUALLY' | 'AD_HOC';
+  reportType: "PROGRESS" | "FINANCIAL" | "COMPLIANCE" | "IMPACT" | "COMPLETION";
+  frequency: "WEEKLY" | "MONTHLY" | "QUARTERLY" | "ANNUALLY" | "AD_HOC";
   template?: string;
   nextDueDate: Date;
   recipients: string[];
@@ -322,7 +362,7 @@ export interface ReportingRequirement {
 
 export interface Permission {
   resource: string;
-  actions: ('CREATE' | 'READ' | 'UPDATE' | 'DELETE' | 'APPROVE')[];
+  actions: ("CREATE" | "READ" | "UPDATE" | "DELETE" | "APPROVE")[];
   conditions?: Record<string, any>;
 }
 
@@ -345,7 +385,7 @@ export interface Coordinates {
 }
 
 export interface MonitoringSchedule {
-  frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'QUARTERLY' | 'ANNUALLY';
+  frequency: "DAILY" | "WEEKLY" | "MONTHLY" | "QUARTERLY" | "ANNUALLY";
   nextDate: Date;
   responsible: string;
   checklist: string[];
@@ -362,7 +402,7 @@ export interface ProjectGeography {
 export interface GeographicArea {
   id: string;
   name: string;
-  type: 'VILLAGE' | 'DISTRICT' | 'PROVINCE' | 'WATERSHED' | 'PROTECTED_AREA';
+  type: "VILLAGE" | "DISTRICT" | "PROVINCE" | "WATERSHED" | "PROTECTED_AREA";
   boundary: Coordinates[];
   population?: number;
   demographics?: Demographics;
@@ -371,9 +411,9 @@ export interface GeographicArea {
 export interface AccessPoint {
   id: string;
   name: string;
-  type: 'MAIN_ROAD' | 'FEEDER_ROAD' | 'BRIDGE' | 'AIRSTRIP' | 'PORT';
+  type: "MAIN_ROAD" | "FEEDER_ROAD" | "BRIDGE" | "AIRSTRIP" | "PORT";
   coordinates: Coordinates;
-  currentCondition: 'EXCELLENT' | 'GOOD' | 'FAIR' | 'POOR' | 'CRITICAL';
+  currentCondition: "EXCELLENT" | "GOOD" | "FAIR" | "POOR" | "CRITICAL";
   improvements: string[];
 }
 
@@ -424,8 +464,8 @@ export interface EnvironmentalImpact {
   carbonFootprint: number;
   treesPlanted: number;
   soilErosionPrevention: number;
-  waterQualityImpact: 'POSITIVE' | 'NEUTRAL' | 'NEGATIVE';
-  biodiversityImpact: 'POSITIVE' | 'NEUTRAL' | 'NEGATIVE';
+  waterQualityImpact: "POSITIVE" | "NEUTRAL" | "NEGATIVE";
+  biodiversityImpact: "POSITIVE" | "NEUTRAL" | "NEGATIVE";
   mitigationMeasures: string[];
 }
 
@@ -472,7 +512,7 @@ export interface MaintenanceRequirement {
   component: string;
   frequency: string;
   estimatedCost: number;
-  responsibility: 'GOVERNMENT' | 'CONTRACTOR' | 'COMMUNITY' | 'DONOR';
+  responsibility: "GOVERNMENT" | "CONTRACTOR" | "COMMUNITY" | "DONOR";
   skillsRequired: string[];
   equipmentNeeded: string[];
   warrantyCovered: boolean;
@@ -483,8 +523,12 @@ export interface CommunityVerification {
   verificationDate: Date;
   verifiedBy: string;
   communityRepresentatives: string[];
-  verificationMethod: 'SITE_VISIT' | 'COMMUNITY_MEETING' | 'SURVEY' | 'FOCUS_GROUP';
-  verificationStatus: 'VERIFIED' | 'DISPUTED' | 'PARTIALLY_VERIFIED';
+  verificationMethod:
+    | "SITE_VISIT"
+    | "COMMUNITY_MEETING"
+    | "SURVEY"
+    | "FOCUS_GROUP";
+  verificationStatus: "VERIFIED" | "DISPUTED" | "PARTIALLY_VERIFIED";
   comments?: string;
   evidence?: Evidence[];
 }

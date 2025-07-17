@@ -1,13 +1,13 @@
 // Production Database Service for PNG Road Construction Monitor
 // Pure mock data mode - no database dependencies
 
-import { MockAPIService } from './mockApiService';
+import { MockAPIService } from "./mockApiService";
 
 // Real-time update interface for cross-component communication
 export interface RealtimeUpdate {
   id: string;
-  type: 'project' | 'gps' | 'financial' | 'user';
-  action: 'create' | 'update' | 'delete';
+  type: "project" | "gps" | "financial" | "user";
+  action: "create" | "update" | "delete";
   data: any;
   timestamp: Date;
   userId?: string;
@@ -21,21 +21,21 @@ class ProductionDatabaseService {
   private pngApiEnabled = false;
 
   constructor() {
-    console.log('Production Database Service initialized in pure mock mode:', {
+    console.log("Production Database Service initialized in pure mock mode:", {
       useMockData: this.useMockData,
       realtimeEnabled: this.realtimeEnabled,
       pngApiEnabled: this.pngApiEnabled,
-      environment: process.env.NODE_ENV
+      environment: process.env.NODE_ENV,
     });
   }
 
   // Health check for the database service
   async healthCheck() {
     return {
-      status: 'healthy',
-      dataSource: 'mock',
-      message: 'Using mock data service (no database required)',
-      timestamp: new Date().toISOString()
+      status: "healthy",
+      dataSource: "mock",
+      message: "Using mock data service (no database required)",
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -53,12 +53,12 @@ class ProductionDatabaseService {
 
     // Mock real-time update
     if (this.realtimeEnabled && result.success) {
-      console.log('Mock real-time update:', {
+      console.log("Mock real-time update:", {
         id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        type: 'project',
-        action: 'create',
+        type: "project",
+        action: "create",
         data: result.data,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
 
@@ -74,12 +74,12 @@ class ProductionDatabaseService {
 
     // Mock real-time update
     if (this.realtimeEnabled && result.success) {
-      console.log('Mock real-time update:', {
+      console.log("Mock real-time update:", {
         id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        type: 'gps',
-        action: 'create',
+        type: "gps",
+        action: "create",
         data: result.data,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
 
@@ -95,12 +95,12 @@ class ProductionDatabaseService {
 
     // Mock real-time update
     if (this.realtimeEnabled && result.success) {
-      console.log('Mock real-time update:', {
+      console.log("Mock real-time update:", {
         id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        type: 'financial',
-        action: 'create',
+        type: "financial",
+        action: "create",
         data: result.data,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
 
@@ -123,7 +123,7 @@ class ProductionDatabaseService {
   async syncWithPNGAPI() {
     return {
       success: false,
-      message: 'PNG API integration is disabled (mock mode)'
+      message: "PNG API integration is disabled (mock mode)",
     };
   }
 
@@ -134,7 +134,7 @@ class ProductionDatabaseService {
       realtimeEnabled: this.realtimeEnabled,
       pngApiEnabled: this.pngApiEnabled,
       environment: process.env.NODE_ENV,
-      mode: 'pure-mock'
+      mode: "pure-mock",
     };
   }
 }

@@ -1,11 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Activity, TrendingUp, Target, Clock, CheckCircle } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { FinancialSummary } from "@/types/financial";
+import { Activity, CheckCircle, Clock, Target, TrendingUp } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface ProgressItem {
   category: string;
@@ -27,7 +40,10 @@ interface ProgressMonitorProps {
   financialSummary: FinancialSummary;
 }
 
-export default function ProgressMonitor({ projectId, financialSummary }: ProgressMonitorProps) {
+export default function ProgressMonitor({
+  projectId,
+  financialSummary,
+}: ProgressMonitorProps) {
   const [progressData, setProgressData] = useState<ProgressItem[]>([]);
 
   useEffect(() => {
@@ -45,9 +61,19 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
         variance: 0,
         status: "on-track",
         milestones: [
-          { name: "Land Acquisition", planned: new Date("2023-01-15"), actual: new Date("2023-01-20"), status: "completed" },
-          { name: "Site Clearing", planned: new Date("2023-02-01"), actual: new Date("2023-01-28"), status: "completed" }
-        ]
+          {
+            name: "Land Acquisition",
+            planned: new Date("2023-01-15"),
+            actual: new Date("2023-01-20"),
+            status: "completed",
+          },
+          {
+            name: "Site Clearing",
+            planned: new Date("2023-02-01"),
+            actual: new Date("2023-01-28"),
+            status: "completed",
+          },
+        ],
       },
       {
         category: "Earthworks",
@@ -57,9 +83,18 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
         variance: 5,
         status: "ahead",
         milestones: [
-          { name: "Cut & Fill Operations", planned: new Date("2023-03-01"), actual: new Date("2023-02-25"), status: "completed" },
-          { name: "Subgrade Preparation", planned: new Date("2023-04-15"), status: "in-progress" }
-        ]
+          {
+            name: "Cut & Fill Operations",
+            planned: new Date("2023-03-01"),
+            actual: new Date("2023-02-25"),
+            status: "completed",
+          },
+          {
+            name: "Subgrade Preparation",
+            planned: new Date("2023-04-15"),
+            status: "in-progress",
+          },
+        ],
       },
       {
         category: "Drainage",
@@ -69,9 +104,17 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
         variance: -15,
         status: "behind",
         milestones: [
-          { name: "Culvert Installation", planned: new Date("2023-05-01"), status: "delayed" },
-          { name: "Roadside Drains", planned: new Date("2023-06-01"), status: "pending" }
-        ]
+          {
+            name: "Culvert Installation",
+            planned: new Date("2023-05-01"),
+            status: "delayed",
+          },
+          {
+            name: "Roadside Drains",
+            planned: new Date("2023-06-01"),
+            status: "pending",
+          },
+        ],
       },
       {
         category: "Pavement",
@@ -81,9 +124,17 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
         variance: -15,
         status: "behind",
         milestones: [
-          { name: "Base Course", planned: new Date("2023-07-01"), status: "in-progress" },
-          { name: "Asphalt Laying", planned: new Date("2023-08-15"), status: "pending" }
-        ]
+          {
+            name: "Base Course",
+            planned: new Date("2023-07-01"),
+            status: "in-progress",
+          },
+          {
+            name: "Asphalt Laying",
+            planned: new Date("2023-08-15"),
+            status: "pending",
+          },
+        ],
       },
       {
         category: "Bridges",
@@ -93,10 +144,18 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
         variance: -15,
         status: "critical",
         milestones: [
-          { name: "Foundation Work", planned: new Date("2023-06-01"), status: "delayed" },
-          { name: "Superstructure", planned: new Date("2023-09-01"), status: "pending" }
-        ]
-      }
+          {
+            name: "Foundation Work",
+            planned: new Date("2023-06-01"),
+            status: "delayed",
+          },
+          {
+            name: "Superstructure",
+            planned: new Date("2023-09-01"),
+            status: "pending",
+          },
+        ],
+      },
     ];
 
     setProgressData(mockData);
@@ -104,22 +163,33 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "ahead": return "bg-green-100 text-green-800";
-      case "on-track": return "bg-blue-100 text-blue-800";
-      case "behind": return "bg-orange-100 text-orange-800";
-      case "critical": return "bg-red-100 text-red-800";
-      case "completed": return "bg-gray-100 text-gray-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "ahead":
+        return "bg-green-100 text-green-800";
+      case "on-track":
+        return "bg-blue-100 text-blue-800";
+      case "behind":
+        return "bg-orange-100 text-orange-800";
+      case "critical":
+        return "bg-red-100 text-red-800";
+      case "completed":
+        return "bg-gray-100 text-gray-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getMilestoneStatusColor = (status: string) => {
     switch (status) {
-      case "completed": return "bg-green-100 text-green-800";
-      case "in-progress": return "bg-blue-100 text-blue-800";
-      case "delayed": return "bg-red-100 text-red-800";
-      case "pending": return "bg-gray-100 text-gray-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "in-progress":
+        return "bg-blue-100 text-blue-800";
+      case "delayed":
+        return "bg-red-100 text-red-800";
+      case "pending":
+        return "bg-gray-100 text-gray-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -129,9 +199,15 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
     return "bg-red-500";
   };
 
-  const overallPhysicalProgress = progressData.reduce((sum, item) => sum + item.physicalProgress, 0) / progressData.length;
-  const overallFinancialProgress = progressData.reduce((sum, item) => sum + item.financialProgress, 0) / progressData.length;
-  const overallPlannedProgress = progressData.reduce((sum, item) => sum + item.plannedProgress, 0) / progressData.length;
+  const overallPhysicalProgress =
+    progressData.reduce((sum, item) => sum + item.physicalProgress, 0) /
+    progressData.length;
+  const overallFinancialProgress =
+    progressData.reduce((sum, item) => sum + item.financialProgress, 0) /
+    progressData.length;
+  const overallPlannedProgress =
+    progressData.reduce((sum, item) => sum + item.plannedProgress, 0) /
+    progressData.length;
 
   return (
     <div className="space-y-6">
@@ -184,9 +260,16 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Schedule Variance</p>
-                <p className={`text-2xl font-bold ${(overallPhysicalProgress - overallPlannedProgress) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {(overallPhysicalProgress - overallPlannedProgress) >= 0 ? '+' : ''}
-                  {(overallPhysicalProgress - overallPlannedProgress).toFixed(1)}%
+                <p
+                  className={`text-2xl font-bold ${(overallPhysicalProgress - overallPlannedProgress) >= 0 ? "text-green-600" : "text-red-600"}`}
+                >
+                  {overallPhysicalProgress - overallPlannedProgress >= 0
+                    ? "+"
+                    : ""}
+                  {(overallPhysicalProgress - overallPlannedProgress).toFixed(
+                    1,
+                  )}
+                  %
                 </p>
               </div>
               <Clock className="h-8 w-8 text-gray-500" />
@@ -199,7 +282,9 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
       <Card>
         <CardHeader>
           <CardTitle>Performance Indices</CardTitle>
-          <CardDescription>Key performance indicators from financial summary</CardDescription>
+          <CardDescription>
+            Key performance indicators from financial summary
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -207,18 +292,26 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
               <div className="text-3xl font-bold text-blue-600">
                 {financialSummary.costPerformanceIndex.toFixed(2)}
               </div>
-              <div className="text-sm text-gray-600 mt-1">Cost Performance Index (CPI)</div>
+              <div className="text-sm text-gray-600 mt-1">
+                Cost Performance Index (CPI)
+              </div>
               <div className="text-xs text-gray-500 mt-1">
-                {financialSummary.costPerformanceIndex >= 1.0 ? 'Under budget' : 'Over budget'}
+                {financialSummary.costPerformanceIndex >= 1.0
+                  ? "Under budget"
+                  : "Over budget"}
               </div>
             </div>
             <div className="text-center p-4 bg-green-50 rounded-lg">
               <div className="text-3xl font-bold text-green-600">
                 {financialSummary.schedulePerformanceIndex.toFixed(2)}
               </div>
-              <div className="text-sm text-gray-600 mt-1">Schedule Performance Index (SPI)</div>
+              <div className="text-sm text-gray-600 mt-1">
+                Schedule Performance Index (SPI)
+              </div>
               <div className="text-xs text-gray-500 mt-1">
-                {financialSummary.schedulePerformanceIndex >= 1.0 ? 'Ahead of schedule' : 'Behind schedule'}
+                {financialSummary.schedulePerformanceIndex >= 1.0
+                  ? "Ahead of schedule"
+                  : "Behind schedule"}
               </div>
             </div>
           </div>
@@ -229,7 +322,9 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
       <Card>
         <CardHeader>
           <CardTitle>Progress by Work Category</CardTitle>
-          <CardDescription>Physical vs financial progress comparison</CardDescription>
+          <CardDescription>
+            Physical vs financial progress comparison
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -252,7 +347,9 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
                       <div className="flex-1 bg-gray-200 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full ${getProgressBarColor(item.physicalProgress, item.plannedProgress)}`}
-                          style={{ width: `${Math.min(item.physicalProgress, 100)}%` }}
+                          style={{
+                            width: `${Math.min(item.physicalProgress, 100)}%`,
+                          }}
                         />
                       </div>
                       <span className="text-sm font-medium w-12">
@@ -265,7 +362,9 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
                       <div className="flex-1 bg-gray-200 rounded-full h-2">
                         <div
                           className="h-2 rounded-full bg-green-500"
-                          style={{ width: `${Math.min(item.financialProgress, 100)}%` }}
+                          style={{
+                            width: `${Math.min(item.financialProgress, 100)}%`,
+                          }}
                         />
                       </div>
                       <span className="text-sm font-medium w-12">
@@ -279,8 +378,11 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
                     </span>
                   </TableCell>
                   <TableCell>
-                    <span className={`text-sm font-medium ${item.variance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {item.variance >= 0 ? '+' : ''}{item.variance}%
+                    <span
+                      className={`text-sm font-medium ${item.variance >= 0 ? "text-green-600" : "text-red-600"}`}
+                    >
+                      {item.variance >= 0 ? "+" : ""}
+                      {item.variance}%
                     </span>
                   </TableCell>
                   <TableCell>
@@ -299,19 +401,30 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
       <Card>
         <CardHeader>
           <CardTitle>Upcoming Milestones</CardTitle>
-          <CardDescription>Key project milestones and their status</CardDescription>
+          <CardDescription>
+            Key project milestones and their status
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {progressData.map((category) => (
               <div key={category.category}>
-                <h4 className="font-semibold text-gray-900 mb-2">{category.category}</h4>
+                <h4 className="font-semibold text-gray-900 mb-2">
+                  {category.category}
+                </h4>
                 <div className="space-y-2">
                   {category.milestones.map((milestone, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-2 bg-gray-50 rounded"
+                    >
                       <div className="flex items-center gap-2">
-                        <CheckCircle className={`h-4 w-4 ${milestone.status === 'completed' ? 'text-green-500' : 'text-gray-400'}`} />
-                        <span className="text-sm font-medium">{milestone.name}</span>
+                        <CheckCircle
+                          className={`h-4 w-4 ${milestone.status === "completed" ? "text-green-500" : "text-gray-400"}`}
+                        />
+                        <span className="text-sm font-medium">
+                          {milestone.name}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-gray-500">
@@ -322,7 +435,9 @@ export default function ProgressMonitor({ projectId, financialSummary }: Progres
                             Actual: {milestone.actual.toLocaleDateString()}
                           </span>
                         )}
-                        <Badge className={getMilestoneStatusColor(milestone.status)}>
+                        <Badge
+                          className={getMilestoneStatusColor(milestone.status)}
+                        >
                           {milestone.status}
                         </Badge>
                       </div>

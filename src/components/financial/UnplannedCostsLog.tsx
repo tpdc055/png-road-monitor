@@ -1,22 +1,50 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Plus, AlertTriangle, Eye, Edit, FileText, TrendingUp } from "lucide-react";
 import type { UnplannedCost } from "@/types/financial";
+import {
+  AlertTriangle,
+  Edit,
+  Eye,
+  FileText,
+  Plus,
+  TrendingUp,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface UnplannedCostsLogProps {
   projectId: string;
 }
 
-export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps) {
+export default function UnplannedCostsLog({
+  projectId,
+}: UnplannedCostsLogProps) {
   const [unplannedCosts, setUnplannedCosts] = useState<UnplannedCost[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newCost, setNewCost] = useState<Partial<UnplannedCost>>({
@@ -25,7 +53,7 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
     amount: 0,
     reason: "",
     impact: "medium",
-    reportedBy: ""
+    reportedBy: "",
   });
 
   useEffect(() => {
@@ -46,7 +74,8 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
         date: new Date("2023-03-15"),
         reportedBy: "Site Engineer",
         approvalStatus: "approved",
-        mitigationPlan: "Implement drainage improvements and weather monitoring"
+        mitigationPlan:
+          "Implement drainage improvements and weather monitoring",
       },
       {
         id: "uc2",
@@ -58,7 +87,7 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
         impact: "medium",
         date: new Date("2023-04-02"),
         reportedBy: "Procurement Manager",
-        approvalStatus: "approved"
+        approvalStatus: "approved",
       },
       {
         id: "uc3",
@@ -66,12 +95,13 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
         category: "Geotechnical Issues",
         description: "Unexpected soft soil requiring additional stabilization",
         amount: 3200000,
-        reason: "Geotechnical investigation did not identify problematic soil layer",
+        reason:
+          "Geotechnical investigation did not identify problematic soil layer",
         impact: "high",
         date: new Date("2023-05-20"),
         reportedBy: "Geotechnical Engineer",
         approvalStatus: "pending",
-        mitigationPlan: "Deep soil stabilization and revised foundation design"
+        mitigationPlan: "Deep soil stabilization and revised foundation design",
       },
       {
         id: "uc4",
@@ -83,7 +113,7 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
         impact: "low",
         date: new Date("2023-06-10"),
         reportedBy: "Environmental Officer",
-        approvalStatus: "approved"
+        approvalStatus: "approved",
       },
       {
         id: "uc5",
@@ -95,8 +125,8 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
         impact: "medium",
         date: new Date("2023-07-05"),
         reportedBy: "Project Manager",
-        approvalStatus: "pending"
-      }
+        approvalStatus: "pending",
+      },
     ];
 
     setUnplannedCosts(mockCosts);
@@ -108,19 +138,27 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
 
   const getImpactColor = (impact: string) => {
     switch (impact) {
-      case "low": return "bg-yellow-100 text-yellow-800";
-      case "medium": return "bg-orange-100 text-orange-800";
-      case "high": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "low":
+        return "bg-yellow-100 text-yellow-800";
+      case "medium":
+        return "bg-orange-100 text-orange-800";
+      case "high":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getApprovalColor = (status: string) => {
     switch (status) {
-      case "approved": return "bg-green-100 text-green-800";
-      case "pending": return "bg-yellow-100 text-yellow-800";
-      case "rejected": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "approved":
+        return "bg-green-100 text-green-800";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "rejected":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -140,39 +178,56 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
       impact: newCost.impact as "low" | "medium" | "high",
       date: new Date(),
       reportedBy: newCost.reportedBy || "Current User",
-      approvalStatus: "pending"
+      approvalStatus: "pending",
     };
 
-    setUnplannedCosts(prev => [cost, ...prev]);
+    setUnplannedCosts((prev) => [cost, ...prev]);
     setNewCost({
       category: "",
       description: "",
       amount: 0,
       reason: "",
       impact: "medium",
-      reportedBy: ""
+      reportedBy: "",
     });
     setShowAddForm(false);
   };
 
-  const totalUnplannedCosts = unplannedCosts.reduce((sum, cost) => sum + cost.amount, 0);
-  const approvedCosts = unplannedCosts.filter(cost => cost.approvalStatus === "approved").reduce((sum, cost) => sum + cost.amount, 0);
-  const pendingCosts = unplannedCosts.filter(cost => cost.approvalStatus === "pending").reduce((sum, cost) => sum + cost.amount, 0);
+  const totalUnplannedCosts = unplannedCosts.reduce(
+    (sum, cost) => sum + cost.amount,
+    0,
+  );
+  const approvedCosts = unplannedCosts
+    .filter((cost) => cost.approvalStatus === "approved")
+    .reduce((sum, cost) => sum + cost.amount, 0);
+  const pendingCosts = unplannedCosts
+    .filter((cost) => cost.approvalStatus === "pending")
+    .reduce((sum, cost) => sum + cost.amount, 0);
 
-  const costsByCategory = unplannedCosts.reduce((acc, cost) => {
-    acc[cost.category] = (acc[cost.category] || 0) + cost.amount;
-    return acc;
-  }, {} as Record<string, number>);
+  const costsByCategory = unplannedCosts.reduce(
+    (acc, cost) => {
+      acc[cost.category] = (acc[cost.category] || 0) + cost.amount;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold text-gray-900">Unplanned Costs Log</h3>
-          <p className="text-gray-600">Track and manage unexpected project costs</p>
+          <h3 className="text-xl font-bold text-gray-900">
+            Unplanned Costs Log
+          </h3>
+          <p className="text-gray-600">
+            Track and manage unexpected project costs
+          </p>
         </div>
-        <Button onClick={() => setShowAddForm(true)} className="bg-red-600 hover:bg-red-700">
+        <Button
+          onClick={() => setShowAddForm(true)}
+          className="bg-red-600 hover:bg-red-700"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Report Unplanned Cost
         </Button>
@@ -241,12 +296,17 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
       <Card>
         <CardHeader>
           <CardTitle>Costs by Category</CardTitle>
-          <CardDescription>Breakdown of unplanned costs by category</CardDescription>
+          <CardDescription>
+            Breakdown of unplanned costs by category
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Object.entries(costsByCategory).map(([category, amount]) => (
-              <div key={category} className="text-center p-4 bg-gray-50 rounded-lg">
+              <div
+                key={category}
+                className="text-center p-4 bg-gray-50 rounded-lg"
+              >
                 <div className="text-lg font-bold text-gray-900">
                   {formatCurrency(amount)}
                 </div>
@@ -264,24 +324,45 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
       {showAddForm && (
         <Card className="border-red-200 bg-red-50">
           <CardHeader>
-            <CardTitle className="text-red-800">Report New Unplanned Cost</CardTitle>
+            <CardTitle className="text-red-800">
+              Report New Unplanned Cost
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="category">Category</Label>
-                <Select value={newCost.category} onValueChange={(value) => setNewCost(prev => ({...prev, category: value}))}>
+                <Select
+                  value={newCost.category}
+                  onValueChange={(value) =>
+                    setNewCost((prev) => ({ ...prev, category: value }))
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Weather Delays">Weather Delays</SelectItem>
-                    <SelectItem value="Material Price Increase">Material Price Increase</SelectItem>
-                    <SelectItem value="Geotechnical Issues">Geotechnical Issues</SelectItem>
-                    <SelectItem value="Environmental Compliance">Environmental Compliance</SelectItem>
-                    <SelectItem value="Security Costs">Security Costs</SelectItem>
-                    <SelectItem value="Design Changes">Design Changes</SelectItem>
-                    <SelectItem value="Equipment Failure">Equipment Failure</SelectItem>
+                    <SelectItem value="Weather Delays">
+                      Weather Delays
+                    </SelectItem>
+                    <SelectItem value="Material Price Increase">
+                      Material Price Increase
+                    </SelectItem>
+                    <SelectItem value="Geotechnical Issues">
+                      Geotechnical Issues
+                    </SelectItem>
+                    <SelectItem value="Environmental Compliance">
+                      Environmental Compliance
+                    </SelectItem>
+                    <SelectItem value="Security Costs">
+                      Security Costs
+                    </SelectItem>
+                    <SelectItem value="Design Changes">
+                      Design Changes
+                    </SelectItem>
+                    <SelectItem value="Equipment Failure">
+                      Equipment Failure
+                    </SelectItem>
                     <SelectItem value="Other">Other</SelectItem>
                   </SelectContent>
                 </Select>
@@ -294,7 +375,12 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
                   type="number"
                   placeholder="Enter amount"
                   value={newCost.amount || ""}
-                  onChange={(e) => setNewCost(prev => ({...prev, amount: Number(e.target.value)}))}
+                  onChange={(e) =>
+                    setNewCost((prev) => ({
+                      ...prev,
+                      amount: Number(e.target.value),
+                    }))
+                  }
                 />
               </div>
             </div>
@@ -305,7 +391,12 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
                 id="description"
                 placeholder="Brief description of the unplanned cost"
                 value={newCost.description}
-                onChange={(e) => setNewCost(prev => ({...prev, description: e.target.value}))}
+                onChange={(e) =>
+                  setNewCost((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
               />
             </div>
 
@@ -315,14 +406,24 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
                 id="reason"
                 placeholder="Detailed explanation of why this cost occurred"
                 value={newCost.reason}
-                onChange={(e) => setNewCost(prev => ({...prev, reason: e.target.value}))}
+                onChange={(e) =>
+                  setNewCost((prev) => ({ ...prev, reason: e.target.value }))
+                }
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="impact">Impact Level</Label>
-                <Select value={newCost.impact} onValueChange={(value) => setNewCost(prev => ({...prev, impact: value as "low" | "medium" | "high"}))}>
+                <Select
+                  value={newCost.impact}
+                  onValueChange={(value) =>
+                    setNewCost((prev) => ({
+                      ...prev,
+                      impact: value as "low" | "medium" | "high",
+                    }))
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -340,13 +441,21 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
                   id="reportedBy"
                   placeholder="Your name/position"
                   value={newCost.reportedBy}
-                  onChange={(e) => setNewCost(prev => ({...prev, reportedBy: e.target.value}))}
+                  onChange={(e) =>
+                    setNewCost((prev) => ({
+                      ...prev,
+                      reportedBy: e.target.value,
+                    }))
+                  }
                 />
               </div>
             </div>
 
             <div className="flex gap-2">
-              <Button onClick={addUnplannedCost} className="bg-red-600 hover:bg-red-700">
+              <Button
+                onClick={addUnplannedCost}
+                className="bg-red-600 hover:bg-red-700"
+              >
                 Submit Report
               </Button>
               <Button variant="outline" onClick={() => setShowAddForm(false)}>
@@ -361,7 +470,9 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
       <Card>
         <CardHeader>
           <CardTitle>Unplanned Costs Log</CardTitle>
-          <CardDescription>All reported unplanned costs and their approval status</CardDescription>
+          <CardDescription>
+            All reported unplanned costs and their approval status
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -379,12 +490,8 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
             <TableBody>
               {unplannedCosts.map((cost) => (
                 <TableRow key={cost.id}>
-                  <TableCell>
-                    {cost.date.toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {cost.category}
-                  </TableCell>
+                  <TableCell>{cost.date.toLocaleDateString()}</TableCell>
+                  <TableCell className="font-medium">{cost.category}</TableCell>
                   <TableCell>
                     <div className="max-w-xs">
                       <p className="text-sm">{cost.description}</p>
@@ -410,10 +517,18 @@ export default function UnplannedCostsLog({ projectId }: UnplannedCostsLogProps)
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1">
-                      <Button size="sm" variant="outline" className="h-8 w-8 p-0">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 w-8 p-0"
+                      >
                         <Eye className="h-3 w-3" />
                       </Button>
-                      <Button size="sm" variant="outline" className="h-8 w-8 p-0">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 w-8 p-0"
+                      >
                         <Edit className="h-3 w-3" />
                       </Button>
                     </div>

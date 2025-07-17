@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import jsPDF from "jspdf";
 import {
-  Download,
-  FileText,
-  FileSpreadsheet,
-  Calendar,
-  MapPin,
-  DollarSign,
-  TrendingUp,
   AlertTriangle,
-  Settings
-} from 'lucide-react';
-import jsPDF from 'jspdf';
-import * as XLSX from 'xlsx';
+  Calendar,
+  DollarSign,
+  Download,
+  FileSpreadsheet,
+  FileText,
+  MapPin,
+  Settings,
+  TrendingUp,
+} from "lucide-react";
+import React, { useState } from "react";
+import * as XLSX from "xlsx";
 
 interface Project {
   id: string;
@@ -73,14 +73,14 @@ interface ExportOptions {
     start: string;
     end: string;
   };
-  format: 'pdf' | 'excel' | 'both';
+  format: "pdf" | "excel" | "both";
 }
 
 export default function DataExportComponent({
   projects = [],
   gpsEntries = [],
   financialEntries = [],
-  selectedProject
+  selectedProject,
 }: DataExportProps) {
   const [exportOptions, setExportOptions] = useState<ExportOptions>({
     includeProjects: true,
@@ -88,18 +88,18 @@ export default function DataExportComponent({
     includeFinancial: true,
     includeAnalytics: true,
     dateRange: {
-      start: '2024-01-01',
-      end: new Date().toISOString().split('T')[0]
+      start: "2024-01-01",
+      end: new Date().toISOString().split("T")[0],
     },
-    format: 'pdf'
+    format: "pdf",
   });
 
   const [isExporting, setIsExporting] = useState(false);
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-PG', {
-      style: 'currency',
-      currency: 'PGK',
+    return new Intl.NumberFormat("en-PG", {
+      style: "currency",
+      currency: "PGK",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
@@ -111,7 +111,7 @@ export default function DataExportComponent({
 
     // Header
     pdf.setFontSize(20);
-    pdf.text('PNG Road Construction Monitor Report', 20, yPosition);
+    pdf.text("PNG Road Construction Monitor Report", 20, yPosition);
     yPosition += 10;
 
     pdf.setFontSize(12);
@@ -128,7 +128,7 @@ export default function DataExportComponent({
     // Projects Summary
     if (exportOptions.includeProjects) {
       pdf.setFontSize(16);
-      pdf.text('Project Summary', 20, yPosition);
+      pdf.text("Project Summary", 20, yPosition);
       yPosition += 10;
 
       const projectsToExport = selectedProject ? [selectedProject] : projects;
@@ -167,11 +167,11 @@ export default function DataExportComponent({
       }
 
       pdf.setFontSize(16);
-      pdf.text('GPS Tracking Data', 20, yPosition);
+      pdf.text("GPS Tracking Data", 20, yPosition);
       yPosition += 10;
 
       const filteredGPS = selectedProject
-        ? gpsEntries.filter(entry => entry.projectId === selectedProject.id)
+        ? gpsEntries.filter((entry) => entry.projectId === selectedProject.id)
         : gpsEntries;
 
       filteredGPS.slice(0, 10).forEach((entry, index) => {
@@ -181,11 +181,23 @@ export default function DataExportComponent({
         }
 
         pdf.setFontSize(10);
-        pdf.text(`${index + 1}. ${entry.description || 'GPS Point'}`, 20, yPosition);
+        pdf.text(
+          `${index + 1}. ${entry.description || "GPS Point"}`,
+          20,
+          yPosition,
+        );
         yPosition += 5;
-        pdf.text(`Coordinates: ${entry.latitude.toFixed(6)}, ${entry.longitude.toFixed(6)}`, 25, yPosition);
+        pdf.text(
+          `Coordinates: ${entry.latitude.toFixed(6)}, ${entry.longitude.toFixed(6)}`,
+          25,
+          yPosition,
+        );
         yPosition += 5;
-        pdf.text(`Date: ${new Date(entry.timestamp).toLocaleDateString()}`, 25, yPosition);
+        pdf.text(
+          `Date: ${new Date(entry.timestamp).toLocaleDateString()}`,
+          25,
+          yPosition,
+        );
         yPosition += 5;
         if (entry.taskName) {
           pdf.text(`Task: ${entry.taskName}`, 25, yPosition);
@@ -203,17 +215,26 @@ export default function DataExportComponent({
       }
 
       pdf.setFontSize(16);
-      pdf.text('Financial Summary', 20, yPosition);
+      pdf.text("Financial Summary", 20, yPosition);
       yPosition += 10;
 
       const filteredFinancial = selectedProject
-        ? financialEntries.filter(entry => entry.projectId === selectedProject.id)
+        ? financialEntries.filter(
+            (entry) => entry.projectId === selectedProject.id,
+          )
         : financialEntries;
 
-      const totalExpenses = filteredFinancial.reduce((sum, entry) => sum + entry.amount, 0);
+      const totalExpenses = filteredFinancial.reduce(
+        (sum, entry) => sum + entry.amount,
+        0,
+      );
 
       pdf.setFontSize(12);
-      pdf.text(`Total Expenses: ${formatCurrency(totalExpenses)}`, 20, yPosition);
+      pdf.text(
+        `Total Expenses: ${formatCurrency(totalExpenses)}`,
+        20,
+        yPosition,
+      );
       yPosition += 10;
 
       filteredFinancial.slice(0, 15).forEach((entry, index) => {
@@ -242,14 +263,21 @@ export default function DataExportComponent({
       }
 
       pdf.setFontSize(16);
-      pdf.text('Analytics Summary', 20, yPosition);
+      pdf.text("Analytics Summary", 20, yPosition);
       yPosition += 10;
 
       const projectsToAnalyze = selectedProject ? [selectedProject] : projects;
-      const totalBudget = projectsToAnalyze.reduce((sum, p) => sum + p.budget, 0);
+      const totalBudget = projectsToAnalyze.reduce(
+        (sum, p) => sum + p.budget,
+        0,
+      );
       const totalSpent = projectsToAnalyze.reduce((sum, p) => sum + p.spent, 0);
-      const avgProgress = projectsToAnalyze.reduce((sum, p) => sum + p.progress, 0) / projectsToAnalyze.length;
-      const activeProjects = projectsToAnalyze.filter(p => p.status === 'ACTIVE').length;
+      const avgProgress =
+        projectsToAnalyze.reduce((sum, p) => sum + p.progress, 0) /
+        projectsToAnalyze.length;
+      const activeProjects = projectsToAnalyze.filter(
+        (p) => p.status === "ACTIVE",
+      ).length;
 
       pdf.setFontSize(12);
       pdf.text(`Total Projects: ${projectsToAnalyze.length}`, 20, yPosition);
@@ -260,15 +288,19 @@ export default function DataExportComponent({
       yPosition += 7;
       pdf.text(`Total Spent: ${formatCurrency(totalSpent)}`, 20, yPosition);
       yPosition += 7;
-      pdf.text(`Budget Utilization: ${((totalSpent / totalBudget) * 100).toFixed(1)}%`, 20, yPosition);
+      pdf.text(
+        `Budget Utilization: ${((totalSpent / totalBudget) * 100).toFixed(1)}%`,
+        20,
+        yPosition,
+      );
       yPosition += 7;
       pdf.text(`Average Progress: ${avgProgress.toFixed(1)}%`, 20, yPosition);
     }
 
     // Save PDF
     const fileName = selectedProject
-      ? `${selectedProject.name.replace(/[^a-z0-9]/gi, '_')}_report.pdf`
-      : `PNG_Road_Construction_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+      ? `${selectedProject.name.replace(/[^a-z0-9]/gi, "_")}_report.pdf`
+      : `PNG_Road_Construction_Report_${new Date().toISOString().split("T")[0]}.pdf`;
 
     pdf.save(fileName);
   };
@@ -279,93 +311,120 @@ export default function DataExportComponent({
     // Projects Sheet
     if (exportOptions.includeProjects) {
       const projectsToExport = selectedProject ? [selectedProject] : projects;
-      const projectsData = projectsToExport.map(project => ({
-        'Project ID': project.id,
-        'Project Name': project.name,
-        'Location': project.location,
-        'Province': project.province,
-        'Status': project.status,
-        'Progress (%)': project.progress,
-        'Budget (PGK)': project.budget,
-        'Spent (PGK)': project.spent,
-        'Budget Utilization (%)': ((project.spent / project.budget) * 100).toFixed(1),
-        'Contractor': project.contractor,
-        'Start Date': project.startDate,
-        'End Date': project.endDate,
-        'Total Distance (km)': project.totalDistance || 'N/A',
-        'Completed Distance (km)': project.completedDistance || 'N/A'
+      const projectsData = projectsToExport.map((project) => ({
+        "Project ID": project.id,
+        "Project Name": project.name,
+        Location: project.location,
+        Province: project.province,
+        Status: project.status,
+        "Progress (%)": project.progress,
+        "Budget (PGK)": project.budget,
+        "Spent (PGK)": project.spent,
+        "Budget Utilization (%)": (
+          (project.spent / project.budget) *
+          100
+        ).toFixed(1),
+        Contractor: project.contractor,
+        "Start Date": project.startDate,
+        "End Date": project.endDate,
+        "Total Distance (km)": project.totalDistance || "N/A",
+        "Completed Distance (km)": project.completedDistance || "N/A",
       }));
 
       const projectsSheet = XLSX.utils.json_to_sheet(projectsData);
-      XLSX.utils.book_append_sheet(workbook, projectsSheet, 'Projects');
+      XLSX.utils.book_append_sheet(workbook, projectsSheet, "Projects");
     }
 
     // GPS Data Sheet
     if (exportOptions.includeGPS && gpsEntries.length > 0) {
       const filteredGPS = selectedProject
-        ? gpsEntries.filter(entry => entry.projectId === selectedProject.id)
+        ? gpsEntries.filter((entry) => entry.projectId === selectedProject.id)
         : gpsEntries;
 
-      const gpsData = filteredGPS.map(entry => ({
-        'Entry ID': entry.id,
-        'Project ID': entry.projectId,
-        'Latitude': entry.latitude,
-        'Longitude': entry.longitude,
-        'Description': entry.description,
-        'Task Name': entry.taskName || 'N/A',
-        'Work Type': entry.workType || 'N/A',
-        'Timestamp': new Date(entry.timestamp).toLocaleString(),
-        'Date': new Date(entry.timestamp).toLocaleDateString()
+      const gpsData = filteredGPS.map((entry) => ({
+        "Entry ID": entry.id,
+        "Project ID": entry.projectId,
+        Latitude: entry.latitude,
+        Longitude: entry.longitude,
+        Description: entry.description,
+        "Task Name": entry.taskName || "N/A",
+        "Work Type": entry.workType || "N/A",
+        Timestamp: new Date(entry.timestamp).toLocaleString(),
+        Date: new Date(entry.timestamp).toLocaleDateString(),
       }));
 
       const gpsSheet = XLSX.utils.json_to_sheet(gpsData);
-      XLSX.utils.book_append_sheet(workbook, gpsSheet, 'GPS_Data');
+      XLSX.utils.book_append_sheet(workbook, gpsSheet, "GPS_Data");
     }
 
     // Financial Data Sheet
     if (exportOptions.includeFinancial && financialEntries.length > 0) {
       const filteredFinancial = selectedProject
-        ? financialEntries.filter(entry => entry.projectId === selectedProject.id)
+        ? financialEntries.filter(
+            (entry) => entry.projectId === selectedProject.id,
+          )
         : financialEntries;
 
-      const financialData = filteredFinancial.map(entry => ({
-        'Entry ID': entry.id,
-        'Project ID': entry.projectId,
-        'Category': entry.category,
-        'Type': entry.type,
-        'Amount (PGK)': entry.amount,
-        'Description': entry.description,
-        'Date': entry.date,
-        'Vendor': entry.vendor
+      const financialData = filteredFinancial.map((entry) => ({
+        "Entry ID": entry.id,
+        "Project ID": entry.projectId,
+        Category: entry.category,
+        Type: entry.type,
+        "Amount (PGK)": entry.amount,
+        Description: entry.description,
+        Date: entry.date,
+        Vendor: entry.vendor,
       }));
 
       const financialSheet = XLSX.utils.json_to_sheet(financialData);
-      XLSX.utils.book_append_sheet(workbook, financialSheet, 'Financial_Data');
+      XLSX.utils.book_append_sheet(workbook, financialSheet, "Financial_Data");
     }
 
     // Analytics Sheet
     if (exportOptions.includeAnalytics) {
       const projectsToAnalyze = selectedProject ? [selectedProject] : projects;
       const analyticsData = [
-        { 'Metric': 'Total Projects', 'Value': projectsToAnalyze.length },
-        { 'Metric': 'Active Projects', 'Value': projectsToAnalyze.filter(p => p.status === 'ACTIVE').length },
-        { 'Metric': 'Planning Projects', 'Value': projectsToAnalyze.filter(p => p.status === 'PLANNING').length },
-        { 'Metric': 'On Hold Projects', 'Value': projectsToAnalyze.filter(p => p.status === 'ON_HOLD').length },
-        { 'Metric': 'Total Budget (PGK)', 'Value': projectsToAnalyze.reduce((sum, p) => sum + p.budget, 0) },
-        { 'Metric': 'Total Spent (PGK)', 'Value': projectsToAnalyze.reduce((sum, p) => sum + p.spent, 0) },
-        { 'Metric': 'Average Progress (%)', 'Value': (projectsToAnalyze.reduce((sum, p) => sum + p.progress, 0) / projectsToAnalyze.length).toFixed(1) },
-        { 'Metric': 'Total GPS Entries', 'Value': gpsEntries.length },
-        { 'Metric': 'Total Financial Entries', 'Value': financialEntries.length }
+        { Metric: "Total Projects", Value: projectsToAnalyze.length },
+        {
+          Metric: "Active Projects",
+          Value: projectsToAnalyze.filter((p) => p.status === "ACTIVE").length,
+        },
+        {
+          Metric: "Planning Projects",
+          Value: projectsToAnalyze.filter((p) => p.status === "PLANNING")
+            .length,
+        },
+        {
+          Metric: "On Hold Projects",
+          Value: projectsToAnalyze.filter((p) => p.status === "ON_HOLD").length,
+        },
+        {
+          Metric: "Total Budget (PGK)",
+          Value: projectsToAnalyze.reduce((sum, p) => sum + p.budget, 0),
+        },
+        {
+          Metric: "Total Spent (PGK)",
+          Value: projectsToAnalyze.reduce((sum, p) => sum + p.spent, 0),
+        },
+        {
+          Metric: "Average Progress (%)",
+          Value: (
+            projectsToAnalyze.reduce((sum, p) => sum + p.progress, 0) /
+            projectsToAnalyze.length
+          ).toFixed(1),
+        },
+        { Metric: "Total GPS Entries", Value: gpsEntries.length },
+        { Metric: "Total Financial Entries", Value: financialEntries.length },
       ];
 
       const analyticsSheet = XLSX.utils.json_to_sheet(analyticsData);
-      XLSX.utils.book_append_sheet(workbook, analyticsSheet, 'Analytics');
+      XLSX.utils.book_append_sheet(workbook, analyticsSheet, "Analytics");
     }
 
     // Save Excel file
     const fileName = selectedProject
-      ? `${selectedProject.name.replace(/[^a-z0-9]/gi, '_')}_data.xlsx`
-      : `PNG_Road_Construction_Data_${new Date().toISOString().split('T')[0]}.xlsx`;
+      ? `${selectedProject.name.replace(/[^a-z0-9]/gi, "_")}_data.xlsx`
+      : `PNG_Road_Construction_Data_${new Date().toISOString().split("T")[0]}.xlsx`;
 
     XLSX.writeFile(workbook, fileName);
   };
@@ -374,16 +433,16 @@ export default function DataExportComponent({
     setIsExporting(true);
 
     try {
-      if (exportOptions.format === 'pdf') {
+      if (exportOptions.format === "pdf") {
         await generatePDFReport();
-      } else if (exportOptions.format === 'excel') {
+      } else if (exportOptions.format === "excel") {
         generateExcelReport();
-      } else if (exportOptions.format === 'both') {
+      } else if (exportOptions.format === "both") {
         await generatePDFReport();
         generateExcelReport();
       }
     } catch (error) {
-      console.error('Export failed:', error);
+      console.error("Export failed:", error);
     }
 
     setIsExporting(false);
@@ -397,7 +456,8 @@ export default function DataExportComponent({
           Data Export & Reports
         </CardTitle>
         <p className="text-sm text-gray-600">
-          Generate comprehensive reports and export project data in PDF or Excel format
+          Generate comprehensive reports and export project data in PDF or Excel
+          format
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -415,10 +475,16 @@ export default function DataExportComponent({
                   id="projects"
                   checked={exportOptions.includeProjects}
                   onCheckedChange={(checked) =>
-                    setExportOptions(prev => ({ ...prev, includeProjects: checked as boolean }))
+                    setExportOptions((prev) => ({
+                      ...prev,
+                      includeProjects: checked as boolean,
+                    }))
                   }
                 />
-                <label htmlFor="projects" className="flex items-center gap-2 text-sm font-medium">
+                <label
+                  htmlFor="projects"
+                  className="flex items-center gap-2 text-sm font-medium"
+                >
                   <MapPin className="h-4 w-4" />
                   Project Information
                 </label>
@@ -429,10 +495,16 @@ export default function DataExportComponent({
                   id="gps"
                   checked={exportOptions.includeGPS}
                   onCheckedChange={(checked) =>
-                    setExportOptions(prev => ({ ...prev, includeGPS: checked as boolean }))
+                    setExportOptions((prev) => ({
+                      ...prev,
+                      includeGPS: checked as boolean,
+                    }))
                   }
                 />
-                <label htmlFor="gps" className="flex items-center gap-2 text-sm font-medium">
+                <label
+                  htmlFor="gps"
+                  className="flex items-center gap-2 text-sm font-medium"
+                >
                   <MapPin className="h-4 w-4" />
                   GPS Tracking Data
                 </label>
@@ -445,10 +517,16 @@ export default function DataExportComponent({
                   id="financial"
                   checked={exportOptions.includeFinancial}
                   onCheckedChange={(checked) =>
-                    setExportOptions(prev => ({ ...prev, includeFinancial: checked as boolean }))
+                    setExportOptions((prev) => ({
+                      ...prev,
+                      includeFinancial: checked as boolean,
+                    }))
                   }
                 />
-                <label htmlFor="financial" className="flex items-center gap-2 text-sm font-medium">
+                <label
+                  htmlFor="financial"
+                  className="flex items-center gap-2 text-sm font-medium"
+                >
                   <DollarSign className="h-4 w-4" />
                   Financial Data
                 </label>
@@ -459,10 +537,16 @@ export default function DataExportComponent({
                   id="analytics"
                   checked={exportOptions.includeAnalytics}
                   onCheckedChange={(checked) =>
-                    setExportOptions(prev => ({ ...prev, includeAnalytics: checked as boolean }))
+                    setExportOptions((prev) => ({
+                      ...prev,
+                      includeAnalytics: checked as boolean,
+                    }))
                   }
                 />
-                <label htmlFor="analytics" className="flex items-center gap-2 text-sm font-medium">
+                <label
+                  htmlFor="analytics"
+                  className="flex items-center gap-2 text-sm font-medium"
+                >
                   <TrendingUp className="h-4 w-4" />
                   Analytics Summary
                 </label>
@@ -485,9 +569,9 @@ export default function DataExportComponent({
                 className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={exportOptions.dateRange.start}
                 onChange={(e) =>
-                  setExportOptions(prev => ({
+                  setExportOptions((prev) => ({
                     ...prev,
-                    dateRange: { ...prev.dateRange, start: e.target.value }
+                    dateRange: { ...prev.dateRange, start: e.target.value },
                   }))
                 }
               />
@@ -499,9 +583,9 @@ export default function DataExportComponent({
                 className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={exportOptions.dateRange.end}
                 onChange={(e) =>
-                  setExportOptions(prev => ({
+                  setExportOptions((prev) => ({
                     ...prev,
-                    dateRange: { ...prev.dateRange, end: e.target.value }
+                    dateRange: { ...prev.dateRange, end: e.target.value },
                   }))
                 }
               />
@@ -514,24 +598,30 @@ export default function DataExportComponent({
           <h3 className="font-semibold">Export Format</h3>
           <div className="flex gap-4">
             <Button
-              variant={exportOptions.format === 'pdf' ? 'default' : 'outline'}
-              onClick={() => setExportOptions(prev => ({ ...prev, format: 'pdf' }))}
+              variant={exportOptions.format === "pdf" ? "default" : "outline"}
+              onClick={() =>
+                setExportOptions((prev) => ({ ...prev, format: "pdf" }))
+              }
               className="flex items-center gap-2"
             >
               <FileText className="h-4 w-4" />
               PDF Report
             </Button>
             <Button
-              variant={exportOptions.format === 'excel' ? 'default' : 'outline'}
-              onClick={() => setExportOptions(prev => ({ ...prev, format: 'excel' }))}
+              variant={exportOptions.format === "excel" ? "default" : "outline"}
+              onClick={() =>
+                setExportOptions((prev) => ({ ...prev, format: "excel" }))
+              }
               className="flex items-center gap-2"
             >
               <FileSpreadsheet className="h-4 w-4" />
               Excel Data
             </Button>
             <Button
-              variant={exportOptions.format === 'both' ? 'default' : 'outline'}
-              onClick={() => setExportOptions(prev => ({ ...prev, format: 'both' }))}
+              variant={exportOptions.format === "both" ? "default" : "outline"}
+              onClick={() =>
+                setExportOptions((prev) => ({ ...prev, format: "both" }))
+              }
               className="flex items-center gap-2"
             >
               <Download className="h-4 w-4" />
@@ -545,17 +635,41 @@ export default function DataExportComponent({
           <h3 className="font-semibold mb-2">Export Summary</h3>
           <div className="text-sm space-y-1">
             {selectedProject ? (
-              <p>📍 Project: <strong>{selectedProject.name}</strong></p>
+              <p>
+                📍 Project: <strong>{selectedProject.name}</strong>
+              </p>
             ) : (
-              <p>📍 All Projects: <strong>{projects.length} projects</strong></p>
+              <p>
+                📍 All Projects: <strong>{projects.length} projects</strong>
+              </p>
             )}
-            <p>📅 Date Range: <strong>{exportOptions.dateRange.start} to {exportOptions.dateRange.end}</strong></p>
-            <p>📄 Format: <strong>{exportOptions.format === 'both' ? 'PDF & Excel' : exportOptions.format.toUpperCase()}</strong></p>
+            <p>
+              📅 Date Range:{" "}
+              <strong>
+                {exportOptions.dateRange.start} to {exportOptions.dateRange.end}
+              </strong>
+            </p>
+            <p>
+              📄 Format:{" "}
+              <strong>
+                {exportOptions.format === "both"
+                  ? "PDF & Excel"
+                  : exportOptions.format.toUpperCase()}
+              </strong>
+            </p>
             <div className="flex gap-2 mt-2">
-              {exportOptions.includeProjects && <Badge variant="secondary">Projects</Badge>}
-              {exportOptions.includeGPS && <Badge variant="secondary">GPS Data</Badge>}
-              {exportOptions.includeFinancial && <Badge variant="secondary">Financial</Badge>}
-              {exportOptions.includeAnalytics && <Badge variant="secondary">Analytics</Badge>}
+              {exportOptions.includeProjects && (
+                <Badge variant="secondary">Projects</Badge>
+              )}
+              {exportOptions.includeGPS && (
+                <Badge variant="secondary">GPS Data</Badge>
+              )}
+              {exportOptions.includeFinancial && (
+                <Badge variant="secondary">Financial</Badge>
+              )}
+              {exportOptions.includeAnalytics && (
+                <Badge variant="secondary">Analytics</Badge>
+              )}
             </div>
           </div>
         </div>
@@ -563,7 +677,13 @@ export default function DataExportComponent({
         {/* Export Button */}
         <Button
           onClick={handleExport}
-          disabled={isExporting || (!exportOptions.includeProjects && !exportOptions.includeGPS && !exportOptions.includeFinancial && !exportOptions.includeAnalytics)}
+          disabled={
+            isExporting ||
+            (!exportOptions.includeProjects &&
+              !exportOptions.includeGPS &&
+              !exportOptions.includeFinancial &&
+              !exportOptions.includeAnalytics)
+          }
           className="w-full"
           size="lg"
         >

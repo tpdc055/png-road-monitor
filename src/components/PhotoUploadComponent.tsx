@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import React, { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Upload,
   Camera,
-  X,
-  Image as ImageIcon,
   Download,
   Eye,
-  Trash2,
   Grid,
-  List
-} from 'lucide-react';
+  Image as ImageIcon,
+  List,
+  Trash2,
+  Upload,
+  X,
+} from "lucide-react";
+import React, { useCallback, useState } from "react";
+import { useDropzone } from "react-dropzone";
 
 interface PhotoFile {
   id: string;
@@ -49,46 +49,51 @@ export default function PhotoUploadComponent({
   maxFiles = 10,
   maxSize = 10 * 1024 * 1024, // 10MB
   accept = {
-    'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp']
+    "image/*": [".jpeg", ".jpg", ".png", ".gif", ".webp"],
   },
   projectId,
   gpsEntryId,
   latitude,
   longitude,
-  existingPhotos = []
+  existingPhotos = [],
 }: PhotoUploadProps) {
   const [photos, setPhotos] = useState<PhotoFile[]>(existingPhotos);
-  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>(
+    {},
+  );
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedPhoto, setSelectedPhoto] = useState<PhotoFile | null>(null);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const newPhotos: PhotoFile[] = acceptedFiles.map(file => ({
-      id: `photo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      file,
-      preview: URL.createObjectURL(file),
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      uploadedAt: new Date(),
-      projectId,
-      gpsEntryId,
-      latitude,
-      longitude
-    }));
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const newPhotos: PhotoFile[] = acceptedFiles.map((file) => ({
+        id: `photo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        file,
+        preview: URL.createObjectURL(file),
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        uploadedAt: new Date(),
+        projectId,
+        gpsEntryId,
+        latitude,
+        longitude,
+      }));
 
-    const updatedPhotos = [...photos, ...newPhotos];
-    setPhotos(updatedPhotos);
+      const updatedPhotos = [...photos, ...newPhotos];
+      setPhotos(updatedPhotos);
 
-    if (onPhotosChange) {
-      onPhotosChange(updatedPhotos);
-    }
+      if (onPhotosChange) {
+        onPhotosChange(updatedPhotos);
+      }
 
-    // Simulate upload progress
-    newPhotos.forEach(photo => {
-      simulateUpload(photo.id);
-    });
-  }, [photos, onPhotosChange, projectId, gpsEntryId, latitude, longitude]);
+      // Simulate upload progress
+      newPhotos.forEach((photo) => {
+        simulateUpload(photo.id);
+      });
+    },
+    [photos, onPhotosChange, projectId, gpsEntryId, latitude, longitude],
+  );
 
   const simulateUpload = (photoId: string) => {
     let progress = 0;
@@ -97,15 +102,15 @@ export default function PhotoUploadComponent({
       if (progress >= 100) {
         progress = 100;
         clearInterval(interval);
-        setUploadProgress(prev => {
+        setUploadProgress((prev) => {
           const newProgress = { ...prev };
           delete newProgress[photoId];
           return newProgress;
         });
       } else {
-        setUploadProgress(prev => ({
+        setUploadProgress((prev) => ({
           ...prev,
-          [photoId]: progress
+          [photoId]: progress,
         }));
       }
     }, 200);
@@ -116,11 +121,11 @@ export default function PhotoUploadComponent({
     accept,
     maxFiles: maxFiles - photos.length,
     maxSize,
-    multiple: true
+    multiple: true,
   });
 
   const removePhoto = (photoId: string) => {
-    const updatedPhotos = photos.filter(photo => photo.id !== photoId);
+    const updatedPhotos = photos.filter((photo) => photo.id !== photoId);
     setPhotos(updatedPhotos);
 
     if (onPhotosChange) {
@@ -128,22 +133,24 @@ export default function PhotoUploadComponent({
     }
 
     // Clean up object URL
-    const photo = photos.find(p => p.id === photoId);
+    const photo = photos.find((p) => p.id === photoId);
     if (photo) {
       URL.revokeObjectURL(photo.preview);
     }
   };
 
   const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return (
+      Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
+    );
   };
 
   const downloadPhoto = (photo: PhotoFile) => {
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = photo.preview;
     link.download = photo.name;
     document.body.appendChild(link);
@@ -163,23 +170,25 @@ export default function PhotoUploadComponent({
             </CardTitle>
             <div className="flex gap-2">
               <Button
-                variant={viewMode === 'grid' ? 'default' : 'outline'}
+                variant={viewMode === "grid" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setViewMode('grid')}
+                onClick={() => setViewMode("grid")}
               >
                 <Grid className="h-4 w-4" />
               </Button>
               <Button
-                variant={viewMode === 'list' ? 'default' : 'outline'}
+                variant={viewMode === "list" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setViewMode('list')}
+                onClick={() => setViewMode("list")}
               >
                 <List className="h-4 w-4" />
               </Button>
             </div>
           </div>
           <div className="flex gap-4 text-sm text-gray-600">
-            <span>{photos.length} / {maxFiles} photos</span>
+            <span>
+              {photos.length} / {maxFiles} photos
+            </span>
             <span>Max size: {formatFileSize(maxSize)}</span>
           </div>
         </CardHeader>
@@ -189,9 +198,10 @@ export default function PhotoUploadComponent({
               {...getRootProps()}
               className={`
                 border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
-                ${isDragActive
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-300 hover:border-gray-400'
+                ${
+                  isDragActive
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-300 hover:border-gray-400"
                 }
               `}
             >
@@ -201,14 +211,17 @@ export default function PhotoUploadComponent({
                   <Upload className="h-6 w-6 text-gray-600" />
                 </div>
                 {isDragActive ? (
-                  <p className="text-blue-600 font-medium">Drop photos here...</p>
+                  <p className="text-blue-600 font-medium">
+                    Drop photos here...
+                  </p>
                 ) : (
                   <div className="space-y-2">
                     <p className="text-gray-700 font-medium">
                       Drag & drop photos here, or click to select
                     </p>
                     <p className="text-sm text-gray-500">
-                      Supports JPEG, PNG, GIF, WebP • Max {formatFileSize(maxSize)} per file
+                      Supports JPEG, PNG, GIF, WebP • Max{" "}
+                      {formatFileSize(maxSize)} per file
                     </p>
                   </div>
                 )}
@@ -228,7 +241,7 @@ export default function PhotoUploadComponent({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {viewMode === 'grid' ? (
+            {viewMode === "grid" ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {photos.map((photo) => (
                   <div key={photo.id} className="relative group">
@@ -242,7 +255,9 @@ export default function PhotoUploadComponent({
                         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                           <div className="text-white text-center">
                             <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                            <div className="text-sm">{Math.round(uploadProgress[photo.id])}%</div>
+                            <div className="text-sm">
+                              {Math.round(uploadProgress[photo.id])}%
+                            </div>
                           </div>
                         </div>
                       )}
@@ -273,8 +288,12 @@ export default function PhotoUploadComponent({
                       </div>
                     </div>
                     <div className="mt-2">
-                      <p className="text-sm font-medium truncate">{photo.name}</p>
-                      <p className="text-xs text-gray-500">{formatFileSize(photo.size)}</p>
+                      <p className="text-sm font-medium truncate">
+                        {photo.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {formatFileSize(photo.size)}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -282,7 +301,10 @@ export default function PhotoUploadComponent({
             ) : (
               <div className="space-y-2">
                 {photos.map((photo) => (
-                  <div key={photo.id} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                  <div
+                    key={photo.id}
+                    className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg"
+                  >
                     <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                       <img
                         src={photo.preview}
@@ -299,14 +321,17 @@ export default function PhotoUploadComponent({
                       </div>
                       {photo.latitude && photo.longitude && (
                         <p className="text-xs text-blue-600">
-                          GPS: {photo.latitude.toFixed(6)}, {photo.longitude.toFixed(6)}
+                          GPS: {photo.latitude.toFixed(6)},{" "}
+                          {photo.longitude.toFixed(6)}
                         </p>
                       )}
                     </div>
                     {uploadProgress[photo.id] ? (
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                        <span className="text-sm">{Math.round(uploadProgress[photo.id])}%</span>
+                        <span className="text-sm">
+                          {Math.round(uploadProgress[photo.id])}%
+                        </span>
                       </div>
                     ) : (
                       <div className="flex gap-2">
@@ -369,11 +394,13 @@ export default function PhotoUploadComponent({
                   <strong>Type:</strong> {selectedPhoto.type}
                 </div>
                 <div>
-                  <strong>Uploaded:</strong> {selectedPhoto.uploadedAt.toLocaleDateString()}
+                  <strong>Uploaded:</strong>{" "}
+                  {selectedPhoto.uploadedAt.toLocaleDateString()}
                 </div>
                 {selectedPhoto.latitude && selectedPhoto.longitude && (
                   <div>
-                    <strong>GPS:</strong> {selectedPhoto.latitude.toFixed(6)}, {selectedPhoto.longitude.toFixed(6)}
+                    <strong>GPS:</strong> {selectedPhoto.latitude.toFixed(6)},{" "}
+                    {selectedPhoto.longitude.toFixed(6)}
                   </div>
                 )}
               </div>

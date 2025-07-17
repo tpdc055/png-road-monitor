@@ -1,36 +1,48 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import {
-  MapPin,
-  Plus,
-  Save,
-  X,
-  Navigation,
-  Route,
-  Target,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Calendar,
+  Camera,
   CheckCircle,
   Circle,
   Clock,
-  Ruler,
+  Download,
   Eye,
+  FileText,
+  Image,
+  MapPin,
+  Navigation,
+  Plus,
+  RotateCcw,
+  Route,
+  Ruler,
+  Save,
+  Target,
+  Upload,
+  X,
   ZoomIn,
   ZoomOut,
-  RotateCcw,
-  Download,
-  Upload,
-  Camera,
-  Image,
-  FileText,
-  Calendar
 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 interface GPSPoint {
   id: string;
@@ -78,14 +90,14 @@ const WORK_TYPES = [
   { id: "base_course", name: "Base Course", color: "#696969" },
   { id: "surfacing", name: "Road Surfacing", color: "#2F4F4F" },
   { id: "line_marking", name: "Line Marking", color: "#FFFF00" },
-  { id: "bridge", name: "Bridge Construction", color: "#8B0000" }
+  { id: "bridge", name: "Bridge Construction", color: "#8B0000" },
 ];
 
 const STATUS_COLORS = {
   planned: "#9CA3AF",
   in_progress: "#F59E0B",
   completed: "#10B981",
-  quality_checked: "#3B82F6"
+  quality_checked: "#3B82F6",
 };
 
 export default function RoadProgressMapper() {
@@ -94,21 +106,24 @@ export default function RoadProgressMapper() {
     name: "Mt. Hagen-Kagamuga Road Upgrade",
     location: "Western Highlands Province",
     totalLength: 25000, // 25km
-    completedLength: 16250 // 16.25km (65% complete)
+    completedLength: 16250, // 16.25km (65% complete)
   });
 
   const [gpsPoints, setGpsPoints] = useState<GPSPoint[]>([]);
-  const [selectedWorkType, setSelectedWorkType] = useState<string>("earthworks");
+  const [selectedWorkType, setSelectedWorkType] =
+    useState<string>("earthworks");
   const [newPoint, setNewPoint] = useState({
     latitude: "",
     longitude: "",
     description: "",
-    elevation: ""
+    elevation: "",
   });
 
   const [selectedPhotos, setSelectedPhotos] = useState<File[]>([]);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
-  const [selectedPointForPhotos, setSelectedPointForPhotos] = useState<string | null>(null);
+  const [selectedPointForPhotos, setSelectedPointForPhotos] = useState<
+    string | null
+  >(null);
 
   const [viewMode, setViewMode] = useState<"map" | "linear">("map");
   const [showCompleted, setShowCompleted] = useState(true);
@@ -120,28 +135,178 @@ export default function RoadProgressMapper() {
   useEffect(() => {
     // Initialize with sample GPS points for a curved road
     const samplePoints: GPSPoint[] = [
-      { id: "1", latitude: -6.31499, longitude: 143.95555, description: "Start Point - Road Junction", workType: "completed", status: "completed", timestamp: "2024-01-15T08:00:00Z", sequence: 1, chainage: 0 },
-      { id: "2", latitude: -6.31520, longitude: 143.95580, description: "Clearing Section 1", workType: "clearing", status: "completed", timestamp: "2024-01-16T09:00:00Z", sequence: 2, chainage: 250 },
-      { id: "3", latitude: -6.31545, longitude: 143.95610, description: "Excavation Point A", workType: "earthworks", status: "completed", timestamp: "2024-01-18T10:00:00Z", sequence: 3, chainage: 500 },
-      { id: "4", latitude: -6.31575, longitude: 143.95640, description: "Drainage Culvert 1", workType: "drainage", status: "completed", timestamp: "2024-01-20T11:00:00Z", sequence: 4, chainage: 750 },
-      { id: "5", latitude: -6.31610, longitude: 143.95665, description: "Base Course Section 1", workType: "base_course", status: "completed", timestamp: "2024-01-22T08:30:00Z", sequence: 5, chainage: 1000 },
-      { id: "6", latitude: -6.31650, longitude: 143.95680, description: "Curve Section Start", workType: "earthworks", status: "completed", timestamp: "2024-01-24T09:15:00Z", sequence: 6, chainage: 1250 },
-      { id: "7", latitude: -6.31690, longitude: 143.95695, description: "Curve Midpoint", workType: "earthworks", status: "completed", timestamp: "2024-01-26T10:45:00Z", sequence: 7, chainage: 1500 },
-      { id: "8", latitude: -6.31725, longitude: 143.95720, description: "Curve End", workType: "base_course", status: "completed", timestamp: "2024-01-28T14:20:00Z", sequence: 8, chainage: 1750 },
-      { id: "9", latitude: -6.31755, longitude: 143.95750, description: "Straight Section", workType: "base_course", status: "completed", timestamp: "2024-01-30T08:00:00Z", sequence: 9, chainage: 2000 },
-      { id: "10", latitude: -6.31785, longitude: 143.95785, description: "Bridge Approach", workType: "bridge", status: "in_progress", timestamp: "2024-02-01T09:30:00Z", sequence: 10, chainage: 2250 },
-      { id: "11", latitude: -6.31815, longitude: 143.95820, description: "Bridge Structure", workType: "bridge", status: "in_progress", timestamp: "2024-02-03T11:00:00Z", sequence: 11, chainage: 2500 },
-      { id: "12", latitude: -6.31845, longitude: 143.95855, description: "Bridge Exit", workType: "bridge", status: "planned", timestamp: "2024-02-05T12:00:00Z", sequence: 12, chainage: 2750 },
-      { id: "13", latitude: -6.31875, longitude: 143.95890, description: "Next Section", workType: "earthworks", status: "planned", timestamp: "2024-02-07T10:00:00Z", sequence: 13, chainage: 3000 },
-      { id: "14", latitude: -6.31900, longitude: 143.95925, description: "Future Point 1", workType: "clearing", status: "planned", timestamp: "2024-02-10T08:00:00Z", sequence: 14, chainage: 3250 },
-      { id: "15", latitude: -6.31925, longitude: 143.95960, description: "Future Point 2", workType: "clearing", status: "planned", timestamp: "2024-02-12T09:00:00Z", sequence: 15, chainage: 3500 }
+      {
+        id: "1",
+        latitude: -6.31499,
+        longitude: 143.95555,
+        description: "Start Point - Road Junction",
+        workType: "completed",
+        status: "completed",
+        timestamp: "2024-01-15T08:00:00Z",
+        sequence: 1,
+        chainage: 0,
+      },
+      {
+        id: "2",
+        latitude: -6.3152,
+        longitude: 143.9558,
+        description: "Clearing Section 1",
+        workType: "clearing",
+        status: "completed",
+        timestamp: "2024-01-16T09:00:00Z",
+        sequence: 2,
+        chainage: 250,
+      },
+      {
+        id: "3",
+        latitude: -6.31545,
+        longitude: 143.9561,
+        description: "Excavation Point A",
+        workType: "earthworks",
+        status: "completed",
+        timestamp: "2024-01-18T10:00:00Z",
+        sequence: 3,
+        chainage: 500,
+      },
+      {
+        id: "4",
+        latitude: -6.31575,
+        longitude: 143.9564,
+        description: "Drainage Culvert 1",
+        workType: "drainage",
+        status: "completed",
+        timestamp: "2024-01-20T11:00:00Z",
+        sequence: 4,
+        chainage: 750,
+      },
+      {
+        id: "5",
+        latitude: -6.3161,
+        longitude: 143.95665,
+        description: "Base Course Section 1",
+        workType: "base_course",
+        status: "completed",
+        timestamp: "2024-01-22T08:30:00Z",
+        sequence: 5,
+        chainage: 1000,
+      },
+      {
+        id: "6",
+        latitude: -6.3165,
+        longitude: 143.9568,
+        description: "Curve Section Start",
+        workType: "earthworks",
+        status: "completed",
+        timestamp: "2024-01-24T09:15:00Z",
+        sequence: 6,
+        chainage: 1250,
+      },
+      {
+        id: "7",
+        latitude: -6.3169,
+        longitude: 143.95695,
+        description: "Curve Midpoint",
+        workType: "earthworks",
+        status: "completed",
+        timestamp: "2024-01-26T10:45:00Z",
+        sequence: 7,
+        chainage: 1500,
+      },
+      {
+        id: "8",
+        latitude: -6.31725,
+        longitude: 143.9572,
+        description: "Curve End",
+        workType: "base_course",
+        status: "completed",
+        timestamp: "2024-01-28T14:20:00Z",
+        sequence: 8,
+        chainage: 1750,
+      },
+      {
+        id: "9",
+        latitude: -6.31755,
+        longitude: 143.9575,
+        description: "Straight Section",
+        workType: "base_course",
+        status: "completed",
+        timestamp: "2024-01-30T08:00:00Z",
+        sequence: 9,
+        chainage: 2000,
+      },
+      {
+        id: "10",
+        latitude: -6.31785,
+        longitude: 143.95785,
+        description: "Bridge Approach",
+        workType: "bridge",
+        status: "in_progress",
+        timestamp: "2024-02-01T09:30:00Z",
+        sequence: 10,
+        chainage: 2250,
+      },
+      {
+        id: "11",
+        latitude: -6.31815,
+        longitude: 143.9582,
+        description: "Bridge Structure",
+        workType: "bridge",
+        status: "in_progress",
+        timestamp: "2024-02-03T11:00:00Z",
+        sequence: 11,
+        chainage: 2500,
+      },
+      {
+        id: "12",
+        latitude: -6.31845,
+        longitude: 143.95855,
+        description: "Bridge Exit",
+        workType: "bridge",
+        status: "planned",
+        timestamp: "2024-02-05T12:00:00Z",
+        sequence: 12,
+        chainage: 2750,
+      },
+      {
+        id: "13",
+        latitude: -6.31875,
+        longitude: 143.9589,
+        description: "Next Section",
+        workType: "earthworks",
+        status: "planned",
+        timestamp: "2024-02-07T10:00:00Z",
+        sequence: 13,
+        chainage: 3000,
+      },
+      {
+        id: "14",
+        latitude: -6.319,
+        longitude: 143.95925,
+        description: "Future Point 1",
+        workType: "clearing",
+        status: "planned",
+        timestamp: "2024-02-10T08:00:00Z",
+        sequence: 14,
+        chainage: 3250,
+      },
+      {
+        id: "15",
+        latitude: -6.31925,
+        longitude: 143.9596,
+        description: "Future Point 2",
+        workType: "clearing",
+        status: "planned",
+        timestamp: "2024-02-12T09:00:00Z",
+        sequence: 15,
+        chainage: 3500,
+      },
     ];
     setGpsPoints(samplePoints);
   }, []);
 
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    setSelectedPhotos(prev => [...prev, ...files]);
+    setSelectedPhotos((prev) => [...prev, ...files]);
   };
 
   const addPhotosToPoint = (pointId: string) => {
@@ -150,16 +315,18 @@ export default function RoadProgressMapper() {
     const newPhotos = selectedPhotos.map((file, index) => ({
       id: `photo-${Date.now()}-${index}`,
       filename: file.name,
-      url: typeof window !== 'undefined' ? URL.createObjectURL(file) : '',
+      url: typeof window !== "undefined" ? URL.createObjectURL(file) : "",
       timestamp: new Date().toISOString(),
-      description: `Photo ${index + 1} for GPS point`
+      description: `Photo ${index + 1} for GPS point`,
     }));
 
-    setGpsPoints(points => points.map(point =>
-      point.id === pointId
-        ? { ...point, photos: [...(point.photos || []), ...newPhotos] }
-        : point
-    ));
+    setGpsPoints((points) =>
+      points.map((point) =>
+        point.id === pointId
+          ? { ...point, photos: [...(point.photos || []), ...newPhotos] }
+          : point,
+      ),
+    );
 
     setSelectedPhotos([]);
     setShowPhotoUpload(false);
@@ -167,11 +334,13 @@ export default function RoadProgressMapper() {
   };
 
   const removePhotoFromPoint = (pointId: string, photoId: string) => {
-    setGpsPoints(points => points.map(point =>
-      point.id === pointId
-        ? { ...point, photos: point.photos?.filter(p => p.id !== photoId) }
-        : point
-    ));
+    setGpsPoints((points) =>
+      points.map((point) =>
+        point.id === pointId
+          ? { ...point, photos: point.photos?.filter((p) => p.id !== photoId) }
+          : point,
+      ),
+    );
   };
 
   const addGPSPoint = () => {
@@ -179,36 +348,45 @@ export default function RoadProgressMapper() {
 
     const point: GPSPoint = {
       id: Date.now().toString(),
-      latitude: parseFloat(newPoint.latitude),
-      longitude: parseFloat(newPoint.longitude),
-      elevation: newPoint.elevation ? parseFloat(newPoint.elevation) : undefined,
+      latitude: Number.parseFloat(newPoint.latitude),
+      longitude: Number.parseFloat(newPoint.longitude),
+      elevation: newPoint.elevation
+        ? Number.parseFloat(newPoint.elevation)
+        : undefined,
       description: newPoint.description || "GPS Point",
       workType: selectedWorkType,
       status: "planned",
       timestamp: new Date().toISOString(),
       sequence: gpsPoints.length + 1,
-      chainage: (gpsPoints.length + 1) * 250 // Approximate 250m intervals
+      chainage: (gpsPoints.length + 1) * 250, // Approximate 250m intervals
     };
 
     setGpsPoints([...gpsPoints, point]);
-    setNewPoint({ latitude: "", longitude: "", description: "", elevation: "" });
+    setNewPoint({
+      latitude: "",
+      longitude: "",
+      description: "",
+      elevation: "",
+    });
   };
 
   const updatePointStatus = (pointId: string, status: GPSPoint["status"]) => {
-    setGpsPoints(gpsPoints.map(point =>
-      point.id === pointId ? { ...point, status } : point
-    ));
+    setGpsPoints(
+      gpsPoints.map((point) =>
+        point.id === pointId ? { ...point, status } : point,
+      ),
+    );
   };
 
   const deletePoint = (pointId: string) => {
-    setGpsPoints(gpsPoints.filter(point => point.id !== pointId));
+    setGpsPoints(gpsPoints.filter((point) => point.id !== pointId));
   };
 
   const drawRoadProgress = () => {
     const canvas = mapCanvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     // Clear canvas
@@ -219,22 +397,22 @@ export default function RoadProgressMapper() {
     canvas.height = 600;
 
     // Background
-    ctx.fillStyle = '#F3F4F6';
+    ctx.fillStyle = "#F3F4F6";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Filter visible points
-    const visiblePoints = gpsPoints.filter(point => {
-      if (point.status === 'completed' && !showCompleted) return false;
-      if (point.status === 'in_progress' && !showInProgress) return false;
-      if (point.status === 'planned' && !showPlanned) return false;
+    const visiblePoints = gpsPoints.filter((point) => {
+      if (point.status === "completed" && !showCompleted) return false;
+      if (point.status === "in_progress" && !showInProgress) return false;
+      if (point.status === "planned" && !showPlanned) return false;
       return true;
     });
 
     if (visiblePoints.length === 0) return;
 
     // Calculate bounds for the GPS points
-    const lats = visiblePoints.map(p => p.latitude);
-    const lngs = visiblePoints.map(p => p.longitude);
+    const lats = visiblePoints.map((p) => p.latitude);
+    const lngs = visiblePoints.map((p) => p.longitude);
     const minLat = Math.min(...lats);
     const maxLat = Math.max(...lats);
     const minLng = Math.min(...lngs);
@@ -247,8 +425,10 @@ export default function RoadProgressMapper() {
 
     // Convert GPS to canvas coordinates
     const toCanvasCoords = (lat: number, lng: number) => {
-      const x = padding + ((lng - minLng) / lngRange) * (canvas.width - 2 * padding);
-      const y = padding + ((maxLat - lat) / latRange) * (canvas.height - 2 * padding);
+      const x =
+        padding + ((lng - minLng) / lngRange) * (canvas.width - 2 * padding);
+      const y =
+        padding + ((maxLat - lat) / latRange) * (canvas.height - 2 * padding);
       return { x, y };
     };
 
@@ -260,16 +440,25 @@ export default function RoadProgressMapper() {
         const currentPoint = visiblePoints[i];
         const nextPoint = visiblePoints[i + 1];
 
-        const start = toCanvasCoords(currentPoint.latitude, currentPoint.longitude);
+        const start = toCanvasCoords(
+          currentPoint.latitude,
+          currentPoint.longitude,
+        );
         const end = toCanvasCoords(nextPoint.latitude, nextPoint.longitude);
 
         // Set line color based on completion status
-        if (currentPoint.status === 'completed' && nextPoint.status === 'completed') {
-          ctx.strokeStyle = '#10B981'; // Green for completed
-        } else if (currentPoint.status === 'in_progress' || nextPoint.status === 'in_progress') {
-          ctx.strokeStyle = '#F59E0B'; // Orange for in progress
+        if (
+          currentPoint.status === "completed" &&
+          nextPoint.status === "completed"
+        ) {
+          ctx.strokeStyle = "#10B981"; // Green for completed
+        } else if (
+          currentPoint.status === "in_progress" ||
+          nextPoint.status === "in_progress"
+        ) {
+          ctx.strokeStyle = "#F59E0B"; // Orange for in progress
         } else {
-          ctx.strokeStyle = '#9CA3AF'; // Gray for planned
+          ctx.strokeStyle = "#9CA3AF"; // Gray for planned
           ctx.setLineDash([10, 5]); // Dashed line for planned
         }
 
@@ -279,7 +468,10 @@ export default function RoadProgressMapper() {
         // Create smooth curves using quadratic curves
         if (i < visiblePoints.length - 2) {
           const nextNextPoint = visiblePoints[i + 2];
-          const nextNext = toCanvasCoords(nextNextPoint.latitude, nextNextPoint.longitude);
+          const nextNext = toCanvasCoords(
+            nextNextPoint.latitude,
+            nextNextPoint.longitude,
+          );
 
           // Control point for curve
           const cpX = (start.x + end.x + nextNext.x) / 3;
@@ -306,11 +498,11 @@ export default function RoadProgressMapper() {
         ctx.moveTo(midX, midY);
         ctx.lineTo(
           midX - arrowLength * Math.cos(angle - arrowWidth / 2),
-          midY - arrowLength * Math.sin(angle - arrowWidth / 2)
+          midY - arrowLength * Math.sin(angle - arrowWidth / 2),
         );
         ctx.lineTo(
           midX - arrowLength * Math.cos(angle + arrowWidth / 2),
-          midY - arrowLength * Math.sin(angle + arrowWidth / 2)
+          midY - arrowLength * Math.sin(angle + arrowWidth / 2),
         );
         ctx.closePath();
         ctx.fill();
@@ -322,7 +514,7 @@ export default function RoadProgressMapper() {
       const coords = toCanvasCoords(point.latitude, point.longitude);
 
       // Point background
-      ctx.fillStyle = '#FFFFFF';
+      ctx.fillStyle = "#FFFFFF";
       ctx.beginPath();
       ctx.arc(coords.x, coords.y, 12, 0, 2 * Math.PI);
       ctx.fill();
@@ -346,27 +538,27 @@ export default function RoadProgressMapper() {
       ctx.stroke();
 
       // Point label
-      ctx.fillStyle = '#1F2937';
-      ctx.font = '12px Arial';
-      ctx.textAlign = 'center';
+      ctx.fillStyle = "#1F2937";
+      ctx.font = "12px Arial";
+      ctx.textAlign = "center";
       ctx.fillText(point.sequence.toString(), coords.x, coords.y + 25);
     });
 
     // Draw legend
     const legendY = 20;
     const legendItems = [
-      { label: 'Completed', color: '#10B981' },
-      { label: 'In Progress', color: '#F59E0B' },
-      { label: 'Planned', color: '#9CA3AF' }
+      { label: "Completed", color: "#10B981" },
+      { label: "In Progress", color: "#F59E0B" },
+      { label: "Planned", color: "#9CA3AF" },
     ];
 
     legendItems.forEach((item, index) => {
-      const x = canvas.width - 150 + (index * 45);
+      const x = canvas.width - 150 + index * 45;
       ctx.fillStyle = item.color;
       ctx.fillRect(x, legendY, 12, 12);
-      ctx.fillStyle = '#1F2937';
-      ctx.font = '10px Arial';
-      ctx.textAlign = 'left';
+      ctx.fillStyle = "#1F2937";
+      ctx.font = "10px Arial";
+      ctx.textAlign = "left";
       ctx.fillText(item.label, x, legendY + 25);
     });
   };
@@ -376,65 +568,82 @@ export default function RoadProgressMapper() {
   }, [gpsPoints, showCompleted, showPlanned, showInProgress]);
 
   const getCompletionPercentage = () => {
-    const completedPoints = gpsPoints.filter(p => p.status === 'completed').length;
-    return gpsPoints.length > 0 ? Math.round((completedPoints / gpsPoints.length) * 100) : 0;
+    const completedPoints = gpsPoints.filter(
+      (p) => p.status === "completed",
+    ).length;
+    return gpsPoints.length > 0
+      ? Math.round((completedPoints / gpsPoints.length) * 100)
+      : 0;
   };
 
   const getCurrentChainage = () => {
-    const completedPoints = gpsPoints.filter(p => p.status === 'completed');
-    return completedPoints.length > 0 ? Math.max(...completedPoints.map(p => p.chainage)) : 0;
+    const completedPoints = gpsPoints.filter((p) => p.status === "completed");
+    return completedPoints.length > 0
+      ? Math.max(...completedPoints.map((p) => p.chainage))
+      : 0;
   };
 
   const exportProgressReport = () => {
     try {
       // Create CSV data
       const csvData = [
-        ['Sequence', 'Latitude', 'Longitude', 'Description', 'Work Type', 'Status', 'Chainage (m)', 'Photos Count', 'Timestamp'],
-        ...gpsPoints.map(point => [
+        [
+          "Sequence",
+          "Latitude",
+          "Longitude",
+          "Description",
+          "Work Type",
+          "Status",
+          "Chainage (m)",
+          "Photos Count",
+          "Timestamp",
+        ],
+        ...gpsPoints.map((point) => [
           point.sequence,
           point.latitude.toFixed(6),
           point.longitude.toFixed(6),
           point.description,
-          WORK_TYPES.find(w => w.id === point.workType)?.name || point.workType,
+          WORK_TYPES.find((w) => w.id === point.workType)?.name ||
+            point.workType,
           point.status,
           point.chainage,
           point.photos?.length || 0,
-          new Date(point.timestamp).toLocaleDateString()
-        ])
+          new Date(point.timestamp).toLocaleDateString(),
+        ]),
       ];
 
-      const csvContent = csvData.map(row => row.join(',')).join('\n');
-      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const csvContent = csvData.map((row) => row.join(",")).join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv" });
 
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
-        link.download = `road-progress-report-${new Date().toISOString().split('T')[0]}.csv`;
+        link.download = `road-progress-report-${new Date().toISOString().split("T")[0]}.csv`;
         link.click();
         URL.revokeObjectURL(url);
       }
     } catch (error) {
-      console.error('Error exporting progress report:', error);
-      alert('Error exporting report. Please try again.');
+      console.error("Error exporting progress report:", error);
+      alert("Error exporting report. Please try again.");
     }
   };
 
   const exportMapImage = () => {
     try {
       const canvas = mapCanvasRef.current;
-      if (!canvas || typeof window === 'undefined') {
-        alert('Map canvas not available for export');
+      if (!canvas || typeof window === "undefined") {
+        alert("Map canvas not available for export");
         return;
       }
 
-      const link = document.createElement('a');
-      link.download = `road-progress-map-${new Date().toISOString().split('T')[0]}.png`;
+      const link = document.createElement("a");
+      link.download = `road-progress-map-${new Date().toISOString().split("T")[0]}.png`;
       link.href = canvas.toDataURL();
       link.click();
     } catch (error) {
-      console.error('Error exporting map image:', error);
-      alert('Error exporting map. Please try again.');
+      console.error("Error exporting map image:", error);
+      alert("Error exporting map. Please try again.");
     }
   };
 
@@ -454,19 +663,27 @@ export default function RoadProgressMapper() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{gpsPoints.length}</div>
+              <div className="text-2xl font-bold text-blue-600">
+                {gpsPoints.length}
+              </div>
               <div className="text-sm text-gray-600">GPS Points</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">{getCompletionPercentage()}%</div>
+              <div className="text-2xl font-bold text-green-600">
+                {getCompletionPercentage()}%
+              </div>
               <div className="text-sm text-gray-600">Completed</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">{getCurrentChainage()}m</div>
+              <div className="text-2xl font-bold text-purple-600">
+                {getCurrentChainage()}m
+              </div>
               <div className="text-sm text-gray-600">Current Chainage</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">{project.totalLength}m</div>
+              <div className="text-2xl font-bold text-orange-600">
+                {project.totalLength}m
+              </div>
               <div className="text-sm text-gray-600">Total Length</div>
             </div>
           </div>
@@ -490,7 +707,12 @@ export default function RoadProgressMapper() {
                   id="latitude"
                   placeholder="-6.31499"
                   value={newPoint.latitude}
-                  onChange={(e) => setNewPoint(prev => ({ ...prev, latitude: e.target.value }))}
+                  onChange={(e) =>
+                    setNewPoint((prev) => ({
+                      ...prev,
+                      latitude: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div>
@@ -499,7 +721,12 @@ export default function RoadProgressMapper() {
                   id="longitude"
                   placeholder="143.95555"
                   value={newPoint.longitude}
-                  onChange={(e) => setNewPoint(prev => ({ ...prev, longitude: e.target.value }))}
+                  onChange={(e) =>
+                    setNewPoint((prev) => ({
+                      ...prev,
+                      longitude: e.target.value,
+                    }))
+                  }
                 />
               </div>
             </div>
@@ -510,18 +737,26 @@ export default function RoadProgressMapper() {
                 id="elevation"
                 placeholder="1200"
                 value={newPoint.elevation}
-                onChange={(e) => setNewPoint(prev => ({ ...prev, elevation: e.target.value }))}
+                onChange={(e) =>
+                  setNewPoint((prev) => ({
+                    ...prev,
+                    elevation: e.target.value,
+                  }))
+                }
               />
             </div>
 
             <div>
               <Label htmlFor="workType">Work Type</Label>
-              <Select value={selectedWorkType} onValueChange={setSelectedWorkType}>
+              <Select
+                value={selectedWorkType}
+                onValueChange={setSelectedWorkType}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {WORK_TYPES.map(type => (
+                  {WORK_TYPES.map((type) => (
                     <SelectItem key={type.id} value={type.id}>
                       {type.name}
                     </SelectItem>
@@ -536,7 +771,12 @@ export default function RoadProgressMapper() {
                 id="description"
                 placeholder="Describe this GPS point..."
                 value={newPoint.description}
-                onChange={(e) => setNewPoint(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) =>
+                  setNewPoint((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
               />
             </div>
 
@@ -547,7 +787,9 @@ export default function RoadProgressMapper() {
 
             {/* Photo Upload Section */}
             <div className="border-t pt-4">
-              <Label className="text-sm font-medium">Attach Photos (Optional)</Label>
+              <Label className="text-sm font-medium">
+                Attach Photos (Optional)
+              </Label>
               <div className="mt-2">
                 <input
                   type="file"
@@ -563,14 +805,18 @@ export default function RoadProgressMapper() {
                 >
                   <div className="text-center">
                     <Camera className="h-6 w-6 mx-auto text-gray-400" />
-                    <span className="text-sm text-gray-600">Click to add photos</span>
+                    <span className="text-sm text-gray-600">
+                      Click to add photos
+                    </span>
                   </div>
                 </label>
               </div>
 
               {selectedPhotos.length > 0 && (
                 <div className="mt-2">
-                  <p className="text-sm text-gray-600">{selectedPhotos.length} photo(s) selected</p>
+                  <p className="text-sm text-gray-600">
+                    {selectedPhotos.length} photo(s) selected
+                  </p>
                   <div className="flex gap-1 mt-1">
                     {selectedPhotos.map((file, index) => (
                       <div key={index} className="relative">
@@ -583,7 +829,11 @@ export default function RoadProgressMapper() {
                           size="sm"
                           variant="destructive"
                           className="absolute -top-1 -right-1 h-4 w-4 p-0"
-                          onClick={() => setSelectedPhotos(prev => prev.filter((_, i) => i !== index))}
+                          onClick={() =>
+                            setSelectedPhotos((prev) =>
+                              prev.filter((_, i) => i !== index),
+                            )
+                          }
                         >
                           <X className="h-2 w-2" />
                         </Button>
@@ -635,18 +885,15 @@ export default function RoadProgressMapper() {
                   <Download className="h-4 w-4 mr-1" />
                   Export CSV
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={exportMapImage}
-                >
+                <Button variant="outline" size="sm" onClick={exportMapImage}>
                   <Image className="h-4 w-4 mr-1" />
                   Export Map
                 </Button>
               </div>
             </div>
             <CardDescription>
-              Connected GPS points showing road construction progress with curves and directions
+              Connected GPS points showing road construction progress with
+              curves and directions
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -654,12 +901,18 @@ export default function RoadProgressMapper() {
               <canvas
                 ref={mapCanvasRef}
                 className="w-full h-96"
-                style={{ maxWidth: '100%', height: '400px' }}
+                style={{ maxWidth: "100%", height: "400px" }}
               />
             </div>
             <div className="mt-4 text-sm text-gray-600">
-              <p>• X markers represent GPS points connected by the actual road path</p>
-              <p>• Green lines: Completed sections | Orange lines: In progress | Gray dashed: Planned</p>
+              <p>
+                • X markers represent GPS points connected by the actual road
+                path
+              </p>
+              <p>
+                • Green lines: Completed sections | Orange lines: In progress |
+                Gray dashed: Planned
+              </p>
               <p>• Arrows show construction direction and progress flow</p>
             </div>
           </CardContent>
@@ -699,14 +952,19 @@ export default function RoadProgressMapper() {
                     <td className="p-2 text-sm">{point.description}</td>
                     <td className="p-2">
                       <Badge variant="outline">
-                        {WORK_TYPES.find(w => w.id === point.workType)?.name}
+                        {WORK_TYPES.find((w) => w.id === point.workType)?.name}
                       </Badge>
                     </td>
                     <td className="p-2 text-sm">{point.chainage}m</td>
                     <td className="p-2">
                       <Select
                         value={point.status}
-                        onValueChange={(status) => updatePointStatus(point.id, status as GPSPoint["status"])}
+                        onValueChange={(status) =>
+                          updatePointStatus(
+                            point.id,
+                            status as GPSPoint["status"],
+                          )
+                        }
                       >
                         <SelectTrigger className="w-32">
                           <SelectValue />
@@ -761,7 +1019,9 @@ export default function RoadProgressMapper() {
                             size="sm"
                             onClick={() => {
                               // Show photos in a modal or gallery
-                              alert(`View ${point.photos?.length} photos for this GPS point`);
+                              alert(
+                                `View ${point.photos?.length} photos for this GPS point`,
+                              );
                             }}
                             className="h-6 px-2"
                           >
