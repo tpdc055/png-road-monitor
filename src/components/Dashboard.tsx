@@ -51,6 +51,7 @@ import StakeholderDashboard from "@/components/StakeholderDashboard";
 import InformationSharingSystem from "@/components/InformationSharingSystem";
 import CommunityFeedbackSystem from "@/components/CommunityFeedbackSystem";
 import RoadProgressMapper from "@/components/RoadProgressMapper";
+import MobileGPSCollector from "@/components/MobileGPSCollector";
 
 // PNG Traditional Art Inspired Icons
 const PNGIcons = {
@@ -159,6 +160,7 @@ export default function Dashboard() {
       icon: MapIcon,
       items: [
         { id: "gps-entry", label: "GPS Data Entry", icon: MapPin },
+        { id: "mobile-gps", label: "Mobile GPS Collector", icon: Navigation },
         { id: "road-progress", label: "Road Progress Mapping", icon: Navigation },
         { id: "machine-tracking", label: "Equipment Tracking", icon: Truck },
         { id: "site-monitoring", label: "Site Monitoring", icon: Eye },
@@ -601,6 +603,8 @@ export default function Dashboard() {
       // Field Operations
       case "gps-entry":
         return <GPSTaskEntry />;
+      case "mobile-gps":
+        return <MobileGPSCollector />;
       case "road-progress":
         return <RoadProgressMapper />;
       case "machine-tracking":

@@ -25,7 +25,11 @@ import {
   ZoomOut,
   RotateCcw,
   Download,
-  Upload
+  Upload,
+  Camera,
+  Image,
+  FileText,
+  Calendar
 } from "lucide-react";
 
 interface GPSPoint {
@@ -37,7 +41,13 @@ interface GPSPoint {
   workType: string;
   status: "planned" | "in_progress" | "completed" | "quality_checked";
   timestamp: string;
-  photos?: string[];
+  photos?: {
+    id: string;
+    filename: string;
+    url: string;
+    timestamp: string;
+    description?: string;
+  }[];
   sequence: number;
   chainage: number; // Distance from start in meters
 }
@@ -96,6 +106,10 @@ export default function RoadProgressMapper() {
     elevation: ""
   });
 
+  const [selectedPhotos, setSelectedPhotos] = useState<File[]>([]);
+  const [showPhotoUpload, setShowPhotoUpload] = useState(false);
+  const [selectedPointForPhotos, setSelectedPointForPhotos] = useState<string | null>(null);
+
   const [viewMode, setViewMode] = useState<"map" | "linear">("map");
   const [showCompleted, setShowCompleted] = useState(true);
   const [showPlanned, setShowPlanned] = useState(true);
@@ -124,6 +138,41 @@ export default function RoadProgressMapper() {
     ];
     setGpsPoints(samplePoints);
   }, []);
+
+  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    setSelectedPhotos(prev => [...prev, ...files]);
+  };
+
+  const addPhotosToPoint = (pointId: string) => {
+    if (selectedPhotos.length === 0) return;
+
+    const newPhotos = selectedPhotos.map((file, index) => ({
+      id: `photo-${Date.now()}-${index}`,
+      filename: file.name,
+      url: URL.createObjectURL(file),
+      timestamp: new Date().toISOString(),
+      description: `Photo ${index + 1} for GPS point`
+    }));
+
+    setGpsPoints(points => points.map(point =>
+      point.id === pointId
+        ? { ...point, photos: [...(point.photos || []), ...newPhotos] }
+        : point
+    ));
+
+    setSelectedPhotos([]);
+    setShowPhotoUpload(false);
+    setSelectedPointForPhotos(null);
+  };
+
+  const removePhotoFromPoint = (pointId: string, photoId: string) => {
+    setGpsPoints(points => points.map(point =>
+      point.id === pointId
+        ? { ...point, photos: point.photos?.filter(p => p.id !== photoId) }
+        : point
+    ));
+  };
 
   const addGPSPoint = () => {
     if (!newPoint.latitude || !newPoint.longitude) return;
@@ -336,6 +385,43 @@ export default function RoadProgressMapper() {
     return completedPoints.length > 0 ? Math.max(...completedPoints.map(p => p.chainage)) : 0;
   };
 
+  const exportProgressReport = () => {
+    // Create CSV data
+    const csvData = [
+      ['Sequence', 'Latitude', 'Longitude', 'Description', 'Work Type', 'Status', 'Chainage (m)', 'Photos Count', 'Timestamp'],
+      ...gpsPoints.map(point => [
+        point.sequence,
+        point.latitude.toFixed(6),
+        point.longitude.toFixed(6),
+        point.description,
+        WORK_TYPES.find(w => w.id === point.workType)?.name || point.workType,
+        point.status,
+        point.chainage,
+        point.photos?.length || 0,
+        new Date(point.timestamp).toLocaleDateString()
+      ])
+    ];
+
+    const csvContent = csvData.map(row => row.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `road-progress-report-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportMapImage = () => {
+    const canvas = mapCanvasRef.current;
+    if (!canvas) return;
+
+    const link = document.createElement('a');
+    link.download = `road-progress-map-${new Date().toISOString().split('T')[0]}.png`;
+    link.href = canvas.toDataURL();
+    link.click();
+  };
+
   return (
     <div className="space-y-6">
       {/* Header with project info */}
@@ -442,6 +528,55 @@ export default function RoadProgressMapper() {
               <Plus className="h-4 w-4 mr-2" />
               Add GPS Point
             </Button>
+
+            {/* Photo Upload Section */}
+            <div className="border-t pt-4">
+              <Label className="text-sm font-medium">Attach Photos (Optional)</Label>
+              <div className="mt-2">
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                  id="photo-upload"
+                />
+                <label
+                  htmlFor="photo-upload"
+                  className="flex items-center justify-center w-full h-20 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500"
+                >
+                  <div className="text-center">
+                    <Camera className="h-6 w-6 mx-auto text-gray-400" />
+                    <span className="text-sm text-gray-600">Click to add photos</span>
+                  </div>
+                </label>
+              </div>
+
+              {selectedPhotos.length > 0 && (
+                <div className="mt-2">
+                  <p className="text-sm text-gray-600">{selectedPhotos.length} photo(s) selected</p>
+                  <div className="flex gap-1 mt-1">
+                    {selectedPhotos.map((file, index) => (
+                      <div key={index} className="relative">
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={`Preview ${index + 1}`}
+                          className="w-12 h-12 object-cover rounded border"
+                        />
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="absolute -top-1 -right-1 h-4 w-4 p-0"
+                          onClick={() => setSelectedPhotos(prev => prev.filter((_, i) => i !== index))}
+                        >
+                          <X className="h-2 w-2" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -474,6 +609,23 @@ export default function RoadProgressMapper() {
                   onClick={() => setShowPlanned(!showPlanned)}
                 >
                   Planned
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={exportProgressReport}
+                  className="ml-2"
+                >
+                  <Download className="h-4 w-4 mr-1" />
+                  Export CSV
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={exportMapImage}
+                >
+                  <Image className="h-4 w-4 mr-1" />
+                  Export Map
                 </Button>
               </div>
             </div>
@@ -517,6 +669,7 @@ export default function RoadProgressMapper() {
                   <th className="text-left p-2">Work Type</th>
                   <th className="text-left p-2">Chainage</th>
                   <th className="text-left p-2">Status</th>
+                  <th className="text-left p-2">Photos</th>
                   <th className="text-left p-2">Actions</th>
                 </tr>
               </thead>
@@ -569,6 +722,37 @@ export default function RoadProgressMapper() {
                           </SelectItem>
                         </SelectContent>
                       </Select>
+                    </td>
+                    <td className="p-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm">
+                          {point.photos?.length || 0} photo(s)
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedPointForPhotos(point.id);
+                            setShowPhotoUpload(true);
+                          }}
+                          className="h-6 px-2"
+                        >
+                          <Camera className="h-3 w-3" />
+                        </Button>
+                        {point.photos && point.photos.length > 0 && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              // Show photos in a modal or gallery
+                              alert(`View ${point.photos?.length} photos for this GPS point`);
+                            }}
+                            className="h-6 px-2"
+                          >
+                            <Eye className="h-3 w-3" />
+                          </Button>
+                        )}
+                      </div>
                     </td>
                     <td className="p-2">
                       <Button
