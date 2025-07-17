@@ -5,10 +5,9 @@ import ContractorManagement from "@/components/ContractorManagement";
 import EntityManagement from "@/components/EntityManagement";
 import FinancialDashboard from "@/components/FinancialDashboard";
 import GPSMonitoring from "@/components/GPSMonitoring";
-import GPSTaskEntry from "@/components/GPSTaskEntry";
+import GPSDataEntry from "@/components/GPSDataEntry";
 import HSEReports from "@/components/HSEReports";
 import InformationSharingSystem from "@/components/InformationSharingSystem";
-import MobileGPSCollector from "@/components/MobileGPSCollector";
 import ProgressMapping from "@/components/ProgressMapping";
 import ProjectManagement from "@/components/ProjectManagement";
 import ProjectProgressMonitoring from "@/components/ProjectProgressMonitoring";
@@ -217,8 +216,7 @@ export default function Dashboard() {
       label: "Field Operations",
       icon: MapIcon,
       items: [
-        { id: "gps-entry", label: "GPS Data Entry", icon: MapPin },
-        { id: "mobile-gps", label: "Mobile GPS Collector", icon: Navigation },
+        { id: "gps-entry", label: "Enhanced GPS Data Entry", icon: MapPin },
         {
           id: "road-progress",
           label: "Road Progress Mapping",
@@ -836,9 +834,7 @@ export default function Dashboard() {
 
       // Field Operations
       case "gps-entry":
-        return <GPSTaskEntry />;
-      case "mobile-gps":
-        return <MobileGPSCollector />;
+        return <GPSDataEntry />;
       case "road-progress":
         return <RoadProgressMapper />;
       case "machine-tracking":
