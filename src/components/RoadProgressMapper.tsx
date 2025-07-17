@@ -150,7 +150,7 @@ export default function RoadProgressMapper() {
     const newPhotos = selectedPhotos.map((file, index) => ({
       id: `photo-${Date.now()}-${index}`,
       filename: file.name,
-      url: URL.createObjectURL(file),
+      url: typeof window !== 'undefined' ? URL.createObjectURL(file) : '',
       timestamp: new Date().toISOString(),
       description: `Photo ${index + 1} for GPS point`
     }));

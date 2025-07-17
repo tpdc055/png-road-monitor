@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import dynamic from 'next/dynamic';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,12 +57,23 @@ const WORK_TYPES = [
   { id: "bridge", name: "Bridge Work", icon: "🌉", color: "#8B0000" }
 ];
 
-export default function MobileGPSCollector() {
+function MobileGPSCollectorComponent() {
+  const [isMounted, setIsMounted] = useState(false);
   const [isGPSEnabled, setIsGPSEnabled] = useState(false);
   const [currentLocation, setCurrentLocation] = useState<GPSReading | null>(null);
-  const [isConnected, setIsConnected] = useState(navigator.onLine);
+  const [isConnected, setIsConnected] = useState(true);
   const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
   const [gpsEntries, setGpsEntries] = useState<MobileGPSEntry[]>([]);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return <div className="min-h-screen bg-gray-50 p-2 flex items-center justify-center">
+      <div>Loading GPS Collector...</div>
+    </div>;
+  }
 
   const [currentEntry, setCurrentEntry] = useState({
     workType: "",
@@ -81,8 +93,11 @@ export default function MobileGPSCollector() {
 
   // Check GPS and network status
   useEffect(() => {
+    // Only run in browser environment
+    if (typeof window === 'undefined') return;
+
     const checkGPS = () => {
-      if ("geolocation" in navigator) {
+      if (typeof navigator !== 'undefined' && "geolocation" in navigator) {
         setIsGPSEnabled(true);
       }
     };
@@ -90,8 +105,13 @@ export default function MobileGPSCollector() {
     const handleOnline = () => setIsConnected(true);
     const handleOffline = () => setIsConnected(false);
 
+    // Set initial online status
+    if (typeof navigator !== 'undefined') {
+      setIsConnected(navigator.onLine);
+    }
+
     // Battery API (if supported)
-    if ('getBattery' in navigator) {
+    if (typeof navigator !== 'undefined' && 'getBattery' in navigator) {
       (navigator as any).getBattery().then((battery: any) => {
         setBatteryLevel(Math.round(battery.level * 100));
         battery.addEventListener('levelchange', () => {
@@ -111,7 +131,7 @@ export default function MobileGPSCollector() {
   }, []);
 
   const captureCurrentLocation = () => {
-    if (!isGPSEnabled) {
+    if (typeof navigator === 'undefined' || !isGPSEnabled) {
       setLocationError("GPS not available on this device");
       return;
     }
@@ -149,6 +169,11 @@ export default function MobileGPSCollector() {
   };
 
   const startAudioRecording = async () => {
+    if (typeof navigator === 'undefined' || !navigator.mediaDevices) {
+      console.error('Media devices not supported');
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream);
@@ -405,7 +430,7 @@ export default function MobileGPSCollector() {
                 {selectedPhotos.map((file, index) => (
                   <div key={index} className="relative">
                     <img
-                      src={URL.createObjectURL(file)}
+                      src={typeof window !== 'undefined' ? URL.createObjectURL(file) : ''}
                       alt={`Photo ${index + 1}`}
                       className="w-full h-20 object-cover rounded border"
                     />
@@ -486,3 +511,11 @@ export default function MobileGPSCollector() {
     </div>
   );
 }
+
+// Export with dynamic import to prevent SSR issues
+export default dynamic(() => Promise.resolve(MobileGPSCollectorComponent), {
+  ssr: false,
+  loading: () => <div className="min-h-screen bg-gray-50 p-2 flex items-center justify-center">
+    <div>Loading GPS Collector...</div>
+  </div>
+});

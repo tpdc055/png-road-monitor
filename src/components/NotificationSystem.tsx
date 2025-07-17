@@ -391,7 +391,7 @@ export default function NotificationSystem({ projects = [], className }: Notific
                     <div className="flex items-center justify-between">
                       <span>Milestones</span>
                       <Switch
-                        size="sm"
+
                         checked={settings.milestones}
                         onCheckedChange={(checked) =>
                           setSettings(prev => ({ ...prev, milestones: checked }))
@@ -401,7 +401,7 @@ export default function NotificationSystem({ projects = [], className }: Notific
                     <div className="flex items-center justify-between">
                       <span>Budget</span>
                       <Switch
-                        size="sm"
+
                         checked={settings.budget}
                         onCheckedChange={(checked) =>
                           setSettings(prev => ({ ...prev, budget: checked }))
@@ -411,7 +411,7 @@ export default function NotificationSystem({ projects = [], className }: Notific
                     <div className="flex items-center justify-between">
                       <span>Schedule</span>
                       <Switch
-                        size="sm"
+
                         checked={settings.schedule}
                         onCheckedChange={(checked) =>
                           setSettings(prev => ({ ...prev, schedule: checked }))
@@ -421,7 +421,7 @@ export default function NotificationSystem({ projects = [], className }: Notific
                     <div className="flex items-center justify-between">
                       <span>GPS</span>
                       <Switch
-                        size="sm"
+
                         checked={settings.gps}
                         onCheckedChange={(checked) =>
                           setSettings(prev => ({ ...prev, gps: checked }))
@@ -459,7 +459,7 @@ export default function NotificationSystem({ projects = [], className }: Notific
                             {!notification.read && (
                               <Button
                                 variant="ghost"
-                                size="sm"
+
                                 onClick={() => markAsRead(notification.id)}
                                 className="h-6 w-6 p-0"
                               >
@@ -468,7 +468,7 @@ export default function NotificationSystem({ projects = [], className }: Notific
                             )}
                             <Button
                               variant="ghost"
-                              size="sm"
+
                               onClick={() => deleteNotification(notification.id)}
                               className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
                             >

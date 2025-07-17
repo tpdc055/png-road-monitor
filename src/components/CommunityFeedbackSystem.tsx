@@ -36,7 +36,8 @@ import {
   User,
   Building,
   Calendar,
-  TrendingUp
+  TrendingUp,
+  BarChart3
 } from 'lucide-react';
 import type { CommunityFeedback } from '@/types/connectpng';
 

@@ -262,7 +262,7 @@ export default function ProjectTrackingModule({ selectedProjectId, userRole = 'S
                 <div>
                   <CardTitle className="text-xl">{selectedProject.name}</CardTitle>
                   <CardDescription className="mt-1">
-                    {selectedProject.location} • {selectedProject.province?.name || selectedProject.province}
+                    {selectedProject.location} • {typeof selectedProject.province === 'object' ? selectedProject.province?.name : selectedProject.province}
                     {selectedProject.district && ` • ${selectedProject.district}`}
                   </CardDescription>
                 </div>
