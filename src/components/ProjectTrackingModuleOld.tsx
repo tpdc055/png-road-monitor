@@ -1,9 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertTriangle,
@@ -24,83 +29,91 @@ import {
   TrendingUp,
   Upload,
 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import BOQManager from "./BOQManager";
+import DataExportComponent from "./DataExportComponent";
+import GPSDataEntrySpreadsheet from "./GPSDataEntrySpreadsheet";
+import GoogleMapComponent from "./GoogleMapComponent";
+import NotificationSystem from "./NotificationSystem";
+import ProjectAlerts from "./ProjectAlerts";
+import ProjectAnalytics from "./ProjectAnalytics";
+import ProjectDashboard from "./ProjectDashboard";
+import ProjectPhasesManager from "./ProjectPhasesManager";
 
 interface Project {
   id: string;
   name: string;
   location: string;
-  province: any;
+  province: string;
   district?: string;
   contractor: string;
   status: string;
   progress: number;
   budget: number;
   spent: number;
-  startDate: string;
-  endDate: string;
-  description?: string;
-  distance?: number;
+  startDate?: string;
+  endDate?: string;
+  contractValue?: number;
+  roadStartPoint?: string;
+  roadEndPoint?: string;
+  totalDistance?: number;
+  completedDistance?: number;
+  tenderNumber?: string;
+  contractDate?: string;
 }
 
-const mockProjects: Project[] = [
-  {
-    id: "PNG001",
-    name: "Mt. Hagen-Kagamuga Road Upgrade",
-    location: "Mt. Hagen to Kagamuga Airport",
-    province: { name: "Western Highlands" },
-    contractor: "PNG Construction Ltd",
-    status: "ACTIVE",
-    progress: 65,
-    budget: 25000000,
-    spent: 16250000,
-    startDate: "2024-01-15",
-    endDate: "2024-12-31",
-    description: "Major highway upgrade connecting Mt. Hagen city to Kagamuga Airport",
-    distance: 15.2
-  },
-  {
-    id: "PNG002",
-    name: "Port Moresby Ring Road",
-    location: "Port Moresby Metropolitan",
-    province: { name: "National Capital District" },
-    contractor: "Pacific Roads Pty Ltd",
-    status: "ACTIVE",
-    progress: 45,
-    budget: 45000000,
-    spent: 20250000,
-    startDate: "2024-02-01",
-    endDate: "2025-06-30",
-    description: "Ring road to ease traffic congestion in Port Moresby",
-    distance: 28.5
-  },
-  {
-    id: "PNG003",
-    name: "Lae-Nadzab Highway",
-    location: "Lae to Nadzab Airport",
-    province: { name: "Morobe" },
-    contractor: "Highland Construction",
-    status: "PLANNING",
-    progress: 15,
-    budget: 18000000,
-    spent: 2700000,
-    startDate: "2024-03-01",
-    endDate: "2024-11-30",
-    description: "Highway connecting Lae city to Nadzab Airport",
-    distance: 12.8
-  }
-];
+interface ProjectTrackingProps {
+  selectedProjectId?: string;
+  userRole?: string;
+}
 
-export default function ProjectTrackingModuleSimple() {
-  const [projects, setProjects] = useState<Project[]>(mockProjects);
+export default function ProjectTrackingModule({
+  selectedProjectId,
+  userRole = "SITE_ENGINEER",
+}: ProjectTrackingProps) {
+  const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    province: "all",
+    district: "all",
+    status: "all",
+    contractor: "all",
+  });
 
   useEffect(() => {
-    if (!selectedProject && projects.length > 0) {
-      setSelectedProject(projects[0]);
+    fetchProjects();
+  }, [filters]);
+
+  useEffect(() => {
+    if (selectedProjectId && projects.length > 0) {
+      const project = projects.find((p) => p.id === selectedProjectId);
+      if (project) {
+        setSelectedProject(project);
+      }
     }
-  }, [projects, selectedProject]);
+  }, [selectedProjectId, projects]);
+
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/v1/projects");
+      if (response.ok) {
+        const data = await response.json();
+        setProjects(data.data || []);
+
+        // Auto-select first project if none selected
+        if (!selectedProject && data.data?.length > 0) {
+          setSelectedProject(data.data[0]);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -111,46 +124,34 @@ export default function ProjectTrackingModuleSimple() {
       case "on_hold":
         return "bg-yellow-500";
       case "completed":
-        return "bg-gray-500";
+        return "bg-purple-500";
+      case "cancelled":
+        return "bg-red-500";
       default:
-        return "bg-gray-400";
+        return "bg-gray-500";
     }
   };
 
   const getProgressColor = (progress: number) => {
-    if (progress >= 80) return "text-green-600";
-    if (progress >= 50) return "text-blue-600";
-    if (progress >= 25) return "text-yellow-600";
+    if (progress >= 90) return "text-green-600";
+    if (progress >= 70) return "text-blue-600";
+    if (progress >= 50) return "text-yellow-600";
     return "text-red-600";
   };
 
-  const calculateCompletionPercentage = (project: Project) => {
-    return Math.round(project.progress || 0);
-  };
-
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-PG', {
-      style: 'currency',
-      currency: 'PGK',
+    return new Intl.NumberFormat("en-PG", {
+      style: "currency",
+      currency: "PGK",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-PG', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-
-  const calculateDaysRemaining = (endDate: string) => {
-    const end = new Date(endDate);
-    const today = new Date();
-    const diffTime = end.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return Math.max(0, diffDays);
+  const calculateCompletionPercentage = (project: Project) => {
+    if (!project.totalDistance || project.totalDistance === 0)
+      return project.progress;
+    return ((project.completedDistance || 0) / project.totalDistance) * 100;
   };
 
   if (loading) {
@@ -166,14 +167,14 @@ export default function ProjectTrackingModuleSimple() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Header Section */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-            Project Tracking
+            Project Tracking Module
           </h1>
           <p className="text-gray-600 mt-1 text-sm sm:text-base">
-            Monitor road construction projects across Papua New Guinea
+            Comprehensive road construction monitoring and management system
           </p>
         </div>
         <div className="flex flex-wrap gap-2 w-full sm:w-auto">
@@ -181,6 +182,7 @@ export default function ProjectTrackingModuleSimple() {
             <Filter className="h-4 w-4 mr-2" />
             <span className="hidden sm:inline">Filters</span>
           </Button>
+          <NotificationSystem projects={projects} />
           <Button size="sm" className="flex-1 sm:flex-none">
             <Plus className="h-4 w-4 mr-2" />
             <span className="hidden sm:inline">New Project</span>
@@ -189,7 +191,7 @@ export default function ProjectTrackingModuleSimple() {
         </div>
       </div>
 
-      {/* Projects Grid */}
+      {/* Project Selection Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
         {projects.map((project) => (
           <Card
@@ -197,7 +199,7 @@ export default function ProjectTrackingModuleSimple() {
             className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
               selectedProject?.id === project.id
                 ? "ring-2 ring-blue-500 shadow-md"
-                : "hover:ring-1 hover:ring-gray-300"
+                : ""
             }`}
             onClick={() => setSelectedProject(project)}
           >
@@ -208,7 +210,7 @@ export default function ProjectTrackingModuleSimple() {
                     {project.name}
                   </CardTitle>
                   <CardDescription className="text-xs mt-1">
-                    {project.location} • {typeof project.province === 'object' ? project.province?.name : project.province}
+                    {project.location}
                   </CardDescription>
                 </div>
                 <Badge
@@ -227,39 +229,41 @@ export default function ProjectTrackingModuleSimple() {
                     <span
                       className={`font-medium ${getProgressColor(calculateCompletionPercentage(project))}`}
                     >
-                      {calculateCompletionPercentage(project)}%
+                      {calculateCompletionPercentage(project).toFixed(1)}%
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div
                       className={`h-2 rounded-full transition-all duration-300 ${
-                        calculateCompletionPercentage(project) >= 80
+                        calculateCompletionPercentage(project) >= 70
                           ? "bg-green-500"
-                          : calculateCompletionPercentage(project) >= 50
-                          ? "bg-blue-500"
-                          : calculateCompletionPercentage(project) >= 25
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
+                          : calculateCompletionPercentage(project) >= 40
+                            ? "bg-blue-500"
+                            : "bg-red-500"
                       }`}
                       style={{
-                        width: `${calculateCompletionPercentage(project)}%`,
+                        width: `${Math.min(calculateCompletionPercentage(project), 100)}%`,
                       }}
                     />
                   </div>
                 </div>
 
                 {/* Distance */}
-                <div className="flex justify-between text-xs">
-                  <span className="text-gray-600">Distance:</span>
-                  <span className="font-medium">
-                    {project.distance ? `${project.distance} km` : "N/A"}
-                  </span>
-                </div>
+                {project.totalDistance && (
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-600">Distance:</span>
+                    <span className="font-medium">
+                      {(project.completedDistance || 0).toFixed(1)}km /{" "}
+                      {project.totalDistance.toFixed(1)}km
+                    </span>
+                  </div>
+                )}
 
                 {/* Budget */}
                 <div className="flex justify-between text-xs">
                   <span className="text-gray-600">Budget:</span>
                   <span className="font-medium">
+                    {formatCurrency(project.spent)} /{" "}
                     {formatCurrency(project.budget)}
                   </span>
                 </div>
@@ -280,7 +284,7 @@ export default function ProjectTrackingModuleSimple() {
       {/* Selected Project Details */}
       {selectedProject && (
         <>
-          {/* Project Overview */}
+          {/* Project Summary Card */}
           <Card>
             <CardHeader>
               <div className="flex items-start justify-between">
@@ -289,11 +293,12 @@ export default function ProjectTrackingModuleSimple() {
                     {selectedProject.name}
                   </CardTitle>
                   <CardDescription className="mt-1">
-                    {selectedProject.location} • {
-                      typeof selectedProject.province === 'object'
-                        ? selectedProject.province?.name
-                        : selectedProject.province
-                    }
+                    {selectedProject.location} •{" "}
+                    {typeof selectedProject.province === "object"
+                      ? selectedProject.province?.name
+                      : selectedProject.province}
+                    {selectedProject.district &&
+                      ` • ${selectedProject.district}`}
                   </CardDescription>
                 </div>
                 <div className="flex gap-2">
@@ -304,7 +309,7 @@ export default function ProjectTrackingModuleSimple() {
                   </Badge>
                   <Button variant="outline" size="sm">
                     <Edit className="h-4 w-4 mr-2" />
-                    Edit
+                    Edit Project
                   </Button>
                 </div>
               </div>
@@ -318,10 +323,11 @@ export default function ProjectTrackingModuleSimple() {
                     <span className="sm:hidden">%</span>
                   </div>
                   <div className="text-xl sm:text-2xl font-bold text-blue-600">
-                    {calculateCompletionPercentage(selectedProject)}%
+                    {calculateCompletionPercentage(selectedProject).toFixed(1)}%
                   </div>
                   <div className="text-xs text-gray-600">
-                    Overall completion
+                    {(selectedProject.completedDistance || 0).toFixed(1)}km of{" "}
+                    {(selectedProject.totalDistance || 0).toFixed(1)}km
                   </div>
                 </div>
 
@@ -332,10 +338,17 @@ export default function ProjectTrackingModuleSimple() {
                     <span className="sm:hidden">Budget</span>
                   </div>
                   <div className="text-lg sm:text-2xl font-bold text-green-600">
-                    {formatCurrency(selectedProject.budget)}
+                    {formatCurrency(
+                      selectedProject.contractValue || selectedProject.budget,
+                    )}
                   </div>
                   <div className="text-xs text-gray-600">
-                    Total budget allocated
+                    Spent: {formatCurrency(selectedProject.spent)} (
+                    {(
+                      (selectedProject.spent / selectedProject.budget) *
+                      100
+                    ).toFixed(1)}
+                    %)
                   </div>
                 </div>
 
@@ -346,7 +359,13 @@ export default function ProjectTrackingModuleSimple() {
                     <span className="sm:hidden">Days</span>
                   </div>
                   <div className="text-xl sm:text-2xl font-bold text-purple-600">
-                    {calculateDaysRemaining(selectedProject.endDate)}
+                    {selectedProject.startDate
+                      ? Math.ceil(
+                          (new Date(selectedProject.endDate!).getTime() -
+                            new Date().getTime()) /
+                            (1000 * 60 * 60 * 24),
+                        )
+                      : "TBD"}
                   </div>
                   <div className="text-xs text-gray-600">Days remaining</div>
                 </div>
@@ -361,14 +380,14 @@ export default function ProjectTrackingModuleSimple() {
                     {selectedProject.contractor}
                   </div>
                   <div className="text-xs text-gray-600">
-                    Primary contractor
+                    Contract: {selectedProject.tenderNumber || "N/A"}
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Tabs Section */}
+          {/* Main Tracking Interface */}
           <Card>
             <CardContent className="p-0">
               <Tabs
@@ -403,6 +422,30 @@ export default function ProjectTrackingModuleSimple() {
                       <span className="sm:hidden text-xs">Tasks</span>
                     </TabsTrigger>
                     <TabsTrigger
+                      value="boq"
+                      className="gap-1 sm:gap-2 px-2 sm:px-4"
+                    >
+                      <FileText className="h-4 w-4" />
+                      <span className="hidden sm:inline">BOQ Management</span>
+                      <span className="sm:hidden text-xs">BOQ</span>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="analytics"
+                      className="gap-1 sm:gap-2 px-2 sm:px-4"
+                    >
+                      <TrendingUp className="h-4 w-4" />
+                      <span className="hidden sm:inline">Analytics</span>
+                      <span className="sm:hidden text-xs">Stats</span>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="alerts"
+                      className="gap-1 sm:gap-2 px-2 sm:px-4"
+                    >
+                      <AlertTriangle className="h-4 w-4" />
+                      <span className="hidden sm:inline">Alerts</span>
+                      <span className="sm:hidden text-xs">⚠️</span>
+                    </TabsTrigger>
+                    <TabsTrigger
                       value="maps"
                       className="gap-1 sm:gap-2 px-2 sm:px-4"
                     >
@@ -411,96 +454,100 @@ export default function ProjectTrackingModuleSimple() {
                       <span className="sm:hidden text-xs">Maps</span>
                     </TabsTrigger>
                     <TabsTrigger
-                      value="reports"
+                      value="export"
                       className="gap-1 sm:gap-2 px-2 sm:px-4"
                     >
-                      <FileText className="h-4 w-4" />
-                      <span className="hidden sm:inline">Reports</span>
-                      <span className="sm:hidden text-xs">Reports</span>
+                      <Download className="h-4 w-4" />
+                      <span className="hidden sm:inline">Data Export</span>
+                      <span className="sm:hidden text-xs">Export</span>
                     </TabsTrigger>
                   </TabsList>
                 </div>
 
-                <div className="p-4 sm:p-6">
-                  <TabsContent value="dashboard" className="mt-0">
-                    <div className="text-center py-8">
-                      <BarChart3 className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        Project Dashboard
-                      </h3>
-                      <p className="text-gray-600 mb-4">
-                        Comprehensive project analytics and monitoring dashboard
-                      </p>
-                      <Button>
-                        View Dashboard
-                      </Button>
-                    </div>
-                  </TabsContent>
+                <TabsContent value="dashboard" className="p-6">
+                  <ProjectDashboard
+                    project={selectedProject}
+                    userRole={userRole}
+                  />
+                </TabsContent>
 
-                  <TabsContent value="gps-entry" className="mt-0">
-                    <div className="text-center py-8">
-                      <MapPin className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        GPS Data Entry
-                      </h3>
-                      <p className="text-gray-600 mb-4">
-                        Enter GPS coordinates and track construction progress
-                      </p>
-                      <Button>
-                        Start GPS Entry
-                      </Button>
-                    </div>
-                  </TabsContent>
+                <TabsContent value="gps-entry" className="p-6">
+                  <GPSDataEntrySpreadsheet
+                    projectId={selectedProject.id}
+                    projectName={selectedProject.name}
+                    userRole={userRole}
+                  />
+                </TabsContent>
 
-                  <TabsContent value="phases" className="mt-0">
-                    <div className="text-center py-8">
-                      <Calendar className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        Project Phases
-                      </h3>
-                      <p className="text-gray-600 mb-4">
-                        Manage project phases, milestones, and task assignments
-                      </p>
-                      <Button>
-                        Manage Phases
-                      </Button>
-                    </div>
-                  </TabsContent>
+                <TabsContent value="phases" className="p-6">
+                  <ProjectPhasesManager
+                    projectId={selectedProject.id}
+                    projectName={selectedProject.name}
+                    userRole={userRole}
+                  />
+                </TabsContent>
 
-                  <TabsContent value="maps" className="mt-0">
-                    <div className="text-center py-8">
-                      <MapPin className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        Maps & GPS Tracking
-                      </h3>
-                      <p className="text-gray-600 mb-4">
-                        View project locations on interactive maps with GPS tracking
-                      </p>
-                      <Button>
-                        View Maps
-                      </Button>
-                    </div>
-                  </TabsContent>
+                <TabsContent value="boq" className="p-6">
+                  <BOQManager
+                    projectId={selectedProject.id}
+                    projectName={selectedProject.name}
+                    budget={selectedProject.budget}
+                    userRole={userRole}
+                  />
+                </TabsContent>
 
-                  <TabsContent value="reports" className="mt-0">
-                    <div className="text-center py-8">
-                      <FileText className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        Project Reports
-                      </h3>
-                      <p className="text-gray-600 mb-4">
-                        Generate comprehensive reports and export project data
-                      </p>
-                      <Button>
-                        Generate Reports
-                      </Button>
-                    </div>
-                  </TabsContent>
-                </div>
+                <TabsContent value="analytics" className="p-6">
+                  <ProjectAnalytics
+                    project={selectedProject}
+                    userRole={userRole}
+                  />
+                </TabsContent>
+
+                <TabsContent value="alerts" className="p-6">
+                  <ProjectAlerts
+                    projectId={selectedProject.id}
+                    userRole={userRole}
+                  />
+                </TabsContent>
+
+                <TabsContent value="maps" className="p-6">
+                  <GoogleMapComponent
+                    projects={projects}
+                    selectedProject={selectedProject}
+                    onProjectSelect={setSelectedProject}
+                    showGPSPoints={true}
+                    showProjectRoutes={true}
+                  />
+                </TabsContent>
+
+                <TabsContent value="export" className="p-6">
+                  <DataExportComponent
+                    projects={projects}
+                    selectedProject={selectedProject}
+                  />
+                </TabsContent>
               </Tabs>
             </CardContent>
           </Card>
         </>
+      )}
+
+      {projects.length === 0 && !loading && (
+        <Card>
+          <CardContent className="text-center py-12">
+            <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              No Projects Found
+            </h3>
+            <p className="text-gray-600 mb-4">
+              Get started by creating your first road construction project.
+            </p>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Create New Project
+            </Button>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

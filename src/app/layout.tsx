@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     "Papua New Guinea road construction monitoring and management system",
   icons: {
-    icon: "/favicon.svg",
+    icon: "/favicon.ico",
   },
 };
 
