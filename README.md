@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PNG Road Construction Monitor
+
+This is a comprehensive GPS-enabled road construction monitoring system for Papua New Guinea, built with Next.js 15.3.2.
 
 ## Getting Started
 
