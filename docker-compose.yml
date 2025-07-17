@@ -1,0 +1,169 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: png-road-monitor-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://png_road_app:${DB_PASSWORD}@postgres:5432/png_road_monitor_prod
+      - REDIS_URL=redis://redis:6379
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+    volumes:
+      - uploads_data:/usr/src/app/uploads
+      - app_logs:/var/log/png-road-monitor
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - app_network
+
+  postgres:
+    image: postgis/postgis:14-3.2
+    container_name: png-road-monitor-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=png_road_monitor_prod
+      - POSTGRES_USER=png_road_app
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/database/setup-production.sql:/docker-entrypoint-initdb.d/setup.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U png_road_app -d png_road_monitor_prod"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - app_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: png-road-monitor-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - app_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: png-road-monitor-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - uploads_data:/var/uploads/png-road-monitor:ro
+      - ssl_certs:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+    networks:
+      - app_network
+
+  backup:
+    image: postgres:14
+    container_name: png-road-monitor-backup
+    restart: "no"
+    environment:
+      - POSTGRES_USER=png_road_backup
+      - POSTGRES_PASSWORD=${DB_BACKUP_PASSWORD}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=png_road_monitor_prod
+    volumes:
+      - backup_data:/var/backups
+      - ./scripts/database/backup.sh:/usr/local/bin/backup.sh:ro
+    command: /bin/bash -c "crontab -l | { cat; echo '0 2 * * * /usr/local/bin/backup.sh'; } | crontab - && crond -f"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app_network
+
+  # Optional: Monitoring stack (can be enabled separately)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: png-road-monitor-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - app_network
+    profiles:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: png-road-monitor-grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus
+    networks:
+      - app_network
+    profiles:
+      - monitoring
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  uploads_data:
+    driver: local
+  backup_data:
+    driver: local
+  app_logs:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  ssl_certs:
+    driver: local
+
+networks:
+  app_network:
+    driver: bridge

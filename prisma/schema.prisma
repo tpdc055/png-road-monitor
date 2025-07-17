@@ -1,0 +1,431 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(SITE_ENGINEER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  managedProjects   Project[]       @relation("ProjectManager")
+  gpsEntries        GPSEntry[]
+  financialEntries  FinancialEntry[]
+  projectTasks      ProjectTask[]   @relation("TaskAssignee")
+  gpsDataEntries    GPSDataEntry[]
+
+  @@map("users")
+}
+
+model Province {
+  id       String @id @default(uuid())
+  name     String @unique
+  code     String @unique
+  region   String
+
+  // Relations
+  projects  Project[]
+  districts District[]
+
+  @@map("provinces")
+}
+
+model District {
+  id         String @id @default(uuid())
+  name       String
+  code       String
+  provinceId String
+
+  // Relations
+  province Province   @relation(fields: [provinceId], references: [id])
+  projects Project[]
+
+  @@unique([name, provinceId])
+  @@map("districts")
+}
+
+model WorkType {
+  id       String @id @default(uuid())
+  name     String @unique
+  category String
+
+  @@map("work_types")
+}
+
+model Contractor {
+  id        String  @id @default(uuid())
+  name      String  @unique
+  email     String?
+  phone     String?
+  address   String?
+  license   String? @unique
+  specialty String?
+  rating    Float?  @default(0)
+  isActive  Boolean @default(true)
+
+  @@map("contractors")
+}
+
+model Project {
+  id            String        @id @default(uuid())
+  name          String
+  description   String?
+  location      String
+  provinceId    String
+  districtId    String?
+  status        ProjectStatus @default(PLANNING)
+  progress      Float         @default(0)
+  budget        Float
+  spent         Float         @default(0)
+  startDate     DateTime?
+  endDate       DateTime?
+  contractor    String?
+  managerId     String?
+  fundingSource FundingSource @default(GOVERNMENT)
+
+  // Enhanced Project Tracking fields
+  contractValue     Float?
+  roadStartPoint    String?
+  roadEndPoint      String?
+  totalDistance     Float?        // Total distance in km
+  completedDistance Float?        @default(0) // Completed distance in km
+  tenderNumber      String?
+  contractDate      DateTime?
+
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  province         Province         @relation(fields: [provinceId], references: [id])
+  district         District?        @relation(fields: [districtId], references: [id])
+  manager          User?            @relation("ProjectManager", fields: [managerId], references: [id])
+  gpsEntries       GPSEntry[]
+  financialEntries FinancialEntry[]
+  progressEntries  ProgressEntry[]
+
+  // New Project Tracking relations
+  projectPhases    ProjectPhase[]
+  boqItems         BOQItem[]
+  gpsDataEntries   GPSDataEntry[]
+  projectAlerts    ProjectAlert[]
+
+  @@map("projects")
+}
+
+model ProjectPhase {
+  id          String   @id @default(uuid())
+  projectId   String
+  name        String
+  description String?
+  startDate   DateTime?
+  endDate     DateTime?
+  budget      Float    @default(0)
+  spent       Float    @default(0)
+  progress    Float    @default(0)
+  order       Int      @default(0)
+  status      PhaseStatus @default(NOT_STARTED)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks        ProjectTask[]
+  boqItems     BOQItem[]
+  gpsDataEntries GPSDataEntry[]
+
+  @@map("project_phases")
+}
+
+model ProjectTask {
+  id          String   @id @default(uuid())
+  phaseId     String
+  name        String
+  description String?
+  startDate   DateTime?
+  endDate     DateTime?
+  budget      Float    @default(0)
+  spent       Float    @default(0)
+  progress    Float    @default(0)
+  status      TaskStatus @default(NOT_STARTED)
+  assigneeId  String?
+  targetQuantity Float? // Target length/quantity to complete
+  completedQuantity Float? @default(0)
+  unit        String?  // km, m3, etc.
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  phase        ProjectPhase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  assignee     User?         @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  gpsDataEntries GPSDataEntry[]
+
+  @@map("project_tasks")
+}
+
+model BOQItem {
+  id          String   @id @default(uuid())
+  projectId   String
+  phaseId     String?
+  itemCode    String
+  description String
+  unit        String
+  quantity    Float
+  unitRate    Float
+  totalAmount Float
+  completedQuantity Float @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  phase   ProjectPhase? @relation(fields: [phaseId], references: [id])
+
+  @@unique([projectId, itemCode])
+  @@map("boq_items")
+}
+
+model GPSDataEntry {
+  id          String   @id @default(uuid())
+  projectId   String
+  phaseId     String?
+  taskId      String?
+  userId      String
+
+  // GPS and Location Data
+  latitude    Float
+  longitude   Float
+  chainage    Float    // Distance from start point in km
+
+  // Work Details
+  workType    String?
+  status      EntryStatus @default(IN_PROGRESS)
+  comments    String?
+
+  // Metadata
+  entryDate   DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  phase   ProjectPhase? @relation(fields: [phaseId], references: [id])
+  task    ProjectTask?  @relation(fields: [taskId], references: [id])
+  user    User          @relation(fields: [userId], references: [id])
+
+  @@map("gps_data_entries")
+}
+
+model ProjectAlert {
+  id          String   @id @default(uuid())
+  projectId   String
+  type        AlertType
+  severity    AlertSeverity @default(MEDIUM)
+  title       String
+  message     String
+  isRead      Boolean  @default(false)
+  isResolved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  resolvedAt  DateTime?
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_alerts")
+}
+
+model GPSEntry {
+  id              String   @id @default(uuid())
+  latitude        Float
+  longitude       Float
+  description     String?
+  projectId       String
+  userId          String
+  taskName        String?
+  workType        String?
+  roadSide        String?
+  startChainage   String?
+  endChainage     String?
+  taskDescription String?
+  photos          String? // JSON string of photo URLs
+  timestamp       DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@map("gps_entries")
+}
+
+model FinancialEntry {
+  id            String             @id @default(uuid())
+  projectId     String
+  userId        String
+  category      ExpenseCategory
+  type          TransactionType
+  amount        Float
+  description   String
+  date          DateTime
+  invoiceNumber String?
+  vendor        String?
+  isApproved    Boolean            @default(false)
+  approvedBy    String?
+  approvedAt    DateTime?
+  currency      String             @default("PGK")
+  exchangeRate  Float?
+  notes         String?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@map("financial_entries")
+}
+
+model ProgressEntry {
+  id                String   @id @default(uuid())
+  projectId         String
+  date              DateTime
+  physicalProgress  Float
+  financialProgress Float
+  plannedProgress   Float
+  milestones        String? // JSON array
+  issues            String?
+  nextActions       String?
+  weatherConditions String?
+  workforceCount    Int?
+  equipmentStatus   String?
+  notes             String?
+  createdAt         DateTime @default(now())
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id])
+
+  @@map("progress_entries")
+}
+
+model SystemSetting {
+  id          String           @id @default(uuid())
+  key         String           @unique
+  value       String
+  type        SettingType      @default(string)
+  category    String
+  description String?
+  isEditable  Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@map("system_settings")
+}
+
+// Enums
+enum Role {
+  ADMIN
+  PROJECT_MANAGER
+  SITE_ENGINEER
+  FINANCIAL_OFFICER
+  QUALITY_INSPECTOR
+  VIEWER
+}
+
+enum ProjectStatus {
+  PLANNING
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+enum PhaseStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  ON_HOLD
+  CANCELLED
+}
+
+enum TaskStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  OVERDUE
+  ON_HOLD
+}
+
+enum EntryStatus {
+  COMPLETED
+  IN_PROGRESS
+  INSPECTION_REQUIRED
+  APPROVED
+  REJECTED
+}
+
+enum AlertType {
+  SCHEDULE_DELAY
+  BUDGET_EXCEEDED
+  QUALITY_ISSUE
+  SAFETY_CONCERN
+  MILESTONE_APPROACHING
+  TASK_OVERDUE
+  WEATHER_DELAY
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum FundingSource {
+  GOVERNMENT
+  WORLD_BANK
+  ADB
+  EU
+  AUSTRALIA
+  JAPAN
+  CHINA
+  JOINT
+  OTHER
+}
+
+enum ExpenseCategory {
+  MATERIALS
+  LABOR
+  EQUIPMENT
+  TRANSPORT
+  UTILITIES
+  OVERHEAD
+  CONTINGENCY
+  OTHER
+}
+
+enum TransactionType {
+  EXPENSE
+  PAYMENT
+  REFUND
+  ADJUSTMENT
+}
+
+enum SettingType {
+  string
+  number
+  boolean
+  json
+}

@@ -1,0 +1,381 @@
+/* Mobile-First CSS for PNG Road Construction Monitor */
+/* Optimized for field workers using tablets and phones */
+
+/* Touch-friendly interactions */
+@media (max-width: 768px) {
+  /* Minimum touch target sizes for field use */
+  button, .btn, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 16px;
+  }
+
+  /* Larger input fields for easier data entry */
+  input, textarea, select {
+    min-height: 48px;
+    padding: 12px 16px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  /* Improved navigation for tablets */
+  .navigation-tabs {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 0;
+  }
+
+  .navigation-tabs button {
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-right: 8px;
+  }
+}
+
+/* Tablet landscape optimizations */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .card-container {
+    padding: 16px;
+  }
+
+  /* Better table display for project data */
+  .data-table {
+    font-size: 14px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 12px 8px;
+  }
+}
+
+/* Mobile portrait optimizations */
+@media (max-width: 640px) {
+  /* Stack layouts vertically */
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* Compact headers for small screens */
+  .page-header {
+    padding: 16px;
+    text-align: center;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+
+  .page-header p {
+    font-size: 0.875rem;
+  }
+
+  /* Responsive navigation */
+  .main-navigation {
+    padding: 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 4px;
+    font-size: 0.75rem;
+  }
+
+  .nav-item .icon {
+    margin-bottom: 4px;
+  }
+
+  /* GPS entry optimizations for field use */
+  .gps-form {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    border-top: 2px solid #059669;
+    padding: 16px;
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .location-button {
+    width: 100%;
+    background: linear-gradient(135deg, #059669, #047857);
+    color: white;
+    font-weight: bold;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+
+  /* Photo capture optimization */
+  .photo-upload {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  .photo-upload button {
+    aspect-ratio: 1;
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: #f9fafb;
+  }
+
+  /* Map responsiveness */
+  .map-container {
+    height: 40vh;
+    min-height: 250px;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  /* Data entry forms */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+  }
+
+  /* Financial data tables */
+  .financial-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .financial-table table {
+    min-width: 600px;
+  }
+
+  /* Progress indicators */
+  .progress-card {
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border-left: 4px solid #0ea5e9;
+    padding: 16px;
+    margin: 8px 0;
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #059669, #34d399);
+    transition: width 0.3s ease;
+  }
+}
+
+/* Landscape phone optimizations */
+@media (max-width: 896px) and (orientation: landscape) {
+  .header-compact {
+    padding: 8px 16px;
+  }
+
+  .header-compact h1 {
+    font-size: 1.25rem;
+  }
+
+  .navigation-horizontal {
+    display: flex;
+    overflow-x: auto;
+    padding: 4px 0;
+  }
+
+  /* GPS entry in landscape */
+  .gps-form-landscape {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 12px;
+  }
+}
+
+/* High DPI displays (retina) */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .icon, .logo {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Touch-specific interactions */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover effects on touch devices */
+  .hover-effect:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Better touch feedback */
+  .touch-feedback:active {
+    transform: scale(0.98);
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+
+  /* Larger clickable areas */
+  .clickable-area {
+    padding: 16px;
+    margin: 4px 0;
+  }
+}
+
+/* Dark mode considerations for outdoor viewing */
+@media (prefers-color-scheme: dark) {
+  .field-mode {
+    background: #1f2937;
+    color: #f9fafb;
+  }
+
+  .field-mode .card {
+    background: #374151;
+    border: 1px solid #4b5563;
+  }
+
+  .field-mode input,
+  .field-mode textarea,
+  .field-mode select {
+    background: #4b5563;
+    color: #f9fafb;
+    border: 1px solid #6b7280;
+  }
+}
+
+/* Offline mode indicators */
+.offline-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #ef4444;
+  color: white;
+  text-align: center;
+  padding: 8px;
+  font-size: 0.875rem;
+  z-index: 1000;
+}
+
+.sync-pending {
+  background: #f59e0b;
+  color: white;
+}
+
+/* PNG cultural adaptations */
+.png-mobile-header {
+  background: linear-gradient(135deg, #dc2626, #fbbf24, #1f2937);
+  height: 4px;
+  width: 100%;
+}
+
+.field-worker-tools {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 100;
+}
+
+.tool-button {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #059669, #047857);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.tool-button:active {
+  transform: scale(0.95);
+}
+
+/* Data synchronization status */
+.sync-status {
+  position: fixed;
+  top: 60px;
+  right: 16px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  z-index: 999;
+}
+
+.sync-status.syncing {
+  background: rgba(59, 130, 246, 0.9);
+}
+
+.sync-status.error {
+  background: rgba(239, 68, 68, 0.9);
+}
+
+.sync-status.success {
+  background: rgba(34, 197, 94, 0.9);
+}
+
+/* Accessibility improvements for field conditions */
+.high-contrast {
+  filter: contrast(120%) brightness(110%);
+}
+
+.large-text {
+  font-size: 120%;
+  line-height: 1.6;
+}
+
+/* Weather-resistant UI elements */
+.weather-resistant {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Emergency contact button */
+.emergency-contact {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #dc2626;
+  color: white;
+  padding: 12px;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  z-index: 1001;
+}
